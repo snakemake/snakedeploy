@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/snakedeploy.svg)](https://badge.fury.io/py/snakedeploy)
 
-![https://raw.githubusercontent.com/snakemake/snakedeploy/main/img/snakedeploy.png?token=AAGGZ4VLUKWWGZ3CRG4ATES7VRO3S](https://raw.githubusercontent.com/snakemake/snakedeploy/main/img/snakedeploy.png?token=AAGGZ4VLUKWWGZ3CRG4ATES7VRO3S)
+![https://raw.githubusercontent.com/snakemake/snakedeploy/main/img/snakedeploy.png](https://raw.githubusercontent.com/snakemake/snakedeploy/main/img/snakedeploy.png)
 
 Deploy a snakemake pipeline from GitHub.
 
