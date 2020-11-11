@@ -10,4 +10,4 @@ RUN /bin/bash -c "install_packages wget bzip2 ca-certificates git && \
 ADD . /tmp/repo
 WORKDIR /tmp/repo
 RUN pip install .[all]
-#ENTRYPOINT ["/opt/conda/bin/snakedeploy"]
+ENTRYPOINT ["/opt/conda/bin/snakedeploy"]
