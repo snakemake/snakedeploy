@@ -18,7 +18,7 @@ class GitHubProvider:
     """A snakedeploy provider is a resource to retrieve a pipeline."""
 
     name = "github"
-    matchstring = 'github'
+    matchstring = "github"
 
     def check_install(self):
         """A helper to ensure that git is installed, returns False if not."""
