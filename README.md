@@ -61,6 +61,8 @@ actions:
 
 ### 2. Deploy
 
+#### Command Line
+
 The simplest functionality is to deploy a pipeline, which basically means 
 cloning a repository to a particular destination. You can do that as follows:
 
@@ -86,6 +88,8 @@ And inspect the files there!
 $ ls /tmp/dest/
 config  LICENSE  README.md  workflow
 ```
+
+#### Python
 
 These same interactions can be done from within Python.
 
