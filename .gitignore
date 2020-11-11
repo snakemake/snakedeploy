@@ -1,0 +1,4 @@
+snakedeploy.egg-info/
+.eggs/
+__pycache__
+dist

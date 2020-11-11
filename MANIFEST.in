@@ -1,0 +1,5 @@
+include README.md LICENSE
+recursive-include snakedeploy *
+recursive-exclude * __pycache__
+recursive-exclude * *.pyc
+recursive-exclude * *.pyo
