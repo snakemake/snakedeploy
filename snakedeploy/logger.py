@@ -123,7 +123,7 @@ class Logger:
     def error(self, msg):
         self.handler(dict(level="error", msg=msg))
 
-    def exit(self, msg, return_code=0):
+    def exit(self, msg, return_code=1):
         self.handler(dict(level="error", msg=msg))
         sys.exit(return_code)
 
