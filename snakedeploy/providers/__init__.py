@@ -36,6 +36,16 @@ class ProviderRunner:
         logger.info(
             f"Repository {name} cloned to {dest}. Edit config and sample sheets."
         )
+        return dest
+
+    def template(self, source, name):
+        """Given a source repository and a destination name (org/repo), check
+        that the user has defined a GitHub access token, and template the
+        repository to their account. If name is not provided, use the
+        requesting user account and the same repository name as the template.
+        """
+        provider = self.get_provider(source)
+        return provider.template(source, name)
 
     def get_named_provider(name):
         """get a named provider, meaning determining based on name and not url"""
