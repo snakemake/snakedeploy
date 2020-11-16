@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Deploy from GitHub &mdash; Snakedeploy 0.0.11 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-argparse.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Template and Clone" href="template.html" />
+    <link rel="prev" title="Installation" href="../getting_started/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Snakedeploy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.11
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Deploy templates</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Deploy from GitHub</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-line">Command Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python">Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="template.html">Template and Clone</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/snakedeploy.html">The Snakedeploy API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/internal/modules.html">Internal API</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Snakedeploy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Deploy from GitHub</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/deploy/deploy.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="deploy-from-github">
+<span id="deploy"></span><h1>Deploy from GitHub<a class="headerlink" href="#deploy-from-github" title="Permalink to this headline">¶</a></h1>
+<p><strong>Important</strong> This is the suggested approach, as the template API will not work if
+there are any files over 10MB.</p>
+<div class="section" id="command-line">
+<h2>Command Line<a class="headerlink" href="#command-line" title="Permalink to this headline">¶</a></h2>
+<p>The simplest functionality is to deploy a pipeline, which basically means
+cloning a repository to a particular destination. Since we don’t want to keep git
+history and accidentally push to a template, the .git folder is removed.
+You can do that as follows:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> snakedeploy https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest
+</pre></div>
+</div>
+<p>You’ll then see the repository clone</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Cloning into &#39;/tmp/dest&#39;...</span>
+<span class="go">remote: Enumerating objects: 99, done.</span>
+<span class="go">remote: Counting objects: 100% (99/99), done.</span>
+<span class="go">remote: Compressing objects: 100% (71/71), done.</span>
+<span class="go">remote: Total 1762 (delta 52), reused 55 (delta 26), pack-reused 1663</span>
+<span class="go">Receiving objects: 100% (1762/1762), 19.44 MiB | 2.63 MiB/s, done.</span>
+<span class="go">Resolving deltas: 100% (1122/1122), done.</span>
+<span class="go">Repository snakemake-workflows/dna-seq-varlociraptor cloned to /tmp/dest. Edit config and sample sheets.</span>
+</pre></div>
+</div>
+<p>And inspect the files there!</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls /tmp/dest/
+<span class="go">config  LICENSE  README.md  workflow</span>
+</pre></div>
+</div>
+<p>This method doesn’t require any sort of GitHub credential, and doesn’t create a remote
+repository for you.</p>
+</div>
+<div class="section" id="python">
+<h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<p>These same interactions can be done from within Python.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> from snakedeploy.providers import ProviderRunner
+<span class="gp">$</span> <span class="nv">provider</span> <span class="o">=</span> ProviderRunner<span class="o">()</span>
+<span class="gp">$</span> <span class="nv">dest</span> <span class="o">=</span> provider.deploy<span class="o">(</span><span class="s2">&quot;https://github.com/snakemake-workflows/dna-seq-varlociraptor&quot;</span>, <span class="s2">&quot;/tmp/dest&quot;</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="template.html" class="btn btn-neutral float-right" title="Template and Clone" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../getting_started/installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Johannes Koester and Vanessa Sochat
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

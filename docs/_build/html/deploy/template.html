@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Template and Clone &mdash; Snakedeploy 0.0.11 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx-argparse.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Snakedeploy API" href="../api_reference/snakedeploy.html" />
+    <link rel="prev" title="Deploy from GitHub" href="deploy.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Snakedeploy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.11
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Deploy templates</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploy from GitHub</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Template and Clone</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-usage">Command Line Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-usage">Python Usage</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/snakedeploy.html">The Snakedeploy API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/internal/modules.html">Internal API</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Snakedeploy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Template and Clone</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/deploy/template.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="template-and-clone">
+<span id="template"></span><h1>Template and Clone<a class="headerlink" href="#template-and-clone" title="Permalink to this headline">¶</a></h1>
+<p><strong>Important</strong> If you find that the cloned repository is empty, this indicates that
+the request was not successful. GitHub has a limitation that the template repository
+cannot have files over 10MB, and it does not return an error code if this is the case.
+Instead, you’ll find that you cloned an empty repository, and see this error message
+in your requested repository name:</p>
+<img alt="../_images/template-404.png" src="../_images/template-404.png" />
+<p>In this case it’s suggested to return to the first method and just clone the template.</p>
+<p>To create a remote repository from the template, you will need to export a GitHub
+token for both the command line and Pythonic approaches below.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">export</span> <span class="nv">GITHUB_TOKEN</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+</pre></div>
+</div>
+<div class="section" id="command-line-usage">
+<h2>Command Line Usage<a class="headerlink" href="#command-line-usage" title="Permalink to this headline">¶</a></h2>
+<p>To template a repository and then clone your template, you can add the –remote
+flag:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> snakedeploy https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --remote
+</pre></div>
+</div>
+<p>If you don’t provide a <code class="docutils literal notranslate"><span class="pre">--name</span></code>, then the repository will be templated with your
+user account and the same name as the repository being templated. For example, if my username
+is “vsoch” and I clone the repository above:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> snakemake-workflows/dna-seq-varlociraptor --&gt; vsoch/dna-seq-varlociraptor
+</pre></div>
+</div>
+<p>You can change this behavior by providing a name, which might make sense if you want a custom
+name for your project, or you already have a repository with the template’s name. For example,
+I’ve worked on the template as a developer, so I get an error when I try to create
+a default name. Here is how I’d ask for a custom name “vsoch/dna-seq”:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> snakedeploy https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --remote --name vsoch/dna-seq
+</pre></div>
+</div>
+</div>
+<div class="section" id="python-usage">
+<h2>Python Usage<a class="headerlink" href="#python-usage" title="Permalink to this headline">¶</a></h2>
+<p>These same interactions can be done from within Python. It’s the same as before,
+but we template our repository first.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ from snakedeploy.providers import ProviderRunner
+$ provider = ProviderRunner()
+$ repo = provider.template(&quot;https://github.com/snakemake-workflows/dna-seq-varlociraptor&quot;, name=&quot;vsoch/dna-seq&quot;)
+$ dest = provider.deploy(repo, &quot;/tmp/dest&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../api_reference/snakedeploy.html" class="btn btn-neutral float-right" title="The Snakedeploy API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="deploy.html" class="btn btn-neutral float-left" title="Deploy from GitHub" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Johannes Koester and Vanessa Sochat
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
