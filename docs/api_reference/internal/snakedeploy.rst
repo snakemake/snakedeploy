@@ -20,6 +20,12 @@ snakedeploy.providers module
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: snakedeploy.providers.github
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 snakedeploy.logging module
 --------------------------
 

@@ -3,4 +3,6 @@
 The Snakedeploy API
 ===================
 
-.. autofunction:: snakedeploy
+These sections detail the internal functions for Snakedeploy.
+
+.. automodule:: snakedeploy
