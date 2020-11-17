@@ -26,12 +26,12 @@ token for both the command line and Pythonic approaches below.
 Command Line Usage
 ==================
 
-To template a repository and then clone your template, you can add the --remote
+To template a repository and then clone your template, you can add the --create-remote
 flag:
 
 .. code-block:: console
 
-     $ snakedeploy https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --remote
+     $ snakedeploy https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --create-remote
 
 
 If you don't provide a ``--name``, then the repository will be templated with your
@@ -49,7 +49,7 @@ a default name. Here is how I'd ask for a custom name "vsoch/dna-seq":
 
 .. code-block:: console
 
-    $ snakedeploy https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --remote --name vsoch/dna-seq
+    $ snakedeploy https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --create-remote --name vsoch/dna-seq
 
 
 Python Usage

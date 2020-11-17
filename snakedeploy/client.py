@@ -34,7 +34,7 @@ def get_parser():
 
     deploy_group = parser.add_argument_group("DEPLOY")
     deploy_group.add_argument(
-        "--remote",
+        "--create-remote",
         dest="template",
         help="Template the repository first to create a remote to clone. GITHUB_TOKEN is required.",
         default=False,
