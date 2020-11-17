@@ -110,6 +110,10 @@ class GitHubProvider:
             if not keep_git and os.path.exists(git):
                 logger.debug(f"Cleaning up {git}")
                 shutil.rmtree(git)
+                logger.info(
+                    "To create the remote repository on Github, open\n\n"
+                    "https://github.com/new\n\n"
+                )
 
             return dest
         logger.exit(f"Error cloning repository: {return_code}")
