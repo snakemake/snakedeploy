@@ -2,6 +2,7 @@ import sys
 from glob import glob
 import re
 import logging
+from collections import namedtuple
 
 import pandas as pd
 
