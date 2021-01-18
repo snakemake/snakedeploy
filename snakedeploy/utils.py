@@ -21,10 +21,7 @@ def decodeUtf8String(inputStr):
 
 
 def run_command(
-    cmd,
-    capture=True,
-    environ=None,
-    quiet=False,
+    cmd, capture=True, environ=None, quiet=False,
 ):
 
     """run_command uses subprocess to send a command to the terminal. If
