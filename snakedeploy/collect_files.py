@@ -7,6 +7,7 @@ from snakedeploy.exceptions import UserError
 def collect_files(input_pattern: str, glob_pattern: str):
     input_regex = re.compile(input_pattern)
     for item in sys.stdin:
+        item = item[:-1] # remove newline
         match = input_regex.match(item)
         if match is None:
             raise UserError(f"input pattern {input_pattern} does not match {item}")
