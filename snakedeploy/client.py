@@ -167,9 +167,7 @@ def main():
                 repo = runner.template(source=args.repo, name=args.name)
             runner.deploy(source=repo, dest=args.dest, force=args.force)
         elif args.subcommand == "collect-files":
-            collect_files(
-                input_pattern=args.input_pattern, glob_pattern=args.glob_pattern
-            )
+            collect_files(config_sheet_path=args.config_sheet)
     except UserError as e:
         print(e, file=sys.stderr)
         sys.exit(1)
