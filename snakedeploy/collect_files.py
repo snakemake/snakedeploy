@@ -11,5 +11,12 @@ def collect_files(input_pattern: str, glob_pattern: str):
         match = input_regex.match(item)
         if match is None:
             raise UserError(f"input pattern {input_pattern} does not match {item}")
-        files = list(glob(glob_pattern.format(**match.groupdict())))
+        files = list(glob(glob_pattern.format(**{key: autoconvert(value) for key, value in match.groupdict().items()})))
         print(item, *files, sep="\t")
+    
+
+def autoconvert(value):
+    try:
+        return int(value)
+    except ValueError:
+        return value
