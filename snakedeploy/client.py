@@ -101,22 +101,21 @@ def get_parser():
 
     collect_files = subparsers.add_parser(
         "collect-files", 
-        description="""
-        Collect files into a tabular structure, given input from STDIN that formats a glob pattern.
-        """
+        description="Collect files into a tabular structure, given input from "
+        "STDIN formats glob patterns defined in a config sheet."
     )
     collect_files.add_argument(
-        "--input-pattern",
-        default="^(?P<id>.+)$",
-        help="A regex pattern to infer arguments for the file pattern."
-    )
-    collect_files.add_argument(
-        "--glob-pattern",
-        help="Glob pattern for collecting files. "
-        "Can contain format information (according to the "
-        "Python format minilanguage) that is filled by the input from STDIN. "
-        "All matched files for one STDIN input are printed tab separated to one line, "
-        "together with the STDIN input."
+        "config-sheet",
+        help="A TSV file containing two columns input_pattern and glob_pattern. "
+        "The input pattern is a Python regular expression that selects lines from STDIN, "
+        "and extracts values from it (as groups; example: 'S888_Nr(?P<nr>[0-9]+)'). "
+        "If possible such extracted values are automatically converted to integers. "
+        "The glob pattern is formatted (via the Python format minilanguage) with the values from the "
+        "input pattern and used to glob files from the filesystem. "
+        "The globbed files are printed as TSV next to the matching input value taken from STDIN. "
+        "If the globbing does not return any files for one STDIN input, an error is thrown. "
+        "If one STDIN input is not matched by any of the provided stdin patterns, an error is thrown. "
+        "If one STDIN input is matched by multiple of the provided stdin patterns, an error is thrown."
     )
 
     return parser
