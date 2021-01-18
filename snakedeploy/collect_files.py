@@ -28,7 +28,7 @@ def collect_files(config_sheet_path: str):
             raise UserError(f"Item {item} matches multiple input patterns.")
         else:
             match = matches[0]
-            pattern = match.rule["glob_pattern"].format(
+            pattern = match.rule.glob_pattern.format(
                 **{
                     key: autoconvert(value)
                     for key, value in match.match.groupdict().items()
@@ -48,7 +48,7 @@ Match = namedtuple("Match", "rule match")
 
 def get_matches(item, config_sheet: pd.DataFrame):
     return (
-        Match(rule, rule["input_re"].match(item)) for rule in config_sheet.itertuples()
+        Match(rule, rule.input_re.match(item)) for rule in config_sheet.itertuples()
     )
 
 

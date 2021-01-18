@@ -107,7 +107,7 @@ def get_parser():
         "STDIN formats glob patterns defined in a config sheet.",
     )
     collect_files.add_argument(
-        "config-sheet",
+        "config",
         help="A TSV file containing two columns input_pattern and glob_pattern. "
         "The input pattern is a Python regular expression that selects lines from STDIN, "
         "and extracts values from it (as groups; example: 'S888_Nr(?P<nr>[0-9]+)'). "
@@ -167,7 +167,7 @@ def main():
                 repo = runner.template(source=args.repo, name=args.name)
             runner.deploy(source=repo, dest=args.dest, force=args.force)
         elif args.subcommand == "collect-files":
-            collect_files(config_sheet_path=args.config_sheet)
+            collect_files(config_sheet_path=args.config)
     except UserError as e:
         print(e, file=sys.stderr)
         sys.exit(1)
