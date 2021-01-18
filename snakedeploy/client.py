@@ -61,7 +61,7 @@ def get_parser():
 
     subparsers = parser.add_subparsers(title="Subcommands", dest="subcommand")
 
-    deploy_workflow_parser = subparsers.add_parser("deploy-workflow", help="Deploy a workflow from a git repository.")
+    deploy_workflow_parser = subparsers.add_parser("deploy-workflow", description="Deploy a workflow from a git repository.")
 
     deploy_group = deploy_workflow_parser.add_argument_group("DEPLOY")
     deploy_group.add_argument(
@@ -100,7 +100,7 @@ def get_parser():
 
     collect_files = subparsers.add_parser(
         "collect-files", 
-        help="""
+        description="""
         Collect files into a tabular structure, given input from STDIN that formats a glob pattern.
         """
     )
