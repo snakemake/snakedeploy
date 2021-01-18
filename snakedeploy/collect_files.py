@@ -1,6 +1,8 @@
 import sys
 from glob import glob
 
+from snakedeploy.exceptions import UserError
+
 def collect_files(input_pattern: str, glob_pattern: str):
     input_regex = re.compile(input_pattern)
     for item in sys.stdin:
