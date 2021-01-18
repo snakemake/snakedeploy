@@ -10,6 +10,7 @@ from snakedeploy.collect_files import collect_files
 import snakedeploy
 import argparse
 import sys
+from snakedeploy.exceptions import UserError
 
 
 def get_parser():
