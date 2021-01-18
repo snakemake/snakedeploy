@@ -1,5 +1,6 @@
 import sys
 from glob import glob
+import re
 
 from snakedeploy.exceptions import UserError
 
