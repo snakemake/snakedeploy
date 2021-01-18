@@ -34,7 +34,7 @@ Match = namedtuple("Match", "rule match")
 
 
 def get_matches(item, config_sheet: pd.DataFrame):
-    return Match(rule, rule["input_re"].match(item)) for rule in config_sheet.itertuples()
+    return (Match(rule, rule["input_re"].match(item)) for rule in config_sheet.itertuples())
 
 
 def autoconvert(value):
