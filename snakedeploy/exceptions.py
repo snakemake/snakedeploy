@@ -31,3 +31,7 @@ class UnrecognizedProviderError(ValueError):
 
     def __init__(self, message, *args, **kwargs):
         super(UnrecognizedProviderError, self).__init__(*args, **kwargs)
+
+
+class UserError(Exception):
+    """An error that is presented as simple error message without a stack trace"""
