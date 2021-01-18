@@ -62,7 +62,9 @@ def get_parser():
 
     subparsers = parser.add_subparsers(title="Subcommands", dest="subcommand")
 
-    deploy_workflow_parser = subparsers.add_parser("deploy-workflow", description="Deploy a workflow from a git repository.")
+    deploy_workflow_parser = subparsers.add_parser(
+        "deploy-workflow", description="Deploy a workflow from a git repository."
+    )
 
     deploy_group = deploy_workflow_parser.add_argument_group("DEPLOY")
     deploy_group.add_argument(
@@ -100,9 +102,9 @@ def get_parser():
     )
 
     collect_files = subparsers.add_parser(
-        "collect-files", 
+        "collect-files",
         description="Collect files into a tabular structure, given input from "
-        "STDIN formats glob patterns defined in a config sheet."
+        "STDIN formats glob patterns defined in a config sheet.",
     )
     collect_files.add_argument(
         "config-sheet",
@@ -115,7 +117,7 @@ def get_parser():
         "The globbed files are printed as TSV next to the matching input value taken from STDIN. "
         "If the globbing does not return any files for one STDIN input, an error is thrown. "
         "If one STDIN input is not matched by any of the provided stdin patterns, an error is thrown. "
-        "If one STDIN input is matched by multiple of the provided stdin patterns, an error is thrown."
+        "If one STDIN input is matched by multiple of the provided stdin patterns, an error is thrown.",
     )
 
     return parser
@@ -165,7 +167,9 @@ def main():
                 repo = runner.template(source=args.repo, name=args.name)
             runner.deploy(source=repo, dest=args.dest, force=args.force)
         elif args.subcommand == "collect-files":
-            collect_files(input_pattern=args.input_pattern, glob_pattern=args.glob_pattern)
+            collect_files(
+                input_pattern=args.input_pattern, glob_pattern=args.glob_pattern
+            )
     except UserError as e:
         print(e, file=sys.stderr)
         sys.exit(1)
