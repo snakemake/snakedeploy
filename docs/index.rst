@@ -38,9 +38,10 @@ Deployment means that you have the following options:
  1. Clone the repository template as is, removing the .git history
  2. "Template" the repository (meaning forking without keeping connected to the parent) and clone the fork. In this case, we keep the .git history as you will likely want to push back to the repository.
 
-For the second option, you will need a `GITHUB_TOKEN` (a personal access token) exported in
+For the second option, you will need a ``GITHUB_TOKEN`` (a personal access token) exported in
 the environment. You are also given the option to specify the `--name` of your templated repository.
-Both of these options are discussed in :ref:`deploy`.
+Both of these options are discussed in :ref:`deploy`. For additional tools provided by snakedeploy,
+see :ref:`getting_started-tools`.
 
 The library is fairly simple now, but will be used as a base for an interactive
 tool to run snakemake workflows. Stay tuned!

@@ -4,6 +4,8 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020, Vanessa SOchat"
 __license__ = "MPL 2.0"
 
+import csv
+import os
 import subprocess
 import sys
 
@@ -20,8 +22,24 @@ def decodeUtf8String(inputStr):
     )
 
 
+def read_csv(filename, sep="\t"):
+    """Given a filename, read and parse into a list of lists"""
+    if not os.path.exists(filename):
+        raise FileNotFoundError("%s does not exist." % filename)
+
+    rows = []
+    with open(filename, "r") as fd:
+        reader = csv.reader(fd, delimiter=sep)
+        for row in reader:
+            rows.append(row)
+    return rows
+
+
 def run_command(
-    cmd, capture=True, environ=None, quiet=False,
+    cmd,
+    capture=True,
+    environ=None,
+    quiet=False,
 ):
 
     """run_command uses subprocess to send a command to the terminal. If

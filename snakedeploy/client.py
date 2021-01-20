@@ -88,7 +88,9 @@ def get_parser():
     )
 
     deploy_workflow_parser.add_argument(
-        "dest", nargs="?", help="Path to clone the repository, should not exist.",
+        "dest",
+        nargs="?",
+        help="Path to clone the repository, should not exist.",
     )
 
     deploy_workflow_parser.add_argument(
