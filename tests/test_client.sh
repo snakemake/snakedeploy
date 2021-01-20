@@ -30,10 +30,10 @@ runTest 0 $output snakedeploy --help
 
 echo
 echo "#### Testing snakedeploy deployment"
-runTest 0 $output snakedeploy "${repo}" "${dest}"
+runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}"
 
 echo
 echo "#### Testing snakedeploy directory exists"
-runTest 1 $output snakedeploy "${repo}" "${dest}"
+runTest 1 $output snakedeploy deploy-workflow "${repo}" "${dest}"
 
 rm -rf ${tmpdir}
