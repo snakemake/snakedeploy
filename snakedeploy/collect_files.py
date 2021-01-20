@@ -1,7 +1,6 @@
 import sys
 from glob import glob
 import re
-import logging
 from collections import namedtuple
 
 from snakedeploy.exceptions import UserError
