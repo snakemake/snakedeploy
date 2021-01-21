@@ -4,8 +4,6 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-import csv
-import os
 import subprocess
 import sys
 
@@ -20,19 +18,6 @@ def decodeUtf8String(inputStr):
         if isinstance(inputStr, str) or not isinstance(inputStr, bytes)
         else inputStr.decode("utf8")
     )
-
-
-def read_csv(filename, sep="\t"):
-    """Given a filename, read and parse into a list of lists"""
-    if not os.path.exists(filename):
-        raise FileNotFoundError("%s does not exist." % filename)
-
-    rows = []
-    with open(filename, "r") as fd:
-        reader = csv.reader(fd, delimiter=sep)
-        for row in reader:
-            rows.append(row)
-    return rows
 
 
 def run_command(

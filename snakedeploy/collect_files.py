@@ -2,20 +2,17 @@ import sys
 from glob import glob
 import re
 from collections import namedtuple
+import pandas as pd
 
 from snakedeploy.exceptions import UserError
-from snakedeploy.utils import read_csv
 
 
 def collect_files(config_sheet_path: str):
     """Given a configuration sheet path with input patterns, print matches
     of samples to STDOUT
     """
-    config_sheet = read_csv(config_sheet_path, sep="\t")
-
-    # Input patterns are in the first column, add regex to last column
-    for row in config_sheet:
-        row.append(re.compile(row[0]))
+    config_sheet = pd.read_csv(config_sheet_path, sep="\t")
+    config_sheet["input_re"] = config_sheet["input_pattern"].apply(re.compile)
 
     for item in sys.stdin:
         item = item[:-1]  # remove newline
@@ -48,8 +45,10 @@ def collect_files(config_sheet_path: str):
 Match = namedtuple("Match", "rule match")
 
 
-def get_matches(item, config_sheet: list):
-    return (Match(rule, rule[-1].match(item)) for rule in config_sheet)
+def get_matches(item, config_sheet: pd.DataFrame):
+    return (
+        Match(rule, rule.input_re.match(item)) for rule in config_sheet.itertuples()
+    )
 
 
 def autoconvert(value):
