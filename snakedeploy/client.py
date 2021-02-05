@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020, Vanessa SOchat"
+__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from snakedeploy.logger import setup_logger
@@ -88,7 +88,9 @@ def get_parser():
     )
 
     deploy_workflow_parser.add_argument(
-        "dest", nargs="?", help="Path to clone the repository, should not exist.",
+        "dest",
+        nargs="?",
+        help="Path to clone the repository, should not exist.",
     )
 
     deploy_workflow_parser.add_argument(

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020, Vanessa SOchat"
+__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 import subprocess
@@ -21,7 +21,10 @@ def decodeUtf8String(inputStr):
 
 
 def run_command(
-    cmd, capture=True, environ=None, quiet=False,
+    cmd,
+    capture=True,
+    environ=None,
+    quiet=False,
 ):
 
     """run_command uses subprocess to send a command to the terminal. If

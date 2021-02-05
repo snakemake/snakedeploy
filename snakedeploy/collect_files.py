@@ -1,15 +1,16 @@
 import sys
 from glob import glob
 import re
-import logging
 from collections import namedtuple
-
 import pandas as pd
 
 from snakedeploy.exceptions import UserError
 
 
 def collect_files(config_sheet_path: str):
+    """Given a configuration sheet path with input patterns, print matches
+    of samples to STDOUT
+    """
     config_sheet = pd.read_csv(config_sheet_path, sep="\t")
     config_sheet["input_re"] = config_sheet["input_pattern"].apply(re.compile)
 
@@ -26,21 +27,19 @@ def collect_files(config_sheet_path: str):
             raise UserError(f"No input pattern in config sheet matches {item}.")
         elif len(matches) > 1:
             raise UserError(f"Item {item} matches multiple input patterns.")
-        else:
-            match = matches[0]
-            pattern = match.rule.glob_pattern.format(
-                **{
-                    key: autoconvert(value)
-                    for key, value in match.match.groupdict().items()
-                }
-            )
-            files = sorted(glob(pattern))
-            if files:
-                print(item, *files, sep="\t")
-            else:
-                raise UserError(
-                    f"No files were found for {item} with pattern {pattern}."
-                )
+
+        match = matches[0]
+        pattern = match.rule.glob_pattern.format(
+            **{
+                key: autoconvert(value)
+                for key, value in match.match.groupdict().items()
+            }
+        )
+        files = sorted(glob(pattern))
+        if not files:
+            raise UserError(f"No files were found for {item} with pattern {pattern}.")
+
+        print(item, *files, sep="\t")
 
 
 Match = namedtuple("Match", "rule match")
