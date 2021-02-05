@@ -33,5 +33,5 @@ class UnrecognizedProviderError(ValueError):
         super(UnrecognizedProviderError, self).__init__(*args, **kwargs)
 
 
-class UserError(Exception):
+class UserError(ValueError):
     """An error that is presented as simple error message without a stack trace"""
