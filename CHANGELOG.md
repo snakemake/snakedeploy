@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip.
 
 ## [0.2.x](https://github.com/snakemake/snakedeploy/tree/master) (0.0.x)
+ - adding collect-files command (0.0.13)
  - updating --remote to --create-remote and adding message to clone (0.0.12)
  - adding option to template with GitHub (if GitHub token is present) (0.0.11)
  - beta release with working clone (0.0.1)

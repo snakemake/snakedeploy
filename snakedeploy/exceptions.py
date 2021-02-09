@@ -1,5 +1,5 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020, Vanessa SOchat"
+__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 
@@ -31,3 +31,7 @@ class UnrecognizedProviderError(ValueError):
 
     def __init__(self, message, *args, **kwargs):
         super(UnrecognizedProviderError, self).__init__(*args, **kwargs)
+
+
+class UserError(ValueError):
+    """An error that is presented as simple error message without a stack trace"""

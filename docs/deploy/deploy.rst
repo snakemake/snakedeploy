@@ -17,7 +17,7 @@ You can do that as follows:
 
 .. code-block:: console
 
-    $ snakedeploy https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest
+    $ snakedeploy deploy-workflow https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest
 
 
 You'll then see the repository clone
