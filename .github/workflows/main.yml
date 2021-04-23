@@ -8,7 +8,7 @@ on:
     branches_ignore: []
 
 jobs:
-  formatting/linting:
+  code-quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
           pyflakes snakedeploy
 
   testing:
-    needs: formatting/linting
+    needs: code-quality
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
