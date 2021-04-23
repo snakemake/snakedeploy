@@ -8,7 +8,7 @@ on:
     branches_ignore: []
 
 jobs:
-  formatting:
+  formatting/linting:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
