@@ -15,7 +15,10 @@ class Provider(ABC):
             raise UserError(
                 "Repository source URLs must be given as https:// or file://."
             )
-        self.source_url = source_url.removesuffix(".git")
+        # TODO replace with removesuffix once Python 3.9 becomes the minimal version of snakedeploy
+        if source_url.endswith(".git"):
+            source_url = source_url[:-4]
+        self.source_url = source_url
 
     @classmethod
     @abstractmethod
