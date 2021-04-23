@@ -4,12 +4,14 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from snakedeploy.logger import setup_logger
-from snakedeploy.providers import ProviderRunner
-from snakedeploy.collect_files import collect_files
-import snakedeploy
 import argparse
 import sys
+from pathlib import Path
+
+from snakedeploy.logger import setup_logger
+from snakedeploy.deploy import deploy
+from snakedeploy.collect_files import collect_files
+import snakedeploy
 from snakedeploy.exceptions import UserError
 
 
@@ -53,13 +55,6 @@ def get_parser():
         action="store_true",
     )
 
-    logging_group.add_argument(
-        "--log-use-threads",
-        dest="use_threads",
-        action="store_true",
-        help="Force threads rather than processes.",
-    )
-
     subparsers = parser.add_subparsers(title="Subcommands", dest="subcommand")
 
     deploy_workflow_parser = subparsers.add_parser(
@@ -67,38 +62,32 @@ def get_parser():
     )
 
     deploy_group = deploy_workflow_parser.add_argument_group("DEPLOY")
-    deploy_group.add_argument(
-        "--create-remote",
-        dest="template",
-        help="Template the repository first to create a remote to clone. GITHUB_TOKEN is required.",
-        default=False,
-        action="store_true",
-    )
-
-    deploy_group.add_argument(
-        "--name",
-        dest="name",
-        help="A custom name for your template repository, <org/username>/<repository>.",
-    )
 
     deploy_workflow_parser.add_argument(
         "repo",
-        nargs="?",
-        help="Repository address and destination to deploy, e.g., <source> <dest>",
+        help="Workflow repository to use.",
     )
 
     deploy_workflow_parser.add_argument(
         "dest",
-        nargs="?",
-        help="Path to clone the repository, should not exist.",
+        help="Path to create the deploying workflow in.",
+    )
+
+    deploy_workflow_parser.add_argument(
+        "--tag",
+        required=True,
+        help="Git tag (or branch) to deploy from (e.g. a certain release).",
+    )
+
+    deploy_group.add_argument(
+        "--name",
+        help="The name for the module in the resulting Snakefile (default: repository name).",
     )
 
     deploy_workflow_parser.add_argument(
         "--force",
-        dest="force",
-        help="If the folder exists, force overwrite, meaning remove and replace.",
-        default=False,
         action="store_true",
+        help="Enforce overwriting of already present files.",
     )
 
     collect_files = subparsers.add_parser(
@@ -153,23 +142,22 @@ def main():
         quiet=args.quiet,
         nocolor=args.disable_color,
         debug=args.verbose,
-        use_threads=args.use_threads,
     )
+    from snakedeploy.logger import logger
 
     try:
         if args.subcommand == "deploy-workflow":
-            # Instantiate and depoy the runner
-            runner = ProviderRunner()
-
-            # First template the repository, if desired
-            repo = args.repo
-            if args.template:
-                repo = runner.template(source=args.repo, name=args.name)
-            runner.deploy(source=repo, dest=args.dest, force=args.force)
+            deploy(
+                args.repo,
+                name=args.name,
+                tag=args.tag,
+                dest_path=Path(args.dest),
+                force=args.force,
+            )
         elif args.subcommand == "collect-files":
             collect_files(config_sheet_path=args.config)
     except UserError as e:
-        print(e, file=sys.stderr)
+        logger.error(e)
         sys.exit(1)
 
 
