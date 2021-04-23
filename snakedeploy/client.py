@@ -14,6 +14,7 @@ from snakedeploy.collect_files import collect_files
 import snakedeploy
 from snakedeploy.exceptions import UserError
 
+
 def get_parser():
     parser = argparse.ArgumentParser(
         description="Snakedeploy: deploy snakemake pipelines from version control."
@@ -146,7 +147,13 @@ def main():
 
     try:
         if args.subcommand == "deploy-workflow":
-            deploy(args.repo, name=args.name, tag=args.tag, dest_path=Path(args.dest), force=args.force)
+            deploy(
+                args.repo,
+                name=args.name,
+                tag=args.tag,
+                dest_path=Path(args.dest),
+                force=args.force,
+            )
         elif args.subcommand == "collect-files":
             collect_files(config_sheet_path=args.config)
     except UserError as e:

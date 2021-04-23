@@ -1,4 +1,3 @@
-
 import subprocess as sp
 import tempfile
 from pathlib import Path
@@ -13,24 +12,29 @@ from snakedeploy.exceptions import UserError
 
 
 def deploy(source_url: str, name: str, tag: str, dest_path: Path, force=False):
-    """Deploy a given workflow to the local machine, using the Snakemake module system.
-    """
+    """Deploy a given workflow to the local machine, using the Snakemake module system."""
     provider = get_provider(source_url)
-    env = Environment(
-        loader=PackageLoader("snakedeploy")
-    )
+    env = Environment(loader=PackageLoader("snakedeploy"))
     template = env.get_template("use_module.smk.jinja")
 
     snakefile = dest_path / "workflow/Snakefile"
     if snakefile.exists() and not force:
-        raise UserError(f"{snakefile} already exists, aborting (use --force to overwrite)")
+        raise UserError(
+            f"{snakefile} already exists, aborting (use --force to overwrite)"
+        )
     dest_config = dest_path / "config"
     if dest_config.exists() and not force:
-        raise UserError(f"{dest_config} already exists, aborting (use --force to overwrite)")
+        raise UserError(
+            f"{dest_config} already exists, aborting (use --force to overwrite)"
+        )
 
     logger.info("Writing Snakefile with module definition...")
     os.makedirs(dest_path / "workflow", exist_ok=True)
-    module_deployment = template.render(name=name or provider.get_repo_name(), snakefile=provider.get_raw_file("workflow/Snakefile", tag), repo=source_url)
+    module_deployment = template.render(
+        name=name or provider.get_repo_name(),
+        snakefile=provider.get_raw_file("workflow/Snakefile", tag),
+        repo=source_url,
+    )
     with open(snakefile, "w") as f:
         print(module_deployment, file=f)
 
@@ -56,10 +60,9 @@ def deploy(source_url: str, name: str, tag: str, dest_path: Path, force=False):
         else:
             logger.info("Writing template configuration...")
             shutil.copytree(config_dir, dest_config, dirs_exist_ok=force)
-    
+
     logger.info(
-        env.get_template("post-instructions.txt.jinja").render(no_config=no_config, dest_path=dest_path)
+        env.get_template("post-instructions.txt.jinja").render(
+            no_config=no_config, dest_path=dest_path
+        )
     )
-
-
-    
