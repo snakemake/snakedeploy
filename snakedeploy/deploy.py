@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 import shutil
 
-from jinja2 import Environment, PackageLoader, select_autoescape
+from jinja2 import Environment, PackageLoader
 
 from snakedeploy.providers import get_provider
 from snakedeploy.logger import logger
