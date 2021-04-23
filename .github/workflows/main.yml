@@ -32,15 +32,24 @@ jobs:
   testing:
     needs: code-quality
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.9]
+
     steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
       - uses: actions/checkout@v2
-      - name: Setup testing environment
-        run: conda create --quiet --name testing pytest
+
+      - name: Setup test environment
+        run: |
+          pip install -e .
 
       - name: Test snakedeploy
         run: |
-          export PATH="/usr/share/miniconda/bin:$PATH"
-          source activate testing
           /bin/bash tests/test_client.sh
 
   build:
