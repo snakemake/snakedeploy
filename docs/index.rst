@@ -46,15 +46,6 @@ Support
    getting_started/tools
 
 .. toctree::
-  :caption: Deploy templates
-  :name: deployTemplates
-  :hidden:
-  :maxdepth: 1
-
-  deploy/deploy
-  deploy/template
-
-.. toctree::
     :caption: API Reference
     :name: api-reference
     :hidden:

@@ -13,6 +13,8 @@ from snakedeploy.exceptions import UserError
 
 
 def deploy(source_url: str, name: str, tag: str, dest_path: Path, force=False):
+    """Deploy a given workflow to the local machine, using the Snakemake module system.
+    """
     provider = get_provider(source_url)
     env = Environment(
         loader=PackageLoader("snakedeploy")
