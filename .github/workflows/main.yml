@@ -30,7 +30,7 @@ jobs:
           pyflakes snakedeploy
 
   testing:
-    needs: formatting
+    needs: formatting/linting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
