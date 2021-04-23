@@ -1,5 +1,4 @@
 from abc import abstractmethod, ABC
-from urllib.parse import urljoin
 
 from snakedeploy.exceptions import UserError
 
@@ -37,7 +36,7 @@ class Github(Provider):
         return source_url.startswith("https://github.com")
 
     def get_raw_file(self, path: str, tag: str):
-        return urljoin(self.source_url, urljoin(urljoin("raw", tag), path))
+        return f"{self.source_url}/raw/{tag}/{path}"
 
 
 PROVIDERS = [Github]

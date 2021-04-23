@@ -37,7 +37,7 @@ For the example above, it will have the following content
     # declare https://github.com/snakemake-workflows/dna-seq-varlociraptor as a module
     module dna_seq:
         snakefile: 
-            "https://github.com/snakemake-workflows/workflow/Snakefile"
+            "https://github.com/snakemake-workflows/raw/v1.0.0/workflow/Snakefile"
         config:
             config
 
