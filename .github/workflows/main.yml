@@ -51,18 +51,3 @@ jobs:
       - name: Test snakedeploy
         run: |
           /bin/bash tests/test_client.sh
-
-  build:
-    needs: testing
-    runs-on: ubuntu-latest
-    env:
-      CONTAINER: quay.io/snakemake/snakedeploy
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build Docker Image
-        run: docker build -t "${CONTAINER}" .
-      - name: Tag and Preview Container
-        run: |
-          DOCKER_TAG=$(docker run "${CONTAINER}:latest" --version)
-          echo "Docker tag is: ${DOCKER_TAG}"
-          docker run ${CONTAINER} --help
