@@ -12,7 +12,7 @@ import os
 def get_lookup():
     """get version by way of version file, returns a
     lookup dictionary with several global variables without
-    needing to import singularity
+    needing to import snakedeploy
     """
     lookup = dict()
     version_file = os.path.join("snakedeploy", "version.py")
