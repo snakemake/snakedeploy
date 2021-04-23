@@ -25,7 +25,7 @@ class ColorizingStreamHandler(_logging.StreamHandler):
         "ERROR": RED,
     }
 
-    def __init__(self, nocolor=False, stream=sys.stderr, use_threads=False):
+    def __init__(self, nocolor=False, stream=sys.stderr):
         super().__init__(stream=stream)
         self._output_lock = threading.Lock()
         self.nocolor = nocolor or not self.can_color_tty()
@@ -159,20 +159,15 @@ logger = Logger()
 
 def setup_logger(
     quiet=False,
-    printshellcmds=False,
     nocolor=False,
     stdout=False,
     debug=False,
-    use_threads=False,
-    wms_monitor=None,
 ):
     # console output only if no custom logger was specified
     stream_handler = ColorizingStreamHandler(
         nocolor=nocolor,
         stream=sys.stdout if stdout else sys.stderr,
-        use_threads=use_threads,
     )
     logger.set_stream_handler(stream_handler)
     logger.set_level(_logging.DEBUG if debug else _logging.INFO)
     logger.quiet = quiet
-    logger.printshellcmds = printshellcmds

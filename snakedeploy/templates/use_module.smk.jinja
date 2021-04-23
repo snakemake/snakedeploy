@@ -1,0 +1,13 @@
+configfile: "config/config.yaml"
+
+
+# declare {{ repo }} as a module
+module {{ name }}:
+    snakefile: 
+        "{{ snakefile }}"
+    config:
+        config
+
+
+# use all rules from {{ repo }}
+use rule * from {{ name }}

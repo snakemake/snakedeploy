@@ -1,0 +1,9 @@
+Deployment complete, now
+{% if not no_config %}
+  * modify the configuration under {{dest_path}}/config
+{%- else %}
+  * check whether the workflow needs any configuration (it does not provide a template config directory)
+{%- endif %}
+  * check and extend the workflow deployment under {{dest_path}}/workflow/Snakefile
+
+according to your needs.
