@@ -62,24 +62,25 @@ def get_parser():
 
     deploy_group = deploy_workflow_parser.add_argument_group("DEPLOY")
 
-    deploy_group.add_argument(
-        "--name",
-        help="The name for the module in the resulting Snakefile (default: repository name).",
-    )
-
     deploy_workflow_parser.add_argument(
         "repo",
         help="Workflow repository to use.",
     )
 
     deploy_workflow_parser.add_argument(
-        "--tag",
-        help="Git tag (or branch) to deploy from (e.g. a certain release).",
+        "dest",
+        help="Path to create the deploying workflow in.",
     )
 
     deploy_workflow_parser.add_argument(
-        "--dest",
-        help="Path to create the deploying workflow in.",
+        "--tag",
+        required=True,
+        help="Git tag (or branch) to deploy from (e.g. a certain release).",
+    )
+
+    deploy_group.add_argument(
+        "--name",
+        help="The name for the module in the resulting Snakefile (default: repository name).",
     )
 
     deploy_workflow_parser.add_argument(

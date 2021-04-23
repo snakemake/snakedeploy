@@ -30,10 +30,14 @@ runTest 0 $output snakedeploy --help
 
 echo
 echo "#### Testing snakedeploy deployment"
-runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}"
+runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}" --tag v1.0.0 --name dna-seq
 
 echo
 echo "#### Testing snakedeploy directory exists"
-runTest 1 $output snakedeploy deploy-workflow "${repo}" "${dest}"
+runTest 1 $output snakedeploy deploy-workflow "${repo}" "${dest}" --tag v1.0.0
+
+echo
+echo "#### Testing snakedeploy directory exists but enforcing"
+runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}" --tag v1.0.0 --force
 
 rm -rf ${tmpdir}
