@@ -77,7 +77,7 @@ if __name__ == "__main__":
         author_email=AUTHOR_EMAIL,
         maintainer=AUTHOR,
         maintainer_email=AUTHOR_EMAIL,
-        packages=find_packages(),
+        packages=find_packages(exclude=["tests"]),
         include_package_data=True,
         zip_safe=False,
         url=PACKAGE_URL,
