@@ -30,7 +30,7 @@ class Provider(ABC):
         pass
 
     def get_repo_name(self):
-        self.source_url.split("/")[-1]
+        return self.source_url.split("/")[-1]
 
 
 class Github(Provider):

@@ -31,7 +31,7 @@ def deploy(source_url: str, name: str, tag: str, dest_path: Path, force=False):
     logger.info("Writing Snakefile with module definition...")
     os.makedirs(dest_path / "workflow", exist_ok=True)
     module_deployment = template.render(
-        name=name or provider.get_repo_name(),
+        name=name or provider.get_repo_name().replace("-", "_"),
         snakefile=provider.get_raw_file("workflow/Snakefile", tag),
         repo=source_url,
     )
