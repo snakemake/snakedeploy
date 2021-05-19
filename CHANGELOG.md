@@ -13,6 +13,7 @@ and **Merged pull requests**. Critical items to know are:
 
 The versions coincide with releases on pip.
 
+ - fix several bugs (0.1.3)
  - rewrite to comply with the new snakemake module system (0.1.0)
  - adding collect-files command (0.0.13)
  - updating --remote to --create-remote and adding message to clone (0.0.12)
