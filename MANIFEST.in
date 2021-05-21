@@ -3,3 +3,5 @@ recursive-include snakedeploy *
 recursive-exclude * __pycache__
 recursive-exclude * *.pyc
 recursive-exclude * *.pyo
+include versioneer.py
+include snakedeploy/_version.py

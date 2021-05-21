@@ -6,6 +6,7 @@ __license__ = "MPL 2.0"
 
 
 from setuptools import setup, find_packages
+import versioneer
 import os
 
 
@@ -49,7 +50,6 @@ os.chdir(install_path)
 
 # Get version information from the lookup
 lookup = get_lookup()
-VERSION = lookup["__version__"]
 NAME = lookup["NAME"]
 AUTHOR = lookup["AUTHOR"]
 AUTHOR_EMAIL = lookup["AUTHOR_EMAIL"]
@@ -72,7 +72,8 @@ if __name__ == "__main__":
 
     setup(
         name=NAME,
-        version=VERSION,
+        version=versioneer.get_version(),
+        cmdclass=versioneer.get_cmdclass(),
         author=AUTHOR,
         author_email=AUTHOR_EMAIL,
         maintainer=AUTHOR,
