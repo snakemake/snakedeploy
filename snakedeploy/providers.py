@@ -43,7 +43,7 @@ class Github(Provider):
 
     def get_source_file_declaration(self, path: str, tag: str):
         owner_repo = "/".join(self.source_url.split("/")[-2:])
-        return f"github(\"{owner_repo}\", path=\"{path}\", tag=\"{tag}\")"
+        return f'github("{owner_repo}", path="{path}", tag="{tag}")'
 
 
 PROVIDERS = [Github]
