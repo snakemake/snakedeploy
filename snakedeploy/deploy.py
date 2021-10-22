@@ -32,7 +32,7 @@ def deploy(source_url: str, name: str, tag: str, dest_path: Path, force=False):
     os.makedirs(dest_path / "workflow", exist_ok=True)
     module_deployment = template.render(
         name=name or provider.get_repo_name().replace("-", "_"),
-        snakefile=provider.get_raw_file("workflow/Snakefile", tag),
+        snakefile=provider.get_source_file_declaration("workflow/Snakefile", tag),
         repo=source_url,
     )
     with open(snakefile, "w") as f:
