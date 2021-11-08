@@ -31,7 +31,7 @@ def get_parser():
     parser.add_argument(
         "--quiet",
         dest="quiet",
-        help="suppress additional output.",
+        help="Minimize output.",
         default=False,
         action="store_true",
     )
@@ -42,7 +42,7 @@ def get_parser():
     logging_group.add_argument(
         "--verbose",
         dest="verbose",
-        help="verbose output for logging.",
+        help="Verbose output.",
         default=False,
         action="store_true",
     )
