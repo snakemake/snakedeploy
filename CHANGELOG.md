@@ -1,22 +1,8 @@
-# CHANGELOG
+# Changelog
 
-This is a manually generated log to track changes to the repository for each release.
-Each section should include general headers such as **Implemented enhancements**
-and **Merged pull requests**. Critical items to know are:
+### [0.2.1](https://www.github.com/snakemake/snakedeploy/compare/v0.2.0...v0.2.1) (2021-11-08)
 
- - renamed commands
- - deprecated / removed commands
- - changed defaults
- - backward incompatible changes
- - migration guidance
- - changed behaviour
 
-The versions coincide with releases on pip.
+### Bug Fixes
 
- - fix several bugs (0.1.3)
- - rewrite to comply with the new snakemake module system (0.1.0)
- - adding collect-files command (0.0.13)
- - updating --remote to --create-remote and adding message to clone (0.0.12)
- - adding option to template with GitHub (if GitHub token is present) (0.0.11)
- - beta release with working clone (0.0.1)
- - skeleton release (0.0.0)
+* minor rephrasing of CLI help. ([4939d9c](https://www.github.com/snakemake/snakedeploy/commit/4939d9ce656f27157de005353df9dc353ef10694))
