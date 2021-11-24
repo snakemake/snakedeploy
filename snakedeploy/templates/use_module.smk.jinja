@@ -10,7 +10,7 @@ configfile: "config/config.yaml"
 # declare {{ repo }} as a module
 module {{ name }}:
     snakefile: 
-        "{{ snakefile }}"
+        {{ snakefile }}
     config:
         config
 
