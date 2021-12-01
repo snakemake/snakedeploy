@@ -75,13 +75,11 @@ def get_parser():
 
     deploy_workflow_parser.add_argument(
         "--tag",
-        required=True,
         help="Git tag to deploy from (e.g. a certain release).",
     )
 
     deploy_workflow_parser.add_argument(
         "--branch",
-        required=True,
         help="Git branch to deploy from.",
     )
 
@@ -153,6 +151,8 @@ def main():
 
     try:
         if args.subcommand == "deploy-workflow":
+            if not (args.tag or args.branch):
+                raise UserError("Please specify either --tag or --branch")
             deploy(
                 args.repo,
                 name=args.name,
