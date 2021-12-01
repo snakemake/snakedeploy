@@ -76,7 +76,13 @@ def get_parser():
     deploy_workflow_parser.add_argument(
         "--tag",
         required=True,
-        help="Git tag (or branch) to deploy from (e.g. a certain release).",
+        help="Git tag to deploy from (e.g. a certain release).",
+    )
+
+    deploy_workflow_parser.add_argument(
+        "--branch",
+        required=True,
+        help="Git branch to deploy from.",
     )
 
     deploy_group.add_argument(
@@ -151,6 +157,7 @@ def main():
                 args.repo,
                 name=args.name,
                 tag=args.tag,
+                branch=args.branch,
                 dest_path=Path(args.dest),
                 force=args.force,
             )
