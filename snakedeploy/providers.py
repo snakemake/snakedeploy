@@ -33,7 +33,7 @@ class Provider(ABC):
         return self.source_url.split("/")[-1]
 
 
-class Github(Provider):
+class Gitlab(Provider):
     @classmethod
     def matches(cls, source_url: str):
         return source_url.startswith("https://github.com")
@@ -49,4 +49,20 @@ class Github(Provider):
         return f'github("{owner_repo}", path="{path}", {ref_arg})'
 
 
-PROVIDERS = [Github]
+class Github(Provider):
+    @classmethod
+    def matches(cls, source_url: str):
+        return "gitlab" in source_url
+
+    def get_raw_file(self, path: str, tag: str):
+        return f"{self.source_url}/raw/{tag}/{path}"
+
+    def get_source_file_declaration(self, path: str, tag: str, branch: str):
+        owner_repo = "/".join(self.source_url.split("/")[-2:])
+        if not (tag or branch):
+            raise UserError("Either tag or branch has to be specified for deployment.")
+        ref_arg = f'tag="{tag}"' if tag is not None else f"branch={branch}"
+        return f'github("{owner_repo}", path="{path}", {ref_arg})'
+
+
+PROVIDERS = [Github, Gitlab]
