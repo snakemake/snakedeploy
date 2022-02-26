@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 from distutils.dir_util import copy_tree
 from snakedeploy.exceptions import UserError
+import subprocess as sp
 import os
 
 
@@ -64,7 +65,7 @@ class Local(Provider):
 
     def get_source_file_declaration(self, path: str, tag: str, branch: str):
         relative_path = path.replace(self.source_url, "").strip(os.sep)
-        return f'"{path}"'
+        return f'"{relative_path}"'
 
 
 class Github(Provider):

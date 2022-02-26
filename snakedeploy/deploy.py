@@ -8,7 +8,6 @@ from jinja2 import Environment, PackageLoader
 from snakedeploy.providers import get_provider
 from snakedeploy.logger import logger
 from snakedeploy.exceptions import UserError
-import subprocess as sp
 
 
 class SnakeDeploy:
@@ -98,6 +97,7 @@ class SnakeDeploy:
         Deploy the Snakefile to workflow/Snakefile
         """
         # The name cannot have -
+        name = name or self.provider.get_repo_name()
         name = name.replace("-", "_")
 
         snakefile_path = Path(tmpdir) / "workflow" / "Snakefile"
@@ -120,7 +120,7 @@ class SnakeDeploy:
         logger.info("Writing Snakefile with module definition...")
         os.makedirs(self.dest_path / "workflow", exist_ok=True)
         module_deployment = template.render(
-            name=name or provider.get_repo_name().replace("-", "_"),
+            name=name,
             snakefile=self.provider.get_source_file_declaration(snakefile, tag, branch),
             repo=self.provider.source_url,
         )
