@@ -29,15 +29,29 @@ echo "#### Testing snakedeploy --help"
 runTest 0 $output snakedeploy --help
 
 echo
-echo "#### Testing snakedeploy deployment"
+echo "#### Testing snakedeploy GitHub deployment"
 runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}" --tag v1.0.0 --name dna-seq
 
 echo
-echo "#### Testing snakedeploy directory exists"
+echo "#### Testing snakedeploy workflow directory exists"
 runTest 1 $output snakedeploy deploy-workflow "${repo}" "${dest}" --tag v1.0.0
 
 echo
 echo "#### Testing snakedeploy directory exists but enforcing"
 runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}" --tag v1.0.0 --force
+
+echo
+echo "#### Testing snakedeploy GitLab deployment"
+dest=$tmpdir/gitlab-testing
+repo="https://gitlab.com/nate-d-olson/snaketestworkflow"
+runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}" --name snake-test --branch master
+
+echo
+echo "#### Testing snakedeploy local deployment"
+local=$tmpdir/rna-seq-star-deseq2
+repo="https://github.com/snakemake-workflows/rna-seq-star-deseq2"
+dest=${tmpdir}/use-workflow-as-module
+git clone ${repo} ${local}
+runTest 0 $output snakedeploy deploy-workflow "${local}" ${dest} --tag v1.2.0
 
 rm -rf ${tmpdir}
