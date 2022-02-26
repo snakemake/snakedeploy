@@ -57,7 +57,6 @@ class SnakeDeploy:
         Deploy a source to a destination.
         """
         self.check()
-        name = name or "pipeline"
 
         # Create a temporary directory to grab config directory and snakefile
         with tempfile.TemporaryDirectory() as tmpdir:
