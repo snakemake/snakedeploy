@@ -15,8 +15,8 @@ jobs:
 
       - name: Setup environments
         run: |
-          conda create --quiet --name black black>=22
-          conda create --quiet --name pyflakes pyflakes
+          conda create -c conda-forge --quiet --name black black>=22
+          conda create -c conda-forge --quiet --name pyflakes pyflakes
 
       - name: Check formatting with black
         run: |
