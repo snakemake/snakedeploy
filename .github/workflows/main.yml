@@ -13,20 +13,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup black environment
-        run: conda create --quiet --name black pyflakes
+      - name: Setup environments
+        run: |
+          conda create -c conda-forge --quiet --name black black>=22
+          conda create -c conda-forge --quiet --name pyflakes pyflakes
 
       - name: Check formatting with black
         run: |
           export PATH="/usr/share/miniconda/bin:$PATH"
           source activate black
-          pip install black==20.8b1
           black --check snakedeploy
 
       - name: Check imports with pyflakes
         run: |
           export PATH="/usr/share/miniconda/bin:$PATH"
-          source activate black
+          source activate pyflakes
           pyflakes snakedeploy
 
   testing:

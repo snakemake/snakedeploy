@@ -54,4 +54,12 @@ dest=${tmpdir}/use-workflow-as-module
 git clone ${repo} ${local}
 runTest 0 $output snakedeploy deploy-workflow "${local}" ${dest} --tag v1.2.0
 
+echo "#### Testing snakedeply update-conda-envs"
+cp tests/test-env.yaml $tmpdir
+runTest 0 $output snakedeploy update-conda-envs --conda-frontend conda $tmpdir/test-env.yaml
+
+echo
+echo "#### Testing snakedeply pin-conda-envs"
+runTest 0 $output snakedeploy pin-conda-envs --conda-frontend conda $tmpdir/test-env.yaml
+
 rm -rf ${tmpdir}
