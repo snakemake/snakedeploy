@@ -7,6 +7,7 @@ __license__ = "MPL 2.0"
 import argparse
 import sys
 from pathlib import Path
+from snakedeploy.conda import pin_conda_envs, update_conda_envs
 
 from snakedeploy.logger import setup_logger
 from snakedeploy.deploy import deploy
@@ -113,6 +114,40 @@ def get_parser():
         "If one STDIN input is matched by multiple of the provided stdin patterns, an error is thrown.",
     )
 
+    pin_conda_envs = subparsers.add_parser(
+        "pin-conda-envs",
+        description="Pin given conda environment definition files (in YAML format) "
+        "into a list of explicit package URLs including checksums, stored in a file "
+        "<prefix>.<platform>.pin.txt with prefix being the path to the original definition file and "
+        "<platform> being the name of the platform the pinning was performed on (e.g. linux-64). "
+        "The resulting file will be automatically used by Snakemake to restore exactly the pinned "
+        "environment. Also you can use it manually, e.g. with 'mamba create -f <path-to-pin-file> -n <env-name>'.",
+    )
+    pin_conda_envs.add_argument(
+        "envfiles", nargs="+", help="Environment definition YAML files to pin."
+    )
+    pin_conda_envs.add_argument(
+        "--conda-frontend",
+        choices=["mamba", "conda"],
+        default="mamba",
+        help="Conda frontend to use (default: mamba).",
+    )
+
+    update_conda_envs = subparsers.add_parser(
+        "update-conda-envs",
+        description="Update given conda environment definition files (in YAML format) "
+        "so that all contained packages are set to the latest feasible versions.",
+    )
+    update_conda_envs.add_argument(
+        "envfiles", nargs="+", help="Environment definition YAML files to pin."
+    )
+    update_conda_envs.add_argument(
+        "--conda-frontend",
+        choices=["mamba", "conda"],
+        default="mamba",
+        help="Conda frontend to use (default: mamba).",
+    )
+
     return parser
 
 
@@ -163,6 +198,10 @@ def main():
             )
         elif args.subcommand == "collect-files":
             collect_files(config_sheet_path=args.config)
+        elif args.subcommand == "pin-conda-envs":
+            pin_conda_envs(args.envfiles, conda_frontend=args.conda_frontend)
+        elif args.subcommand == "update-conda-envs":
+            update_conda_envs(args.envfiles, conda_frontend=args.conda_frontend)
     except UserError as e:
         logger.error(e)
         sys.exit(1)
