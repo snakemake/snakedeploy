@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://www.github.com/snakemake/snakedeploy/compare/v0.3.0...v0.4.0) (2022-05-18)
+
+
+### Features
+
+* add subcommands to update and pin given conda environment definition files ([#29](https://www.github.com/snakemake/snakedeploy/issues/29)) ([9058377](https://www.github.com/snakemake/snakedeploy/commit/90583779367b29c0eaced16b93b74802647c94de))
+
 ## [0.3.0](https://www.github.com/snakemake/snakedeploy/compare/v0.2.1...v0.3.0) (2021-12-01)
 
 
