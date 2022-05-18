@@ -40,4 +40,13 @@ echo
 echo "#### Testing snakedeploy directory exists but enforcing"
 runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}" --tag v1.0.0 --force
 
+echo
+echo "#### Testing snakedeply update-conda-envs"
+cp tests/test-env.yaml $output
+runTest 0 $output snakedeploy update-conda-envs $output/test-env.yaml
+
+echo
+echo "#### Testing snakedeply pin-conda-envs"
+runTest 0 $output snakedeploy pin-conda-envs $output/test-env.yaml
+
 rm -rf ${tmpdir}
