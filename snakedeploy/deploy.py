@@ -10,7 +10,7 @@ from snakedeploy.logger import logger
 from snakedeploy.exceptions import UserError
 
 
-class SnakeDeploy:
+class WorkflowDeployer:
     def __init__(self, source: str, dest: Path, force=False):
         self.provider = get_provider(source)
         self.env = Environment(loader=PackageLoader("snakedeploy"))
@@ -133,5 +133,5 @@ def deploy(
     """
     Deploy a given workflow to the local machine, using the Snakemake module system.
     """
-    sd = SnakeDeploy(source=source_url, dest=dest_path, force=force)
+    sd = WorkflowDeployer(source=source_url, dest=dest_path, force=force)
     sd.deploy(name=name, tag=tag, branch=branch)
