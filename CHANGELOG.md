@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://www.github.com/snakemake/snakedeploy/compare/v0.4.0...v0.5.0) (2022-06-22)
+
+
+### Features
+
+* test of adding Gitlab provider ([#27](https://www.github.com/snakemake/snakedeploy/issues/27)) ([47fc31b](https://www.github.com/snakemake/snakedeploy/commit/47fc31bcbfd07d391a81498eecfa9fbae61c9613))
+
 ## [0.4.0](https://www.github.com/snakemake/snakedeploy/compare/v0.3.0...v0.4.0) (2022-05-18)
 
 
