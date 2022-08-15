@@ -19,6 +19,7 @@ INSTALL_REQUIRES = (
     ("pandas", {"min_version": None}),
     ("jinja2", {"min_version": None}),
     ("pyyaml", {"min_version": None}),
+    ("pygithub", {"min_version": None}),
 )
 
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)

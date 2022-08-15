@@ -14,6 +14,7 @@ from snakedeploy.deploy import deploy
 from snakedeploy.collect_files import collect_files
 import snakedeploy
 from snakedeploy.exceptions import UserError
+from .snakemake_wrappers import update_snakemake_wrappers
 
 
 def get_parser():
@@ -148,6 +149,19 @@ def get_parser():
         help="Conda frontend to use (default: mamba).",
     )
 
+    update_snakemake_wrappers = subparsers.add_parser(
+        "update-snakemake-wrappers",
+        description="Update all snakemake wrappers in given Snakefiles.",
+    )
+    update_snakemake_wrappers.add_argument(
+        "snakefiles", nargs="+", help="Paths to Snakefiles which should be updated."
+    )
+    update_snakemake_wrappers.add_argument(
+        "--git-ref",
+        help="Git reference to use for updating the wrappers (e.g. a snakemake-wrapper release). "
+        "If nothing specified, the latest release will be used.",
+    )
+
     return parser
 
 
@@ -202,6 +216,8 @@ def main():
             pin_conda_envs(args.envfiles, conda_frontend=args.conda_frontend)
         elif args.subcommand == "update-conda-envs":
             update_conda_envs(args.envfiles, conda_frontend=args.conda_frontend)
+        elif args.subcommand == "update-snakemake-wrappers":
+            update_snakemake_wrappers(args.snakefiles, git_ref=args.git_ref)
     except UserError as e:
         logger.error(e)
         sys.exit(1)

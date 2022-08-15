@@ -54,12 +54,23 @@ dest=${tmpdir}/use-workflow-as-module
 git clone ${repo} ${local}
 runTest 0 $output snakedeploy deploy-workflow "${local}" ${dest} --tag v1.2.0
 
-echo "#### Testing snakedeply update-conda-envs"
+echo
+echo "#### Testing snakedeploy update-conda-envs"
 cp tests/test-env.yaml $tmpdir
 runTest 0 $output snakedeploy update-conda-envs --conda-frontend conda $tmpdir/test-env.yaml
 
 echo
-echo "#### Testing snakedeply pin-conda-envs"
+echo "#### Testing snakedeploy pin-conda-envs"
 runTest 0 $output snakedeploy pin-conda-envs --conda-frontend conda $tmpdir/test-env.yaml
+
+echo
+echo "#### Testing snakedeploy update-snakemake-wrappers with given git ref"
+cp tests/test-snakefile.smk $tmpdir
+runTest 0 $output snakedeploy update-snakemake-wrappers --git-ref v1.4.0 $tmpdir/test-snakefile.smk
+
+echo
+echo "#### Testing snakedeploy update-snakemake-wrappers without git ref"
+runTest 0 $output snakedeploy update-snakemake-wrappers $tmpdir/test-snakefile.smk
+
 
 rm -rf ${tmpdir}
