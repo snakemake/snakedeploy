@@ -1,11 +1,12 @@
 import re
+from typing import List
 from urllib.parse import urlparse
 from snakedeploy.logger import logger
 
 from github import Github
 
 
-def update_snakemake_wrappers(snakefiles: list[str], git_ref: str):
+def update_snakemake_wrappers(snakefiles: List[str], git_ref: str):
     """Set all snakemake wrappers to the given git ref (e.g. tag or branch)."""
 
     if git_ref is None:
