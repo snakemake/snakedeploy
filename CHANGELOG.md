@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://www.github.com/snakemake/snakedeploy/compare/v0.5.0...v0.6.0) (2022-08-15)
+
+
+### Features
+
+* add subcommand for updating snakemake wrappers in given Snakefiles ([#32](https://www.github.com/snakemake/snakedeploy/issues/32)) ([d291113](https://www.github.com/snakemake/snakedeploy/commit/d291113b20682d1562b0fcf42007893542a39b24))
+
 ## [0.5.0](https://www.github.com/snakemake/snakedeploy/compare/v0.4.0...v0.5.0) (2022-06-22)
 
 
