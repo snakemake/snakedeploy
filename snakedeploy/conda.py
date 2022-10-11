@@ -52,10 +52,14 @@ class CondaEnvProcessor:
     def process(
         self, conda_env_paths, create_prs=False, update_envs=True, pin_envs=True
     ):
-        g = Github(os.environ["GITHUB_TOKEN"])
-        repo = (
-            g.get_repo(os.environ["GITHUB_ACTION_REPOSITORY"]) if create_prs else None
-        )
+        repo = None
+        if create_prs:
+            g = Github(os.environ["GITHUB_TOKEN"])
+            repo = (
+                g.get_repo(os.environ["GITHUB_ACTION_REPOSITORY"])
+                if create_prs
+                else None
+            )
         for conda_env_path in conda_env_paths:
             if create_prs:
                 if not update_envs:
