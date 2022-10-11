@@ -72,6 +72,8 @@ class CondaEnvProcessor:
                     f"autobump/{conda_env_path}",
                     repo,
                 )
+            else:
+                pr = None
             try:
                 if update_envs:
                     logger.info(f"Updating {conda_env_path}...")
