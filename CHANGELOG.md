@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://www.github.com/snakemake/snakedeploy/compare/v0.6.0...v0.7.0) (2022-10-11)
+
+
+### Features
+
+* if requested, automatically generate pull requests when updating conda envs ([#34](https://www.github.com/snakemake/snakedeploy/issues/34)) ([a0e978a](https://www.github.com/snakemake/snakedeploy/commit/a0e978af468f97c4218d3f0169c4e0e2c674f4b7))
+
 ## [0.6.0](https://www.github.com/snakemake/snakedeploy/compare/v0.5.0...v0.6.0) (2022-08-15)
 
 
