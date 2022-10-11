@@ -140,13 +140,23 @@ def get_parser():
         "so that all contained packages are set to the latest feasible versions.",
     )
     update_conda_envs.add_argument(
-        "envfiles", nargs="+", help="Environment definition YAML files to pin."
+        "envfiles", nargs="+", help="Environment definition YAML files to update."
     )
     update_conda_envs.add_argument(
         "--conda-frontend",
         choices=["mamba", "conda"],
         default="mamba",
         help="Conda frontend to use (default: mamba).",
+    )
+    update_conda_envs.add_argument(
+        "--pin-envs",
+        action="store_true",
+        help="also pin the updated environments (see pin-conda-envs subcommand).",
+    )
+    update_conda_envs.add_argument(
+        "--create-prs",
+        action="store_true",
+        help="Create pull request for each updated environment.",
     )
 
     update_snakemake_wrappers = subparsers.add_parser(
@@ -213,9 +223,17 @@ def main():
         elif args.subcommand == "collect-files":
             collect_files(config_sheet_path=args.config)
         elif args.subcommand == "pin-conda-envs":
-            pin_conda_envs(args.envfiles, conda_frontend=args.conda_frontend)
+            pin_conda_envs(
+                args.envfiles,
+                conda_frontend=args.conda_frontend,
+            )
         elif args.subcommand == "update-conda-envs":
-            update_conda_envs(args.envfiles, conda_frontend=args.conda_frontend)
+            update_conda_envs(
+                args.envfiles,
+                conda_frontend=args.conda_frontend,
+                create_prs=args.create_prs,
+                pin_envs=args.pin_envs,
+            )
         elif args.subcommand == "update-snakemake-wrappers":
             update_snakemake_wrappers(args.snakefiles, git_ref=args.git_ref)
     except UserError as e:

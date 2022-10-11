@@ -7,6 +7,13 @@ __license__ = "MPL 2.0"
 import subprocess
 import sys
 
+import yaml
+
+
+class YamlDumper(yaml.Dumper):
+    def increase_indent(self, flow=False, *args, **kwargs):
+        return super().increase_indent(flow=flow, indentless=False)
+
 
 def decodeUtf8String(inputStr):
     """Convert an UTF8 sequence into a string
