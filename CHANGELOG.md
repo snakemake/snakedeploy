@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.2](https://www.github.com/snakemake/snakedeploy/compare/v0.7.1...v0.7.2) (2022-10-12)
+
+
+### Bug Fixes
+
+* various bug fixes in conda env update process ([#38](https://www.github.com/snakemake/snakedeploy/issues/38)) ([2fde118](https://www.github.com/snakemake/snakedeploy/commit/2fde11888fcac402612de3d4b4ec0775343a815f))
+
 ### [0.7.1](https://www.github.com/snakemake/snakedeploy/compare/v0.7.0...v0.7.1) (2022-10-12)
 
 
