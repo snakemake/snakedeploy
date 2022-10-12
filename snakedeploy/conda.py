@@ -56,11 +56,7 @@ class CondaEnvProcessor:
         repo = None
         if create_prs:
             g = Github(os.environ["GITHUB_TOKEN"])
-            repo = (
-                g.get_repo(os.environ["GITHUB_ACTION_REPOSITORY"])
-                if create_prs
-                else None
-            )
+            repo = g.get_repo(os.environ["GITHUB_REPOSITORY"]) if create_prs else None
         for conda_env_path in chain.from_iterable(map(glob, conda_env_paths)):
             if create_prs:
                 if not update_envs:
@@ -195,6 +191,7 @@ class PR:
         self.files = []
         self.branch = branch
         self.repo = repo
+        self.base_ref = os.environ["GITHUB_BASE_REF"]
 
     def add_file(self, filepath, content, is_updated, msg):
         self.files.append(File(filepath, content, is_updated, msg))
@@ -204,21 +201,30 @@ class PR:
             logger.info("No files to commit.")
         branch_exists = False
         try:
-            self.repo.get_branch(self.branch)
+            b = self.repo.get_branch(self.branch)
+            logger.info(f"Branch {b} already exists.")
             branch_exists = True
         except GithubException as e:
             if e.status != 404:
                 raise e
+            logger.info(f"Creating branch {self.branch}...")
             self.repo.create_git_ref(
                 ref=f"refs/heads/{self.branch}",
-                sha=self.repo.get_branch("master").commit.sha,
+                sha=self.repo.get_branch(self.base_ref).commit.sha,
             )
         for file in self.files:
             if file.is_updated:
+                sha = None
                 if branch_exists:
+                    logger.info(
+                        f"Obtaining sha of {file.path} on branch {self.branch}..."
+                    )
                     sha = self.repo.get_contents(file.path, self.branch).sha
                 else:
-                    sha = self.repo.get_contents(file.path).sha
+                    logger.info(
+                        f"Obtaining sha of {file.path} on branch {self.base_ref}..."
+                    )
+                    sha = self.repo.get_contents(file.path, self.base_ref).sha
                 self.repo.update_file(
                     file.path,
                     file.msg,
@@ -231,8 +237,8 @@ class PR:
                     file.path, file.msg, file.content, branch=self.branch
                 )
         pr_exists = any(
-            pr.head.label == self.branch
-            for pr in self.repo.get_pulls(state="open", base="master")
+            pr.head.label.split(":", 1)[1] == self.branch
+            for pr in self.repo.get_pulls(state="open", base=self.base_ref)
         )
         if pr_exists:
             logger.info("PR already exists.")
@@ -241,6 +247,6 @@ class PR:
                 title=self.title,
                 body=self.body,
                 head=self.branch,
-                base="master",
+                base=self.base_ref,
             )
             logger.info(f"Created PR: {pr.html_url}")
