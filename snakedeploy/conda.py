@@ -56,11 +56,7 @@ class CondaEnvProcessor:
         repo = None
         if create_prs:
             g = Github(os.environ["GITHUB_TOKEN"])
-            repo = (
-                g.get_repo(os.environ["GITHUB_ACTION_REPOSITORY"])
-                if create_prs
-                else None
-            )
+            repo = g.get_repo(os.environ["GITHUB_REPOSITORY"]) if create_prs else None
         for conda_env_path in chain.from_iterable(map(glob, conda_env_paths)):
             if create_prs:
                 if not update_envs:

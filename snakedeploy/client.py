@@ -156,7 +156,8 @@ def get_parser():
     update_conda_envs.add_argument(
         "--create-prs",
         action="store_true",
-        help="Create pull request for each updated environment.",
+        help="Create pull request for each updated environment. "
+        "Requires GITHUB_TOKEN and GITHUB_REPOSITORY environment variables to be set.",
     )
 
     update_snakemake_wrappers = subparsers.add_parser(
