@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.1](https://www.github.com/snakemake/snakedeploy/compare/v0.8.0...v0.8.1) (2022-10-12)
+
+
+### Bug Fixes
+
+* if nothing to commit, do not create PR ([#42](https://www.github.com/snakemake/snakedeploy/issues/42)) ([84bb903](https://www.github.com/snakemake/snakedeploy/commit/84bb903a15a5443de515e73c25c559139cce1479))
+
 ## [0.8.0](https://www.github.com/snakemake/snakedeploy/compare/v0.7.2...v0.8.0) (2022-10-12)
 
 
