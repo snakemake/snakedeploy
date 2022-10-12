@@ -157,7 +157,12 @@ def get_parser():
         "--create-prs",
         action="store_true",
         help="Create pull request for each updated environment. "
-        "Requires GITHUB_TOKEN and GITHUB_REPOSITORY environment variables to be set.",
+        "Requires GITHUB_TOKEN and GITHUB_REPOSITORY (the repo name) and GITHUB_BASE_REF "
+        "(the default branch, e.g. main or master) environment "
+        "variables to be set (the latter two are available when running as github action). "
+        "In order to enable further actions (e.g. checks) to run on the generated PRs, the "
+        "provided GITHUB_TOKEN may not be the default github actions token. See here for "
+        "options: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs.",
     )
 
     update_snakemake_wrappers = subparsers.add_parser(

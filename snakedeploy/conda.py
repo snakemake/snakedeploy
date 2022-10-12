@@ -191,6 +191,7 @@ class PR:
         self.files = []
         self.branch = branch
         self.repo = repo
+        self.base_ref = os.environ["GITHUB_BASE_REF"]
 
     def add_file(self, filepath, content, is_updated, msg):
         self.files.append(File(filepath, content, is_updated, msg))
@@ -209,7 +210,7 @@ class PR:
             logger.info(f"Creating branch {self.branch}...")
             self.repo.create_git_ref(
                 ref=f"refs/heads/{self.branch}",
-                sha=self.repo.get_branch("master").commit.sha,
+                sha=self.repo.get_branch(self.base_ref).commit.sha,
             )
         for file in self.files:
             if file.is_updated:
@@ -220,8 +221,10 @@ class PR:
                     )
                     sha = self.repo.get_contents(file.path, self.branch).sha
                 else:
-                    logger.info(f"Obtaining sha of {file.path} on branch master...")
-                    sha = self.repo.get_contents(file.path, "master").sha
+                    logger.info(
+                        f"Obtaining sha of {file.path} on branch {self.base_ref}..."
+                    )
+                    sha = self.repo.get_contents(file.path, self.base_ref).sha
                 self.repo.update_file(
                     file.path,
                     file.msg,
@@ -235,7 +238,7 @@ class PR:
                 )
         pr_exists = any(
             pr.head.label.split(":", 1)[1] == self.branch
-            for pr in self.repo.get_pulls(state="open", base="master")
+            for pr in self.repo.get_pulls(state="open", base=self.base_ref)
         )
         if pr_exists:
             logger.info("PR already exists.")
@@ -244,6 +247,6 @@ class PR:
                 title=self.title,
                 body=self.body,
                 head=self.branch,
-                base="master",
+                base=self.base_ref,
             )
             logger.info(f"Created PR: {pr.html_url}")
