@@ -90,7 +90,7 @@ class CondaEnvProcessor:
                         entity = m.group("entity")
                     except IndexError:
                         raise UserError(
-                            f"No group 'entity' found in given --entity-regex."
+                            "No group 'entity' found in given --entity-regex."
                         )
                 if pr_add_label and not entity_regex:
                     raise UserError(
