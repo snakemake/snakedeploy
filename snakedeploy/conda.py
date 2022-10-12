@@ -99,7 +99,7 @@ class CondaEnvProcessor:
                 pr = PR(
                     f"perf: autobump {entity}",
                     f"Automatic update of {entity}.",
-                    f"autobump/{entity}",
+                    f"autobump/{entity.replace('/', '-')}",
                     repo,
                     label=entity if pr_add_label else None,
                 )
@@ -229,7 +229,7 @@ class PR:
         self.branch = branch
         self.repo = repo
         self.base_ref = os.environ["GITHUB_BASE_REF"]
-        label = label
+        self.label = label
 
     def add_file(self, filepath, content, is_updated, msg):
         self.files.append(File(filepath, content, is_updated, msg))
@@ -237,6 +237,8 @@ class PR:
     def create(self):
         if not self.files:
             logger.info("No files to commit.")
+            return
+
         branch_exists = False
         try:
             b = self.repo.get_branch(self.branch)
