@@ -4,7 +4,8 @@ import subprocess as sp
 import tempfile
 import re
 from abc import ABC, abstractmethod
-
+from glob import glob
+from itertools import chain
 
 import yaml
 
@@ -39,7 +40,7 @@ class CondaEnvProcessor(ABC):
         )
 
     def process(self, conda_env_paths):
-        for conda_env_path in conda_env_paths:
+        for conda_env_path in chain.from_iterable(map(glob, conda_env_paths)):
             logger.info(f"{self.get_process_msg()} {conda_env_path}...")
             try:
                 self.process_env(conda_env_path)
