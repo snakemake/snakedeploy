@@ -30,7 +30,6 @@ def update_conda_envs(
 ):
     """Update the given conda env definitions such that all dependencies
     in them are set to the latest feasible versions."""
-    print(conda_env_paths)
     return CondaEnvProcessor(conda_frontend=conda_frontend).process(
         conda_env_paths, create_prs=create_prs, update_envs=True, pin_envs=pin_envs
     )
