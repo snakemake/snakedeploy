@@ -99,7 +99,7 @@ class CondaEnvProcessor:
                 pr = PR(
                     f"perf: autobump {entity}",
                     f"Automatic update of {entity}.",
-                    f"autobump/{entity}",
+                    f"autobump/{entity.replace('/', '-')}",
                     repo,
                     label=entity if pr_add_label else None,
                 )
