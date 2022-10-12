@@ -164,6 +164,17 @@ def get_parser():
         "provided GITHUB_TOKEN may not be the default github actions token. See here for "
         "options: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs.",
     )
+    update_conda_envs.add_argument(
+        "--entity-regex",
+        help="Regular expression for deriving an entity name from the environment file name "
+        "(will be used for adding a label and for title and description). Has to contain a group 'entity' "
+        "(e.g. '(?P<entity>.+)/environment.yaml').",
+    )
+    update_conda_envs.add_argument(
+        "--pr-add-label",
+        action="store_true",
+        help="Add a label to the PR. Has to be used in combination with --entity-regex.",
+    )
 
     update_snakemake_wrappers = subparsers.add_parser(
         "update-snakemake-wrappers",
@@ -239,6 +250,8 @@ def main():
                 conda_frontend=args.conda_frontend,
                 create_prs=args.create_prs,
                 pin_envs=args.pin_envs,
+                entity_regex=args.entity_regex,
+                pr_add_label=args.pr_add_label,
             )
         elif args.subcommand == "update-snakemake-wrappers":
             update_snakemake_wrappers(args.snakefiles, git_ref=args.git_ref)
