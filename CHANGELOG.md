@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://www.github.com/snakemake/snakedeploy/compare/v0.7.2...v0.8.0) (2022-10-12)
+
+
+### Features
+
+* only update pinning if env was updated; ability to specify a regex for entity determination and adding labels when creating PRs from updated envs ([#40](https://www.github.com/snakemake/snakedeploy/issues/40)) ([f074e35](https://www.github.com/snakemake/snakedeploy/commit/f074e35f993b2b325f29e34e908dafb1bfcf150f))
+
 ### [0.7.2](https://www.github.com/snakemake/snakedeploy/compare/v0.7.1...v0.7.2) (2022-10-12)
 
 
