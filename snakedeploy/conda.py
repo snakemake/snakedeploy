@@ -72,10 +72,11 @@ class CondaEnvProcessor:
             else:
                 pr = None
             try:
+                updated = False
                 if update_envs:
                     logger.info(f"Updating {conda_env_path}...")
-                    self.update_env(conda_env_path, pr)
-                if pin_envs:
+                    updated = self.update_env(conda_env_path, pr)
+                if pin_envs and (not update_envs or updated):
                     logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(conda_env_path, pr)
             except sp.CalledProcessError as e:
@@ -139,8 +140,10 @@ class CondaEnvProcessor:
                     is_updated=True,
                     msg=f"perf: update {conda_env_path}.",
                 )
+            return True
         else:
             logger.info("No updates in env.")
+            return False
 
     def update_pinning(self, conda_env_path, pr=None):
         pin_file = Path(conda_env_path).with_suffix(f".{self.info['platform']}.pin.txt")
