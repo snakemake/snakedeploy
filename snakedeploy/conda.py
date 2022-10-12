@@ -237,6 +237,8 @@ class PR:
     def create(self):
         if not self.files:
             logger.info("No files to commit.")
+            return
+
         branch_exists = False
         try:
             b = self.repo.get_branch(self.branch)
