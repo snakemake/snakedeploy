@@ -26,12 +26,22 @@ def pin_conda_envs(conda_env_paths: list, conda_frontend="mamba"):
 
 
 def update_conda_envs(
-    conda_env_paths: list, conda_frontend="mamba", create_prs=False, pin_envs=False
+    conda_env_paths: list,
+    conda_frontend="mamba",
+    create_prs=False,
+    pin_envs=False,
+    pr_add_label=False,
+    entity_regex=None,
 ):
     """Update the given conda env definitions such that all dependencies
     in them are set to the latest feasible versions."""
     return CondaEnvProcessor(conda_frontend=conda_frontend).process(
-        conda_env_paths, create_prs=create_prs, update_envs=True, pin_envs=pin_envs
+        conda_env_paths,
+        create_prs=create_prs,
+        update_envs=True,
+        pin_envs=pin_envs,
+        pr_add_label=pr_add_label,
+        entity_regex=entity_regex,
     )
 
 
@@ -51,7 +61,13 @@ class CondaEnvProcessor:
         )
 
     def process(
-        self, conda_env_paths, create_prs=False, update_envs=True, pin_envs=True
+        self,
+        conda_env_paths,
+        create_prs=False,
+        update_envs=True,
+        pin_envs=True,
+        pr_add_label=False,
+        entity_regex=None,
     ):
         repo = None
         if create_prs:
@@ -63,11 +79,29 @@ class CondaEnvProcessor:
                     raise UserError(
                         "Creating PRs for only pinning updates is not supported."
                     )
+                entity = conda_env_path
+                if entity_regex is not None:
+                    m = re.match(entity_regex, conda_env_path)
+                    if m is None:
+                        raise UserError(
+                            f"Given --entity-regex did not match any {conda_env_path}."
+                        )
+                    try:
+                        entity = m.group("entity")
+                    except IndexError:
+                        raise UserError(
+                            f"No group 'entity' found in given --entity-regex."
+                        )
+                if pr_add_label and not entity_regex:
+                    raise UserError(
+                        "Cannot add label to PR without --entity-regex specified."
+                    )
                 pr = PR(
-                    f"perf: autobump {conda_env_path}",
-                    f"Automatic update of {conda_env_path}.",
-                    f"autobump/{conda_env_path}",
+                    f"perf: autobump {entity}",
+                    f"Automatic update of {entity}.",
+                    f"autobump/{entity}",
                     repo,
+                    label=entity if pr_add_label else None,
                 )
             else:
                 pr = None
@@ -188,13 +222,14 @@ class CondaEnvProcessor:
 
 
 class PR:
-    def __init__(self, title, body, branch, repo):
+    def __init__(self, title, body, branch, repo, label=None):
         self.title = title
         self.body = body
         self.files = []
         self.branch = branch
         self.repo = repo
         self.base_ref = os.environ["GITHUB_BASE_REF"]
+        label = label
 
     def add_file(self, filepath, content, is_updated, msg):
         self.files.append(File(filepath, content, is_updated, msg))
@@ -252,4 +287,5 @@ class PR:
                 head=self.branch,
                 base=self.base_ref,
             )
+            pr.add_to_labels(self.label)
             logger.info(f"Created PR: {pr.html_url}")
