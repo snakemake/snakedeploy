@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.1](https://www.github.com/snakemake/snakedeploy/compare/v0.7.0...v0.7.1) (2022-10-12)
+
+
+### Bug Fixes
+
+* glob conda env files passed to related subcommands ([#36](https://www.github.com/snakemake/snakedeploy/issues/36)) ([c72d401](https://www.github.com/snakemake/snakedeploy/commit/c72d4011a8580eb6718395c9972a6446fcf711ab))
+
 ## [0.7.0](https://www.github.com/snakemake/snakedeploy/compare/v0.6.0...v0.7.0) (2022-10-11)
 
 
