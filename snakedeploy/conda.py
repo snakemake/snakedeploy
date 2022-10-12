@@ -6,7 +6,8 @@ from pathlib import Path
 import subprocess as sp
 import tempfile
 import re
-
+from glob import glob
+from itertools import chain
 
 import yaml
 from github import Github, GithubException
@@ -60,7 +61,7 @@ class CondaEnvProcessor:
                 if create_prs
                 else None
             )
-        for conda_env_path in conda_env_paths:
+        for conda_env_path in chain.from_iterable(map(glob, conda_env_paths)):
             if create_prs:
                 if not update_envs:
                     raise UserError(
