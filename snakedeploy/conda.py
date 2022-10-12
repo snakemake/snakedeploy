@@ -205,7 +205,7 @@ class PR:
             logger.info("No files to commit.")
         branch_exists = False
         try:
-            self.repo.get_branch(self.branch)
+            print(self.repo.get_branch(self.branch))  # TODO
             branch_exists = True
         except GithubException as e:
             if e.status != 404:
@@ -216,12 +216,16 @@ class PR:
             )
         for file in self.files:
             if file.is_updated:
+                sha = None
                 if branch_exists:
                     print(file.path, self.branch)
-                    sha = self.repo.get_contents(
-                        file.path, f"snakemake:{self.branch}"  # TODO fix branch
-                    ).sha
-                else:
+                    try:
+                        sha = self.repo.get_contents(file.path, self.branch).sha
+                    except GithubException as e:
+                        if e.status != 404:
+                            raise e
+                        # if the file is not touched in the branch, we do it below
+                if sha is None:
                     sha = self.repo.get_contents(file.path, "master").sha
                 self.repo.update_file(
                     file.path,
