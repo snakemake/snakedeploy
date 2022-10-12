@@ -219,7 +219,7 @@ class PR:
                 if branch_exists:
                     sha = self.repo.get_contents(file.path, self.branch).sha
                 else:
-                    sha = self.repo.get_contents(file.path).sha
+                    sha = self.repo.get_contents(file.path, "master").sha
                 self.repo.update_file(
                     file.path,
                     file.msg,
@@ -232,7 +232,7 @@ class PR:
                     file.path, file.msg, file.content, branch=self.branch
                 )
         pr_exists = any(
-            pr.head.label == self.branch
+            pr.head.label.split(":", 1)[1] == self.branch
             for pr in self.repo.get_pulls(state="open", base="master")
         )
         if pr_exists:
