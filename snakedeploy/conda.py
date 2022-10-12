@@ -217,6 +217,7 @@ class PR:
         for file in self.files:
             if file.is_updated:
                 if branch_exists:
+                    print(file.path, self.branch)
                     sha = self.repo.get_contents(file.path, self.branch).sha
                 else:
                     sha = self.repo.get_contents(file.path, "master").sha
