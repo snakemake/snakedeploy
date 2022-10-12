@@ -205,7 +205,7 @@ class PR:
             logger.info("No files to commit.")
         branch_exists = False
         try:
-            print(self.repo.get_branch(self.branch))  # TODO
+            self.repo.get_branch(self.branch)
             branch_exists = True
         except GithubException as e:
             if e.status != 404:
@@ -218,14 +218,8 @@ class PR:
             if file.is_updated:
                 sha = None
                 if branch_exists:
-                    print(file.path, self.branch)
-                    try:
-                        sha = self.repo.get_contents(file.path, self.branch).sha
-                    except GithubException as e:
-                        if e.status != 404:
-                            raise e
-                        # if the file is not touched in the branch, we do it below
-                if sha is None:
+                    sha = self.repo.get_contents(file.path, self.branch).sha
+                else:
                     sha = self.repo.get_contents(file.path, "master").sha
                 self.repo.update_file(
                     file.path,
