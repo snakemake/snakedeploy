@@ -204,11 +204,13 @@ class PR:
             logger.info("No files to commit.")
         branch_exists = False
         try:
-            self.repo.get_branch(self.branch)
+            b = self.repo.get_branch(self.branch)
+            logger.info(f"Branch {b} already exists.")
             branch_exists = True
         except GithubException as e:
             if e.status != 404:
                 raise e
+            logger.info(f"Creating branch {self.branch}...")
             self.repo.create_git_ref(
                 ref=f"refs/heads/{self.branch}",
                 sha=self.repo.get_branch("master").commit.sha,
@@ -217,8 +219,12 @@ class PR:
             if file.is_updated:
                 sha = None
                 if branch_exists:
+                    logger.info(
+                        f"Obtaining sha of {file.path} on branch {self.branch}..."
+                    )
                     sha = self.repo.get_contents(file.path, self.branch).sha
                 else:
+                    logger.info(f"Obtaining sha of {file.path} on branch master...")
                     sha = self.repo.get_contents(file.path, "master").sha
                 self.repo.update_file(
                     file.path,
