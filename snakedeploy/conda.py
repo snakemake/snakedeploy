@@ -218,7 +218,9 @@ class PR:
             if file.is_updated:
                 if branch_exists:
                     print(file.path, self.branch)
-                    sha = self.repo.get_contents(file.path, self.branch).sha
+                    sha = self.repo.get_contents(
+                        file.path, f"snakemake:{self.branch}"  # TODO fix branch
+                    ).sha
                 else:
                     sha = self.repo.get_contents(file.path, "master").sha
                 self.repo.update_file(
