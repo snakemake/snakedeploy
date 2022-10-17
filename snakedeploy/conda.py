@@ -229,6 +229,7 @@ class PR:
         self.branch = branch
         self.repo = repo
         self.base_ref = os.environ["GITHUB_BASE_REF"]
+        print(f"base_ref: {self.base_ref}")
         self.label = label
 
     def add_file(self, filepath, content, is_updated, msg):
