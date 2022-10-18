@@ -77,7 +77,12 @@ class CondaEnvProcessor:
         if create_prs:
             g = Github(os.environ["GITHUB_TOKEN"])
             repo = g.get_repo(os.environ["GITHUB_REPOSITORY"]) if create_prs else None
-        for conda_env_path in chain.from_iterable(map(glob, conda_env_paths)):
+        conda_envs = list(chain.from_iterable(map(glob, conda_env_paths)))
+        if not conda_envs:
+            logger.info(
+                f"No conda envs found at given paths: {', '.join(conda_env_paths)}"
+            )
+        for conda_env_path in conda_envs:
             if create_prs:
                 if not update_envs:
                     raise UserError(
@@ -120,7 +125,7 @@ class CondaEnvProcessor:
                     logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(conda_env_path, pr)
             except sp.CalledProcessError as e:
-                msg = f"Failed for conda env {conda_env_path}:" "\n" f"{e.stderr}"
+                msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
                 if warn_on_error:
                     logger.warning(msg)
                 else:
