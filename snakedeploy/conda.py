@@ -9,7 +9,7 @@ import re
 from glob import glob
 from itertools import chain
 
-import packaging
+from packaging import version as packaging_version
 import yaml
 from github import Github, GithubException
 
@@ -168,6 +168,7 @@ class CondaEnvProcessor:
                 self.exec_conda(f"env remove --prefix {tmpdir}")
             return pkg_versions
 
+        logger.info("Resolving prior versions...")
         prior_pkg_versions = get_pkg_versions(conda_env_path)
 
         unconstrained_deps = process_dependencies(lambda name: name)
@@ -175,13 +176,14 @@ class CondaEnvProcessor:
         unconstrained_env["dependencies"] = unconstrained_deps
         with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml") as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
+            logger.info("Resolving posterior versions...")
             posterior_pkg_versions = get_pkg_versions(tmpenv.name)
 
         downgraded = [
             pkg_name
-            for pkg_name, version in posterior_pkg_versions
-            if packaging.version.parse(version)
-            < packaging.version.parse(prior_pkg_versions[pkg_name])
+            for pkg_name, version in posterior_pkg_versions.items()
+            if packaging_version.parse(version)
+            < packaging_version.parse(prior_pkg_versions[pkg_name])
         ]
         if downgraded:
             msg = (
