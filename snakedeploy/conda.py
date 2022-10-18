@@ -115,7 +115,7 @@ class CondaEnvProcessor:
                     self.update_pinning(conda_env_path, pr)
             except sp.CalledProcessError as e:
                 raise UserError(
-                    f"Failed for conda env {conda_env_path}:" "\n" f"{e.stderr}"
+                    f"Failed for conda env {conda_env_path}:" "\n" f"{e.stdout}"
                 )
             if create_prs:
                 pr.create()
@@ -216,7 +216,8 @@ class CondaEnvProcessor:
         return sp.check_output(
             f"{self.conda_frontend} {subcmd}",
             shell=True,
-            stderr=sp.PIPE,
+            stderr=sp.STDOUT,
+            stdout=sp.PIPE,
             universal_newlines=True,
         )
 
