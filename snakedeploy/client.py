@@ -175,6 +175,11 @@ def get_parser():
         action="store_true",
         help="Add a label to the PR. Has to be used in combination with --entity-regex.",
     )
+    update_conda_envs.add_argument(
+        "--warn-on-error",
+        action="store_true",
+        help="Only warn if conda env evaluation fails and go on with the other envs.",
+    )
 
     update_snakemake_wrappers = subparsers.add_parser(
         "update-snakemake-wrappers",
@@ -252,6 +257,7 @@ def main():
                 pin_envs=args.pin_envs,
                 entity_regex=args.entity_regex,
                 pr_add_label=args.pr_add_label,
+                warn_on_error=args.warn_on_error,
             )
         elif args.subcommand == "update-snakemake-wrappers":
             update_snakemake_wrappers(args.snakefiles, git_ref=args.git_ref)

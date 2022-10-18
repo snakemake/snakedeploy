@@ -32,6 +32,7 @@ def update_conda_envs(
     pin_envs=False,
     pr_add_label=False,
     entity_regex=None,
+    warn_on_error=False,
 ):
     """Update the given conda env definitions such that all dependencies
     in them are set to the latest feasible versions."""
@@ -42,6 +43,7 @@ def update_conda_envs(
         pin_envs=pin_envs,
         pr_add_label=pr_add_label,
         entity_regex=entity_regex,
+        warn_on_error=warn_on_error,
     )
 
 
@@ -68,6 +70,7 @@ class CondaEnvProcessor:
         pin_envs=True,
         pr_add_label=False,
         entity_regex=None,
+        warn_on_error=False,
     ):
         repo = None
         if create_prs:
@@ -114,9 +117,11 @@ class CondaEnvProcessor:
                     logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(conda_env_path, pr)
             except sp.CalledProcessError as e:
-                raise UserError(
-                    f"Failed for conda env {conda_env_path}:" "\n" f"{e.stdout}"
-                )
+                msg = f"Failed for conda env {conda_env_path}:" "\n" f"{e.stdout}"
+                if warn_on_error:
+                    logger.warning(msg)
+                else:
+                    raise UserError(msg)
             if create_prs:
                 pr.create()
 
