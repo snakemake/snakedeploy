@@ -9,6 +9,7 @@ import re
 from glob import glob
 from itertools import chain
 
+import packaging
 import yaml
 from github import Github, GithubException
 
@@ -112,7 +113,9 @@ class CondaEnvProcessor:
                 updated = False
                 if update_envs:
                     logger.info(f"Updating {conda_env_path}...")
-                    updated = self.update_env(conda_env_path, pr)
+                    updated = self.update_env(
+                        conda_env_path, pr=pr, warn_on_error=warn_on_error
+                    )
                 if pin_envs and (not update_envs or updated):
                     logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(conda_env_path, pr)
@@ -129,6 +132,7 @@ class CondaEnvProcessor:
         self,
         conda_env_path,
         pr=None,
+        warn_on_error=False,
     ):
         spec_re = re.compile("(?P<name>[^=>< ]+)[ =><]+")
         with open(conda_env_path, "r") as infile:
@@ -147,26 +151,47 @@ class CondaEnvProcessor:
 
             return [process_dependency(dep) for dep in conda_env["dependencies"]]
 
+        def get_pkg_versions(conda_env_path):
+            with tempfile.TemporaryDirectory() as tmpdir:
+                self.exec_conda(f"env create --file {conda_env_path} --prefix {tmpdir}")
+                pkg_versions = {
+                    pkg["name"]: pkg["version"]
+                    for pkg in json.loads(
+                        self.exec_conda(f"list --json --prefix {tmpdir}").stdout
+                    )
+                }
+                self.exec_conda(f"env remove --prefix {tmpdir}")
+            return pkg_versions
+
+        prior_pkg_versions = get_pkg_versions(conda_env_path)
+
         unconstrained_deps = process_dependencies(lambda name: name)
         unconstrained_env = dict(conda_env)
         unconstrained_env["dependencies"] = unconstrained_deps
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml"
-        ) as tmpenv, tempfile.TemporaryDirectory() as tmpdir:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml") as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
-            self.exec_conda(f"env create --file {tmpenv.name} --prefix {tmpdir}")
-            pkg_versions = {
-                pkg["name"]: pkg["version"]
-                for pkg in json.loads(
-                    self.exec_conda(f"list --json --prefix {tmpdir}").stdout
-                )
-            }
-            self.exec_conda(f"env remove --prefix {tmpdir}")
+            posterior_pkg_versions = get_pkg_versions(tmpenv.name)
+
+        downgraded = [
+            pkg_name
+            for pkg_name, version in posterior_pkg_versions
+            if packaging.version.parse(version)
+            < packaging.version.parse(prior_pkg_versions[pkg_name])
+        ]
+        if downgraded:
+            msg = (
+                f"Env {conda_env_path} could not be updated because the following packages "
+                f"would be downgraded: {', '.join(downgraded)}."
+            )
+            if warn_on_error:
+                logger.warning(msg)
+            else:
+                raise UserError(msg)
 
         orig_env = copy.deepcopy(conda_env)
 
         conda_env["dependencies"] = process_dependencies(
-            lambda name: f"{name} ={pkg_versions[name]}"
+            lambda name: f"{name} ={posterior_pkg_versions[name]}"
         )
         if orig_env != conda_env:
             with open(conda_env_path, "w") as outfile:
