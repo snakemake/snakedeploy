@@ -117,7 +117,7 @@ class CondaEnvProcessor:
                     logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(conda_env_path, pr)
             except sp.CalledProcessError as e:
-                msg = f"Failed for conda env {conda_env_path}:" "\n" f"{e.stdout}"
+                msg = f"Failed for conda env {conda_env_path}:" "\n" f"{e.stderr}"
                 if warn_on_error:
                     logger.warning(msg)
                 else:
@@ -157,7 +157,9 @@ class CondaEnvProcessor:
             self.exec_conda(f"env create --file {tmpenv.name} --prefix {tmpdir}")
             pkg_versions = {
                 pkg["name"]: pkg["version"]
-                for pkg in json.loads(self.exec_conda(f"list --json --prefix {tmpdir}"))
+                for pkg in json.loads(
+                    self.exec_conda(f"list --json --prefix {tmpdir}").stdout
+                )
             }
             self.exec_conda(f"env remove --prefix {tmpdir}")
 
@@ -221,7 +223,7 @@ class CondaEnvProcessor:
         return sp.run(
             f"{self.conda_frontend} {subcmd}",
             shell=True,
-            stderr=sp.STDOUT,
+            stderr=sp.PIPE,
             stdout=sp.PIPE,
             universal_newlines=True,
             check=True,
