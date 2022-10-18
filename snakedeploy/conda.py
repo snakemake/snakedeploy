@@ -218,12 +218,13 @@ class CondaEnvProcessor:
             self.exec_conda(f"env remove --prefix {tmpdir}")
 
     def exec_conda(self, subcmd):
-        return sp.check_output(
+        return sp.run(
             f"{self.conda_frontend} {subcmd}",
             shell=True,
             stderr=sp.STDOUT,
             stdout=sp.PIPE,
             universal_newlines=True,
+            check=True,
         )
 
 
