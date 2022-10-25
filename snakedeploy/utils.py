@@ -6,8 +6,15 @@ __license__ = "MPL 2.0"
 
 import subprocess
 import sys
+import os
+import tempfile
 
 import yaml
+
+
+def gettempdir():
+    """Get temporary directory, preferring github actions temp dir if set."""
+    return os.environ.get("RUNNER_TEMP", tempfile.gettempdir()
 
 
 class YamlDumper(yaml.Dumper):

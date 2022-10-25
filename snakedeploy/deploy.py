@@ -8,6 +8,7 @@ from jinja2 import Environment, PackageLoader
 from snakedeploy.providers import get_provider
 from snakedeploy.logger import logger
 from snakedeploy.exceptions import UserError
+from snakedeploy.utils import gettempdir
 
 
 class WorkflowDeployer:
@@ -59,7 +60,7 @@ class WorkflowDeployer:
         self.check()
 
         # Create a temporary directory to grab config directory and snakefile
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with tempfile.TemporaryDirectory(dir=gettempdir()) as tmpdir:
             logger.info("Obtaining source repository...")
 
             # Clone temporary directory to find assets
