@@ -12,11 +12,6 @@ import tempfile
 import yaml
 
 
-def gettempdir():
-    """Get temporary directory, preferring github actions temp dir if set."""
-    return os.environ.get("RUNNER_TEMP", tempfile.gettempdir())
-
-
 class YamlDumper(yaml.Dumper):
     def increase_indent(self, flow=False, *args, **kwargs):
         return super().increase_indent(flow=flow, indentless=False)

@@ -15,7 +15,7 @@ from github import Github, GithubException
 
 from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
-from snakedeploy.utils import YamlDumper, gettempdir
+from snakedeploy.utils import YamlDumper
 
 
 def pin_conda_envs(conda_env_paths: list, conda_frontend="mamba"):
@@ -157,7 +157,7 @@ class CondaEnvProcessor:
             return [process_dependency(dep) for dep in conda_env["dependencies"]]
 
         def get_pkg_versions(conda_env_path):
-            with tempfile.TemporaryDirectory(dir=gettempdir()) as tmpdir:
+            with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
                 self.exec_conda(f"env create --file {conda_env_path} --prefix {tmpdir}")
                 pkg_versions = {
                     pkg["name"]: pkg["version"]
@@ -176,7 +176,7 @@ class CondaEnvProcessor:
         unconstrained_env["dependencies"] = unconstrained_deps
 
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml", dir=gettempdir()
+            mode="w", suffix=".yaml", dir=".", prefix="."
         ) as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
             logger.info("Resolving posterior versions...")
@@ -229,7 +229,7 @@ class CondaEnvProcessor:
             with open(pin_file, "r") as infile:
                 old_content = infile.read()
 
-        with tempfile.TemporaryDirectory(dir=gettempdir()) as tmpdir:
+        with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
             self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
             self.exec_conda(
                 f"list --explicit --md5 --prefix {tmpdir} > {tmpdir}/pin.txt"
