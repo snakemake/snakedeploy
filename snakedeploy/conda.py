@@ -176,7 +176,9 @@ class CondaEnvProcessor:
         unconstrained_env["dependencies"] = unconstrained_deps
         import subprocess as sp
 
-        print(os.environ["RUNNER_TEMP"])
+        import sys
+
+        print(os.environ["RUNNER_TEMP"], os.environ.get("TMPDIR"), file=sys.stderr)
         sp.run(["ls", "-l", "/tmp"])
         with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml") as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
