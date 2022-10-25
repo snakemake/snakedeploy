@@ -174,6 +174,10 @@ class CondaEnvProcessor:
         unconstrained_deps = process_dependencies(lambda name: name)
         unconstrained_env = dict(conda_env)
         unconstrained_env["dependencies"] = unconstrained_deps
+        import subprocess as sp
+
+        print(os.environ["RUNNER_TEMP"])
+        sp.run(["ls", "-l", "/tmp"])
         with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml") as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
             logger.info("Resolving posterior versions...")
