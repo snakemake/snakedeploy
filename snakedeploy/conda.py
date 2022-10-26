@@ -195,7 +195,8 @@ class CondaEnvProcessor:
         if downgraded:
             msg = (
                 f"Env {conda_env_path} could not be updated because the following packages "
-                f"would be downgraded: {', '.join(downgraded)}."
+                f"would be downgraded: {', '.join(downgraded)}. Please consider a manual update "
+                "of the environment."
             )
             if warn_on_error:
                 logger.warning(msg)
