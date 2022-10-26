@@ -8,6 +8,7 @@ import tempfile
 import re
 from glob import glob
 from itertools import chain
+from urllib3.util.retry import Retry
 
 from packaging import version as packaging_version
 import yaml
@@ -75,7 +76,12 @@ class CondaEnvProcessor:
     ):
         repo = None
         if create_prs:
-            g = Github(os.environ["GITHUB_TOKEN"])
+            g = Github(
+                os.environ["GITHUB_TOKEN"],
+                retry=Retry(
+                    total=10, status_forcelist=(500, 502, 504), backoff_factor=0.3
+                ),
+            )
             repo = g.get_repo(os.environ["GITHUB_REPOSITORY"]) if create_prs else None
         conda_envs = list(chain.from_iterable(map(glob, conda_env_paths)))
         if not conda_envs:
