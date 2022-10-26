@@ -182,12 +182,16 @@ class CondaEnvProcessor:
             logger.info("Resolving posterior versions...")
             posterior_pkg_versions = get_pkg_versions(tmpenv.name)
 
-        downgraded = [
-            pkg_name
-            for pkg_name, version in posterior_pkg_versions.items()
-            if packaging_version.parse(version)
-            < packaging_version.parse(prior_pkg_versions[pkg_name])
-        ]
+        def downgraded():
+            for pkg_name, version in posterior_pkg_versions.items():
+                version = packaging_version.parse(version)
+                prior_version = prior_pkg_versions.get(pkg_name)
+                if prior_version is not None and version < packaging_version.parse(
+                    prior_version
+                ):
+                    yield pkg_name
+
+        downgraded = list(downgraded())
         if downgraded:
             msg = (
                 f"Env {conda_env_path} could not be updated because the following packages "
