@@ -13,6 +13,7 @@ from urllib3.util.retry import Retry
 from packaging import version as packaging_version
 import yaml
 from github import Github, GithubException
+from reretry import retry
 
 from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
@@ -291,6 +292,7 @@ class PR:
     def add_file(self, filepath, content, is_updated, msg):
         self.files.append(File(filepath, content, is_updated, msg))
 
+    @retry(tries=2, delay=60)
     def create(self):
         if not self.files:
             logger.info("No files to commit.")
