@@ -85,9 +85,9 @@ class CondaEnvProcessor:
                 ),
             )
             repo = g.get_repo(os.environ["GITHUB_REPOSITORY"]) if create_prs else None
-        conda_envs = random.shuffle(
-            list(chain.from_iterable(map(glob, conda_env_paths)))
-        )
+        conda_envs = list(chain.from_iterable(map(glob, conda_env_paths)))
+        random.shuffle(conda_envs)
+
         if not conda_envs:
             logger.info(
                 f"No conda envs found at given paths: {', '.join(conda_env_paths)}"
