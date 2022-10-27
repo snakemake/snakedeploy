@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.8.2](https://www.github.com/snakemake/snakedeploy/compare/v0.8.1...v0.8.2) (2022-10-27)
+
+
+### Bug Fixes
+
+* shuffle conda envs before updating (this ensures that running this in a fallible github action cron job still leads to updating all envs from time to time) ([#46](https://www.github.com/snakemake/snakedeploy/issues/46)) ([c6dad58](https://www.github.com/snakemake/snakedeploy/commit/c6dad5819742a7fa84687e2f532224980de7e2b1))
+* various robustness improvements for conda env update mechanism ([#44](https://www.github.com/snakemake/snakedeploy/issues/44)) ([491c390](https://www.github.com/snakemake/snakedeploy/commit/491c390621ffdbf7f0844767d40584c73e65ce83))
+
 ### [0.8.1](https://www.github.com/snakemake/snakedeploy/compare/v0.8.0...v0.8.1) (2022-10-12)
 
 
