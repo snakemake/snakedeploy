@@ -157,9 +157,9 @@ def get_parser():
         "--create-prs",
         action="store_true",
         help="Create pull request for each updated environment. "
-        "Requires GITHUB_TOKEN and GITHUB_REPOSITORY (the repo name) and GITHUB_BASE_REF "
-        "(the default branch, e.g. main or master) environment "
-        "variables to be set (the latter two are available when running as github action). "
+        "Requires GITHUB_TOKEN and GITHUB_REPOSITORY (the repo name) and one of GITHUB_REF_NAME or GITHUB_BASE_REF "
+        "(preferring the latter, representing the target branch, e.g. main or master) environment "
+        "variables to be set (the latter three are available when running as github action). "
         "In order to enable further actions (e.g. checks) to run on the generated PRs, the "
         "provided GITHUB_TOKEN may not be the default github actions token. See here for "
         "options: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs.",
@@ -174,6 +174,11 @@ def get_parser():
         "--pr-add-label",
         action="store_true",
         help="Add a label to the PR. Has to be used in combination with --entity-regex.",
+    )
+    update_conda_envs.add_argument(
+        "--warn-on-error",
+        action="store_true",
+        help="Only warn if conda env evaluation fails and go on with the other envs.",
     )
 
     update_snakemake_wrappers = subparsers.add_parser(
@@ -252,6 +257,7 @@ def main():
                 pin_envs=args.pin_envs,
                 entity_regex=args.entity_regex,
                 pr_add_label=args.pr_add_label,
+                warn_on_error=args.warn_on_error,
             )
         elif args.subcommand == "update-snakemake-wrappers":
             update_snakemake_wrappers(args.snakefiles, git_ref=args.git_ref)

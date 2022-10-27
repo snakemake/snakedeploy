@@ -8,9 +8,12 @@ import tempfile
 import re
 from glob import glob
 from itertools import chain
+from urllib3.util.retry import Retry
 
+from packaging import version as packaging_version
 import yaml
 from github import Github, GithubException
+from reretry import retry
 
 from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
@@ -32,6 +35,7 @@ def update_conda_envs(
     pin_envs=False,
     pr_add_label=False,
     entity_regex=None,
+    warn_on_error=False,
 ):
     """Update the given conda env definitions such that all dependencies
     in them are set to the latest feasible versions."""
@@ -42,6 +46,7 @@ def update_conda_envs(
         pin_envs=pin_envs,
         pr_add_label=pr_add_label,
         entity_regex=entity_regex,
+        warn_on_error=warn_on_error,
     )
 
 
@@ -68,12 +73,23 @@ class CondaEnvProcessor:
         pin_envs=True,
         pr_add_label=False,
         entity_regex=None,
+        warn_on_error=False,
     ):
         repo = None
         if create_prs:
-            g = Github(os.environ["GITHUB_TOKEN"])
+            g = Github(
+                os.environ["GITHUB_TOKEN"],
+                retry=Retry(
+                    total=10, status_forcelist=(500, 502, 504), backoff_factor=0.3
+                ),
+            )
             repo = g.get_repo(os.environ["GITHUB_REPOSITORY"]) if create_prs else None
-        for conda_env_path in chain.from_iterable(map(glob, conda_env_paths)):
+        conda_envs = list(chain.from_iterable(map(glob, conda_env_paths)))
+        if not conda_envs:
+            logger.info(
+                f"No conda envs found at given paths: {', '.join(conda_env_paths)}"
+            )
+        for conda_env_path in conda_envs:
             if create_prs:
                 if not update_envs:
                     raise UserError(
@@ -109,14 +125,18 @@ class CondaEnvProcessor:
                 updated = False
                 if update_envs:
                     logger.info(f"Updating {conda_env_path}...")
-                    updated = self.update_env(conda_env_path, pr)
+                    updated = self.update_env(
+                        conda_env_path, pr=pr, warn_on_error=warn_on_error
+                    )
                 if pin_envs and (not update_envs or updated):
                     logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(conda_env_path, pr)
             except sp.CalledProcessError as e:
-                raise UserError(
-                    f"Failed for conda env {conda_env_path}:" "\n" f"{e.stderr}"
-                )
+                msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
+                if warn_on_error:
+                    logger.warning(msg)
+                else:
+                    raise UserError(msg)
             if create_prs:
                 pr.create()
 
@@ -124,6 +144,7 @@ class CondaEnvProcessor:
         self,
         conda_env_path,
         pr=None,
+        warn_on_error=False,
     ):
         spec_re = re.compile("(?P<name>[^=>< ]+)[ =><]+")
         with open(conda_env_path, "r") as infile:
@@ -142,24 +163,57 @@ class CondaEnvProcessor:
 
             return [process_dependency(dep) for dep in conda_env["dependencies"]]
 
+        def get_pkg_versions(conda_env_path):
+            with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
+                self.exec_conda(f"env create --file {conda_env_path} --prefix {tmpdir}")
+                pkg_versions = {
+                    pkg["name"]: pkg["version"]
+                    for pkg in json.loads(
+                        self.exec_conda(f"list --json --prefix {tmpdir}").stdout
+                    )
+                }
+                self.exec_conda(f"env remove --prefix {tmpdir}")
+            return pkg_versions
+
+        logger.info("Resolving prior versions...")
+        prior_pkg_versions = get_pkg_versions(conda_env_path)
+
         unconstrained_deps = process_dependencies(lambda name: name)
         unconstrained_env = dict(conda_env)
         unconstrained_env["dependencies"] = unconstrained_deps
+
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml"
-        ) as tmpenv, tempfile.TemporaryDirectory() as tmpdir:
+            mode="w", suffix=".yaml", dir=".", prefix="."
+        ) as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
-            self.exec_conda(f"env create --file {tmpenv.name} --prefix {tmpdir}")
-            pkg_versions = {
-                pkg["name"]: pkg["version"]
-                for pkg in json.loads(self.exec_conda(f"list --json --prefix {tmpdir}"))
-            }
-            self.exec_conda(f"env remove --prefix {tmpdir}")
+            logger.info("Resolving posterior versions...")
+            posterior_pkg_versions = get_pkg_versions(tmpenv.name)
+
+        def downgraded():
+            for pkg_name, version in posterior_pkg_versions.items():
+                version = packaging_version.parse(version)
+                prior_version = prior_pkg_versions.get(pkg_name)
+                if prior_version is not None and version < packaging_version.parse(
+                    prior_version
+                ):
+                    yield pkg_name
+
+        downgraded = list(downgraded())
+        if downgraded:
+            msg = (
+                f"Env {conda_env_path} could not be updated because the following packages "
+                f"would be downgraded: {', '.join(downgraded)}. Please consider a manual update "
+                "of the environment."
+            )
+            if warn_on_error:
+                logger.warning(msg)
+            else:
+                raise UserError(msg)
 
         orig_env = copy.deepcopy(conda_env)
 
         conda_env["dependencies"] = process_dependencies(
-            lambda name: f"{name} ={pkg_versions[name]}"
+            lambda name: f"{name} ={posterior_pkg_versions[name]}"
         )
         if orig_env != conda_env:
             with open(conda_env_path, "w") as outfile:
@@ -187,7 +241,7 @@ class CondaEnvProcessor:
             with open(pin_file, "r") as infile:
                 old_content = infile.read()
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
             self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
             self.exec_conda(
                 f"list --explicit --md5 --prefix {tmpdir} > {tmpdir}/pin.txt"
@@ -213,11 +267,13 @@ class CondaEnvProcessor:
             self.exec_conda(f"env remove --prefix {tmpdir}")
 
     def exec_conda(self, subcmd):
-        return sp.check_output(
+        return sp.run(
             f"{self.conda_frontend} {subcmd}",
             shell=True,
             stderr=sp.PIPE,
+            stdout=sp.PIPE,
             universal_newlines=True,
+            check=True,
         )
 
 
@@ -228,12 +284,15 @@ class PR:
         self.files = []
         self.branch = branch
         self.repo = repo
-        self.base_ref = os.environ["GITHUB_BASE_REF"]
+        self.base_ref = (
+            os.environ.get("GITHUB_BASE_REF") or os.environ["GITHUB_REF_NAME"]
+        )
         self.label = label
 
     def add_file(self, filepath, content, is_updated, msg):
         self.files.append(File(filepath, content, is_updated, msg))
 
+    @retry(tries=2, delay=60)
     def create(self):
         if not self.files:
             logger.info("No files to commit.")

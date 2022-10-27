@@ -1,4 +1,4 @@
 channels:
   - conda-forge
 dependencies:
-  - ripgrep =12.0.0
+  - ripgrep =12
