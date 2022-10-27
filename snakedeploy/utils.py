@@ -6,8 +6,6 @@ __license__ = "MPL 2.0"
 
 import subprocess
 import sys
-import os
-import tempfile
 
 import yaml
 
