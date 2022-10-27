@@ -9,6 +9,7 @@ import re
 from glob import glob
 from itertools import chain
 from urllib3.util.retry import Retry
+import random
 
 from packaging import version as packaging_version
 import yaml
@@ -85,6 +86,8 @@ class CondaEnvProcessor:
             )
             repo = g.get_repo(os.environ["GITHUB_REPOSITORY"]) if create_prs else None
         conda_envs = list(chain.from_iterable(map(glob, conda_env_paths)))
+        random.shuffle(conda_envs)
+
         if not conda_envs:
             logger.info(
                 f"No conda envs found at given paths: {', '.join(conda_env_paths)}"
