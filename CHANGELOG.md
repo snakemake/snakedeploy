@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.3](https://www.github.com/snakemake/snakedeploy/compare/v0.8.2...v0.8.3) (2023-01-30)
+
+
+### Bug Fixes
+
+* better error handling when parsing package versions ([#47](https://www.github.com/snakemake/snakedeploy/issues/47)) ([d20ff11](https://www.github.com/snakemake/snakedeploy/commit/d20ff112b7ce858056c5f5111d09f2705b25dced))
+
 ### [0.8.2](https://www.github.com/snakemake/snakedeploy/compare/v0.8.1...v0.8.2) (2022-10-27)
 
 
