@@ -194,7 +194,12 @@ class CondaEnvProcessor:
 
         def downgraded():
             for pkg_name, version in posterior_pkg_versions.items():
-                version = packaging_version.parse(version)
+                try:
+                    version = packaging_version.parse(version)
+                except packaging_version.InvalidVersion as e:
+                    raise UserError(
+                        f"Cannot parse version {version} of package {pkg_name}: {e}"
+                    )
                 prior_version = prior_pkg_versions.get(pkg_name)
                 if prior_version is not None and version < packaging_version.parse(
                     prior_version
@@ -297,6 +302,9 @@ class PR:
 
     @retry(tries=2, delay=60)
     def create(self):
+        import pdb
+
+        pdb.set_trace()
         if not self.files:
             logger.info("No files to commit.")
             return
