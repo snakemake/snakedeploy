@@ -169,17 +169,15 @@ class CondaEnvProcessor:
         def get_pkg_versions(conda_env_path):
             with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
                 self.exec_conda(f"env create --file {conda_env_path} --prefix {tmpdir}")
-                pkg_versions = {
-                    pkg["name"]: pkg["version"]
-                    for pkg in json.loads(
-                        self.exec_conda(f"list --json --prefix {tmpdir}").stdout
-                    )
-                }
+                results = json.loads(
+                    self.exec_conda(f"list --json --prefix {tmpdir}").stdout
+                )
+                pkg_versions = {pkg["name"]: pkg["version"] for pkg in results}
                 self.exec_conda(f"env remove --prefix {tmpdir}")
-            return pkg_versions
+            return pkg_versions, results
 
         logger.info("Resolving prior versions...")
-        prior_pkg_versions = get_pkg_versions(conda_env_path)
+        prior_pkg_versions, _ = get_pkg_versions(conda_env_path)
 
         unconstrained_deps = process_dependencies(lambda name: name)
         unconstrained_env = dict(conda_env)
@@ -190,13 +188,14 @@ class CondaEnvProcessor:
         ) as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
             logger.info("Resolving posterior versions...")
-            posterior_pkg_versions = get_pkg_versions(tmpenv.name)
+            posterior_pkg_versions, posterior_pkg_json = get_pkg_versions(tmpenv.name)
 
         def downgraded():
             for pkg_name, version in posterior_pkg_versions.items():
                 try:
                     version = packaging_version.parse(version)
                 except packaging_version.InvalidVersion as e:
+                    logger.debug(json.dumps(posterior_pkg_json, indent=2))
                     raise UserError(
                         f"Cannot parse version {version} of package {pkg_name}: {e}"
                     )
