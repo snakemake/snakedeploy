@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.4](https://www.github.com/snakemake/snakedeploy/compare/v0.8.3...v0.8.4) (2023-02-01)
+
+
+### Bug Fixes
+
+* add debugging code for conda env update subcommand ([#50](https://www.github.com/snakemake/snakedeploy/issues/50)) ([0ba8e30](https://www.github.com/snakemake/snakedeploy/commit/0ba8e3024504601793931323599eebe4a95b7d55))
+
 ### [0.8.3](https://www.github.com/snakemake/snakedeploy/compare/v0.8.2...v0.8.3) (2023-01-30)
 
 
