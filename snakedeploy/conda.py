@@ -172,10 +172,7 @@ class CondaEnvProcessor:
                 results = json.loads(
                     self.exec_conda(f"list --json --prefix {tmpdir}").stdout
                 )
-                pkg_versions = {
-                    pkg["name"]: pkg["version"]
-                    for pkg in results
-                }
+                pkg_versions = {pkg["name"]: pkg["version"] for pkg in results}
                 self.exec_conda(f"env remove --prefix {tmpdir}")
             return pkg_versions, results
 
