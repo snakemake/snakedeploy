@@ -8,6 +8,7 @@ __license__ = "MPL 2.0"
 from setuptools import setup, find_packages
 import versioneer
 import os
+import urllib.request
 
 
 def get_lookup():
@@ -65,6 +66,9 @@ with open("README.md") as filey:
 ################################################################################
 
 if __name__ == "__main__":
+
+    # obtain and distribute version parsing from conda
+    urllib.request.urlretrieve("https://github.com/conda/conda/raw/23.1.0/conda/models/version.py", "snakedeploy/conda_version.py")
 
     INSTALL_REQUIRES = get_reqs(lookup)
     TESTS_REQUIRES = get_reqs(lookup, "TESTS_REQUIRES")

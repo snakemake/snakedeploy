@@ -193,14 +193,14 @@ class CondaEnvProcessor:
         def downgraded():
             for pkg_name, version in posterior_pkg_versions.items():
                 try:
-                    version = packaging_version.parse(version)
+                    version = parse_pkg_version(version)
                 except packaging_version.InvalidVersion as e:
                     logger.debug(json.dumps(posterior_pkg_json, indent=2))
                     raise UserError(
                         f"Cannot parse version {version} of package {pkg_name}: {e}"
                     )
                 prior_version = prior_pkg_versions.get(pkg_name)
-                if prior_version is not None and version < packaging_version.parse(
+                if prior_version is not None and version < parse_pkg_version(
                     prior_version
                 ):
                     yield pkg_name
@@ -360,3 +360,8 @@ class PR:
             )
             pr.add_to_labels(self.label)
             logger.info(f"Created PR: {pr.html_url}")
+
+
+def parse_pkg_version(vspec):
+    from conda_version import VersionSpec
+    return VersionSpec(vspec)

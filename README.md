@@ -17,3 +17,4 @@ For getting started and a basic tutorial, see the documentation at
 ## License
 
  * Free software: MPL 2.0 License
+ * `snakedeploy/conda_version.py`: the [source](https://github.com/conda/conda/raw/23.1.0/conda/models/version.py) of this file is distributed under the BSD 3-clause license by Anaconda Inc., and included into snakedeploy upon building this package
