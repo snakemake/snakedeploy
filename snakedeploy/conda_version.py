@@ -3,6 +3,7 @@
 
 # This has been taken from
 # https://github.com/conda/conda/raw/23.1.0/conda/models/version.py
+# and was slightly modified to work with snakedeploys exception handling.
 
 from __future__ import annotations
 
@@ -11,7 +12,7 @@ import operator as op
 import re
 from itertools import zip_longest
 
-from ..exceptions import InvalidVersionSpec
+from snakedeploy.exceptions import InvalidVersionSpec
 
 log = getLogger(__name__)
 

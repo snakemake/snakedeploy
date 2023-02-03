@@ -33,5 +33,12 @@ class UnrecognizedProviderError(ValueError):
         super(UnrecognizedProviderError, self).__init__(*args, **kwargs)
 
 
+class InvalidVersionSpec(ValueError):
+    """Thrown if an invalid version spec is provided"""
+
+    def __init__(self, vspec, message):
+        super().__init__(f"Invalid version spec '{vspec}': {message}")
+
+
 class UserError(ValueError):
     """An error that is presented as simple error message without a stack trace"""
