@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.5](https://www.github.com/snakemake/snakedeploy/compare/v0.8.4...v0.8.5) (2023-02-03)
+
+
+### Bug Fixes
+
+* use conda package version parsing by obtaining conda version spec from github ([#52](https://www.github.com/snakemake/snakedeploy/issues/52)) ([ed821c8](https://www.github.com/snakemake/snakedeploy/commit/ed821c8e61c5ab84191e94ea4ce403200d2aa1fb))
+
 ### [0.8.4](https://www.github.com/snakemake/snakedeploy/compare/v0.8.3...v0.8.4) (2023-02-01)
 
 
