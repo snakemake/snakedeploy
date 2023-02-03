@@ -33,7 +33,6 @@ def run_command(
     environ=None,
     quiet=False,
 ):
-
     """run_command uses subprocess to send a command to the terminal. If
     capture is True, we use the parent stdout, so output is piped to the user.
     This means we don't return the output to parse.
