@@ -7,7 +7,6 @@
 
 from __future__ import annotations
 
-from logging import getLogger
 import operator as op
 import re
 from itertools import zip_longest
