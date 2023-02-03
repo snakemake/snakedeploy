@@ -67,9 +67,6 @@ with open("README.md") as filey:
 
 if __name__ == "__main__":
 
-    # obtain and distribute version parsing from conda
-    urllib.request.urlretrieve("https://github.com/conda/conda/raw/23.1.0/conda/models/version.py", "snakedeploy/conda_version.py")
-
     INSTALL_REQUIRES = get_reqs(lookup)
     TESTS_REQUIRES = get_reqs(lookup, "TESTS_REQUIRES")
     ALL_REQUIRES = get_reqs(lookup, "ALL_REQUIRES")
