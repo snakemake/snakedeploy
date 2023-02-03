@@ -363,6 +363,6 @@ class PR:
 
 
 def parse_pkg_version(vspec):
-    from conda_version import VersionSpec
+    from snakedeploy.conda_version import VersionSpec
 
     return VersionSpec(vspec)

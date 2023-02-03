@@ -13,8 +13,7 @@ import re
 from itertools import zip_longest
 
 from snakedeploy.exceptions import InvalidVersionSpec
-
-log = getLogger(__name__)
+from snakedeploy.logger import logger
 
 
 def normalized_version(version):
@@ -560,7 +559,7 @@ class VersionSpec(BaseSpec, metaclass=SingleStrArgCachingType):
                 elif operator_str == "~=":
                     raise InvalidVersionSpec(vspec_str, "invalid operator with '.*'")
                 else:
-                    log.warning(
+                    logger.warning(
                         "Using .* with relational operator is superfluous and deprecated "
                         "and will be removed in a future version of conda. Your spec was "
                         "{}, but conda is ignoring the .* and treating it as {}".format(
