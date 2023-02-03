@@ -19,6 +19,7 @@ from reretry import retry
 from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
 from snakedeploy.utils import YamlDumper
+from snakedeploy.conda_version import VersionOrder
 
 
 def pin_conda_envs(conda_env_paths: list, conda_frontend="mamba"):
@@ -193,16 +194,14 @@ class CondaEnvProcessor:
         def downgraded():
             for pkg_name, version in posterior_pkg_versions.items():
                 try:
-                    version = packaging_version.parse(version)
+                    version = VersionOrder(version)
                 except packaging_version.InvalidVersion as e:
                     logger.debug(json.dumps(posterior_pkg_json, indent=2))
                     raise UserError(
                         f"Cannot parse version {version} of package {pkg_name}: {e}"
                     )
                 prior_version = prior_pkg_versions.get(pkg_name)
-                if prior_version is not None and version < packaging_version.parse(
-                    prior_version
-                ):
+                if prior_version is not None and version < VersionOrder(prior_version):
                     yield pkg_name
 
         downgraded = list(downgraded())
