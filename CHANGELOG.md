@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.6](https://www.github.com/snakemake/snakedeploy/compare/v0.8.5...v0.8.6) (2023-02-06)
+
+
+### Bug Fixes
+
+* remove accidental debugger invocation ([0e8df29](https://www.github.com/snakemake/snakedeploy/commit/0e8df298f0aa049fdee5d8d403086c57a72bb482))
+
 ### [0.8.5](https://www.github.com/snakemake/snakedeploy/compare/v0.8.4...v0.8.5) (2023-02-03)
 
 
