@@ -300,9 +300,6 @@ class PR:
 
     @retry(tries=2, delay=60)
     def create(self):
-        import pdb
-
-        pdb.set_trace()
         if not self.files:
             logger.info("No files to commit.")
             return
