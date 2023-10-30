@@ -22,11 +22,24 @@ from snakedeploy.utils import YamlDumper
 from snakedeploy.conda_version import VersionOrder
 
 
-def pin_conda_envs(conda_env_paths: list, conda_frontend="mamba"):
+def pin_conda_envs(
+    conda_env_paths: list,
+    conda_frontend="mamba",
+    create_prs=False,
+    pr_add_label=False,
+    entity_regex=None,
+    warn_on_error=False,
+):
     """Pin given conda envs by creating <conda-env>.<platform>.pin.txt
     files with explicit URLs for all packages in each env."""
     return CondaEnvProcessor(conda_frontend=conda_frontend).process(
-        conda_env_paths, create_prs=False, update_envs=False, pin_envs=True
+        conda_env_paths,
+        update_envs=False,
+        pin_envs=True,
+        create_prs=create_prs,
+        pr_add_label=pr_add_label,
+        entity_regex=entity_regex,
+        warn_on_error=warn_on_error,
     )
 
 
@@ -95,10 +108,6 @@ class CondaEnvProcessor:
             )
         for conda_env_path in conda_envs:
             if create_prs:
-                if not update_envs:
-                    raise UserError(
-                        "Creating PRs for only pinning updates is not supported."
-                    )
                 entity = conda_env_path
                 if entity_regex is not None:
                     m = re.match(entity_regex, conda_env_path)
@@ -116,10 +125,15 @@ class CondaEnvProcessor:
                     raise UserError(
                         "Cannot add label to PR without --entity-regex specified."
                     )
+
+                assert (
+                    pin_envs or update_envs
+                ), "bug: either pin_envs or update_envs must be True"
+                mode = "bump" if update_envs else "pin"
                 pr = PR(
-                    f"perf: autobump {entity}",
-                    f"Automatic update of {entity}.",
-                    f"autobump/{entity.replace('/', '-')}",
+                    f"perf: auto{mode} {entity}",
+                    f"Automatic {mode} of {entity}.",
+                    f"auto{mode}/{entity.replace('/', '-')}",
                     repo,
                     label=entity if pr_add_label else None,
                 )
@@ -132,7 +146,11 @@ class CondaEnvProcessor:
                     updated = self.update_env(
                         conda_env_path, pr=pr, warn_on_error=warn_on_error
                     )
-                if pin_envs and (not update_envs or updated):
+                if pin_envs and (
+                    not update_envs
+                    or updated
+                    or not self.get_pin_file_path(conda_env_path).exists()
+                ):
                     logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(conda_env_path, pr)
             except sp.CalledProcessError as e:
@@ -239,8 +257,11 @@ class CondaEnvProcessor:
             logger.info("No updates in env.")
             return False
 
+    def get_pin_file_path(self, conda_env_path):
+        return Path(conda_env_path).with_suffix(f".{self.info['platform']}.pin.txt")
+
     def update_pinning(self, conda_env_path, pr=None):
-        pin_file = Path(conda_env_path).with_suffix(f".{self.info['platform']}.pin.txt")
+        pin_file = self.get_pin_file_path(conda_env_path)
         old_content = None
         updated = False
         if pin_file.exists():

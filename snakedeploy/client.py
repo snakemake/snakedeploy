@@ -133,6 +133,33 @@ def get_parser():
         default="mamba",
         help="Conda frontend to use (default: mamba).",
     )
+    pin_conda_envs.add_argument(
+        "--create-prs",
+        action="store_true",
+        help="Create pull request for each updated environment. "
+        "Requires GITHUB_TOKEN and GITHUB_REPOSITORY (the repo name) and one of GITHUB_REF_NAME or GITHUB_BASE_REF "
+        "(preferring the latter, representing the target branch, e.g. main or master) environment "
+        "variables to be set (the latter three are available when running as github action). "
+        "In order to enable further actions (e.g. checks) to run on the generated PRs, the "
+        "provided GITHUB_TOKEN may not be the default github actions token. See here for "
+        "options: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs.",
+    )
+    pin_conda_envs.add_argument(
+        "--entity-regex",
+        help="Regular expression for deriving an entity name from the environment file name "
+        "(will be used for adding a label and for title and description). Has to contain a group 'entity' "
+        "(e.g. '(?P<entity>.+)/environment.yaml').",
+    )
+    pin_conda_envs.add_argument(
+        "--pr-add-label",
+        action="store_true",
+        help="Add a label to the PR. Has to be used in combination with --entity-regex.",
+    )
+    pin_conda_envs.add_argument(
+        "--warn-on-error",
+        action="store_true",
+        help="Only warn if conda env evaluation fails and go on with the other envs.",
+    )
 
     update_conda_envs = subparsers.add_parser(
         "update-conda-envs",
@@ -248,6 +275,10 @@ def main():
             pin_conda_envs(
                 args.envfiles,
                 conda_frontend=args.conda_frontend,
+                create_prs=args.create_prs,
+                entity_regex=args.entity_regex,
+                pr_add_label=args.pr_add_label,
+                warn_on_error=args.warn_on_error,
             )
         elif args.subcommand == "update-conda-envs":
             update_conda_envs(
