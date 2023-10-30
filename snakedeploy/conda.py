@@ -296,7 +296,7 @@ class PR:
         self.label = label
 
     def add_file(self, filepath, content, is_updated, msg):
-        self.files.append(File(filepath, content, is_updated, msg))
+        self.files.append(File(str(filepath), content, is_updated, msg))
 
     @retry(tries=2, delay=60)
     def create(self):
