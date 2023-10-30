@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://www.github.com/snakemake/snakedeploy/compare/v0.8.6...v0.9.0) (2023-10-30)
+
+
+### Features
+
+* add PR creation to pin-conda-envs ([58ce050](https://www.github.com/snakemake/snakedeploy/commit/58ce05026cc33941203d1449babf58f92df18738))
+
+
+### Bug Fixes
+
+* convert filepath to str ([4ba5cbc](https://www.github.com/snakemake/snakedeploy/commit/4ba5cbc52d4cf0a6d4273d95e223e7b78bbfd581))
+
 ### [0.8.6](https://www.github.com/snakemake/snakedeploy/compare/v0.8.5...v0.8.6) (2023-02-06)
 
 
