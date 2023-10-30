@@ -25,7 +25,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: '3.9'
       
       - name: Build package
         if: ${{ steps.release.outputs.release_created }}
