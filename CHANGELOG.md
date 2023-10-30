@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.9.1](https://www.github.com/snakemake/snakedeploy/compare/v0.9.0...v0.9.1) (2023-10-30)
+
+
+### Bug Fixes
+
+* fix release process ([422b22d](https://www.github.com/snakemake/snakedeploy/commit/422b22d14af7ff7f22bb297277105e59f1f9ada6))
+
 ## [0.9.0](https://www.github.com/snakemake/snakedeploy/compare/v0.8.6...v0.9.0) (2023-10-30)
 
 
