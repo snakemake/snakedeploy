@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.9.2](https://www.github.com/snakemake/snakedeploy/compare/v0.9.1...v0.9.2) (2024-02-28)
+
+
+### Bug Fixes
+
+* type annotations ([81948e0](https://www.github.com/snakemake/snakedeploy/commit/81948e015f9bbec22788c38b2bfa179624fa0ad8))
+
 ### [0.9.1](https://www.github.com/snakemake/snakedeploy/compare/v0.9.0...v0.9.1) (2023-10-30)
 
 
