@@ -2,6 +2,7 @@ import tempfile
 from pathlib import Path
 import os
 import shutil
+from typing import Optional
 
 from jinja2 import Environment, PackageLoader
 
@@ -127,7 +128,12 @@ class WorkflowDeployer:
 
 
 def deploy(
-    source_url: str, name: str, tag: str, branch: str, dest_path: Path, force=False
+    source_url: str,
+    name: Optional[str],
+    tag: Optional[str],
+    branch: Optional[str],
+    dest_path: Path,
+    force=False,
 ):
     """
     Deploy a given workflow to the local machine, using the Snakemake module system.
