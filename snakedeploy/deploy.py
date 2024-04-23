@@ -2,9 +2,10 @@ import tempfile
 from pathlib import Path
 import os
 import shutil
-from typing import Optional
+from typing import Dict, Optional
 
 from jinja2 import Environment, PackageLoader
+import yaml
 
 from snakedeploy.providers import get_provider
 from snakedeploy.logger import logger
@@ -12,11 +13,20 @@ from snakedeploy.exceptions import UserError
 
 
 class WorkflowDeployer:
-    def __init__(self, source: str, dest: Path, force=False):
+    def __init__(self, source: str, dest: Path, tag: Optional[str] = None, branch: Optional[str] = None, force=False):
         self.provider = get_provider(source)
         self.env = Environment(loader=PackageLoader("snakedeploy"))
         self.dest_path = dest
         self.force = force
+        self._cloned = None
+        self.tag = tag
+        self.branch = branch
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc, value, tb):
+        self._cloned.cleanup()
 
     @property
     def snakefile(self):
@@ -26,14 +36,14 @@ class WorkflowDeployer:
     def config(self):
         return self.dest_path / "config"
 
-    def deploy_config(self, tmpdir: str):
+    def deploy_config(self):
         """
         Deploy the config directory, either using an existing or creating a dummy.
 
         returns a boolean "no_config" to indicate if there is not a config (True)
         """
         # Handle the config/
-        config_dir = Path(tmpdir) / "config"
+        config_dir = Path(self.repo_clone.name) / "config"
         no_config = not config_dir.exists()
         if no_config:
             logger.warning(
@@ -52,25 +62,31 @@ class WorkflowDeployer:
             logger.info("Writing template configuration...")
             shutil.copytree(config_dir, self.config, dirs_exist_ok=self.force)
         return no_config
+    
+    @property
+    def repo_clone(self):
+        if self._cloned is None:
+            logger.info("Obtaining source repository...")
+            self._cloned = tempfile.TemporaryDirectory()
+            self.provider.clone(self._cloned.name)
+            if self.tag is not None:
+                self.provider.checkout(self._cloned.name, self.tag)
+            elif self.branch is not None:
+                self.provider.checkout(self._cloned.name, self.branch)
 
-    def deploy(self, name: str, tag: str, branch: str):
+        return self._cloned.name
+
+    def deploy(self, name: str):
         """
         Deploy a source to a destination.
         """
         self.check()
 
-        # Create a temporary directory to grab config directory and snakefile
-        with tempfile.TemporaryDirectory() as tmpdir:
-            logger.info("Obtaining source repository...")
+        # Either copy existing config or create a dummy config
+        no_config = self.deploy_config()
 
-            # Clone temporary directory to find assets
-            self.provider.clone(tmpdir)
-
-            # Either copy existing config or create a dummy config
-            no_config = self.deploy_config(tmpdir)
-
-            # Inspect repository to find existing snakefile
-            self.deploy_snakefile(tmpdir, name, tag, branch)
+        # Inspect repository to find existing snakefile
+        self.deploy_snakefile(self.repo_clone, name)
 
         logger.info(
             self.env.get_template("post-instructions.txt.jinja").render(
@@ -92,7 +108,7 @@ class WorkflowDeployer:
                 f"{self.config} already exists, aborting (use --force to overwrite)"
             )
 
-    def deploy_snakefile(self, tmpdir: str, name: str, tag: str, branch: str):
+    def deploy_snakefile(self, tmpdir: str, name: str):
         """
         Deploy the Snakefile to workflow/Snakefile
         """
@@ -120,11 +136,22 @@ class WorkflowDeployer:
         os.makedirs(self.dest_path / "workflow", exist_ok=True)
         module_deployment = template.render(
             name=name,
-            snakefile=self.provider.get_source_file_declaration(snakefile, tag, branch),
+            snakefile=self.provider.get_source_file_declaration(snakefile, self.tag, self.branch),
             repo=self.provider.source_url,
         )
         with open(self.snakefile, "w") as f:
             print(module_deployment, file=f)
+
+    def get_json_schema(self, item: str) -> Dict:
+        """Get schema under workflow/schemas/{item}.schema.{yaml|yml|json} as 
+        python dict."""
+        clone = Path(self.repo_clone)
+        for ext in ["yaml", "yml", "json"]:
+            path = clone / "workflow" / "schemas" / f"{item}.schema.{ext}"
+            if path.exists():
+                return yaml.safe_load(path.read_text())
+        raise UserError(f"Schema {item} not found in repository.")
+        
 
 
 def deploy(
@@ -138,5 +165,5 @@ def deploy(
     """
     Deploy a given workflow to the local machine, using the Snakemake module system.
     """
-    sd = WorkflowDeployer(source=source_url, dest=dest_path, force=force)
-    sd.deploy(name=name, tag=tag, branch=branch)
+    with WorkflowDeployer(source=source_url, dest=dest_path, tag=tag, branch=branch, force=force) as sd:
+        sd.deploy(name=name)
