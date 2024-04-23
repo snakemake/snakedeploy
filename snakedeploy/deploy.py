@@ -13,7 +13,14 @@ from snakedeploy.exceptions import UserError
 
 
 class WorkflowDeployer:
-    def __init__(self, source: str, dest: Path, tag: Optional[str] = None, branch: Optional[str] = None, force=False):
+    def __init__(
+        self,
+        source: str,
+        dest: Path,
+        tag: Optional[str] = None,
+        branch: Optional[str] = None,
+        force=False,
+    ):
         self.provider = get_provider(source)
         self.env = Environment(loader=PackageLoader("snakedeploy"))
         self.dest_path = dest
@@ -62,7 +69,7 @@ class WorkflowDeployer:
             logger.info("Writing template configuration...")
             shutil.copytree(config_dir, self.config, dirs_exist_ok=self.force)
         return no_config
-    
+
     @property
     def repo_clone(self):
         if self._cloned is None:
@@ -136,14 +143,16 @@ class WorkflowDeployer:
         os.makedirs(self.dest_path / "workflow", exist_ok=True)
         module_deployment = template.render(
             name=name,
-            snakefile=self.provider.get_source_file_declaration(snakefile, self.tag, self.branch),
+            snakefile=self.provider.get_source_file_declaration(
+                snakefile, self.tag, self.branch
+            ),
             repo=self.provider.source_url,
         )
         with open(self.snakefile, "w") as f:
             print(module_deployment, file=f)
 
     def get_json_schema(self, item: str) -> Dict:
-        """Get schema under workflow/schemas/{item}.schema.{yaml|yml|json} as 
+        """Get schema under workflow/schemas/{item}.schema.{yaml|yml|json} as
         python dict."""
         clone = Path(self.repo_clone)
         for ext in ["yaml", "yml", "json"]:
@@ -151,7 +160,6 @@ class WorkflowDeployer:
             if path.exists():
                 return yaml.safe_load(path.read_text())
         raise UserError(f"Schema {item} not found in repository.")
-        
 
 
 def deploy(
@@ -165,5 +173,7 @@ def deploy(
     """
     Deploy a given workflow to the local machine, using the Snakemake module system.
     """
-    with WorkflowDeployer(source=source_url, dest=dest_path, tag=tag, branch=branch, force=force) as sd:
+    with WorkflowDeployer(
+        source=source_url, dest=dest_path, tag=tag, branch=branch, force=force
+    ) as sd:
         sd.deploy(name=name)
