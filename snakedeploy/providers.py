@@ -31,15 +31,19 @@ class Provider(ABC):
     @classmethod
     @abstractmethod
     def matches(cls, source_url: str):
-        pass
+        ...
 
     @abstractmethod
     def clone(self, path: str):
-        pass
+        ...
+
+    @abstractmethod
+    def checkout(self, path: str, ref: str):
+        ...
 
     @abstractmethod
     def get_raw_file(self, path: str, tag: str):
-        pass
+        ...
 
     def get_repo_name(self):
         return self.source_url.split("/")[-1]
@@ -55,6 +59,10 @@ class Local(Provider):
         A local "clone" means moving files.
         """
         copy_tree(self.source_url, tmpdir)
+
+    def checkout(self, path: str, ref: str):
+        # Local repositories don't need to check out anything
+        pass
 
     def get_raw_file(self, path: str, tag: str):
         if tag:
@@ -77,14 +85,20 @@ class Github(Provider):
     def name(self):
         return self.__class__.__name__.lower()
 
-    def clone(self, tmpdir: str):
+    def clone(self, path: str):
         """
         Clone the known source URL to a temporary directory
         """
         try:
-            sp.run(["git", "clone", self.source_url, "."], cwd=tmpdir, check=True)
+            sp.run(["git", "clone", self.source_url, "."], cwd=path, check=True)
         except sp.CalledProcessError as e:
             raise UserError("Failed to clone repository {}:\n{}", self.source_url, e)
+
+    def checkout(self, path: str, ref: str):
+        try:
+            sp.run(["git", "checkout", ref], cwd=path, check=True)
+        except sp.CalledProcessError as e:
+            raise UserError("Failed to checkout ref {}:\n{}", ref, e)
 
     def get_raw_file(self, path: str, tag: str):
         return f"{self.source_url}/raw/{tag}/{path}"
@@ -98,7 +112,6 @@ class Github(Provider):
 
 
 class Gitlab(Github):
-    @classmethod
     def get_raw_file(self, path: str, tag: str):
         return f"{self.source_url}/-/raw/{tag}/{path}"
 
