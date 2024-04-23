@@ -50,7 +50,7 @@ class WorkflowDeployer:
         returns a boolean "no_config" to indicate if there is not a config (True)
         """
         # Handle the config/
-        config_dir = Path(self.repo_clone.name) / "config"
+        config_dir = Path(self.repo_clone) / "config"
         no_config = not config_dir.exists()
         if no_config:
             logger.warning(
