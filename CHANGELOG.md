@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://www.github.com/snakemake/snakedeploy/compare/v0.9.1...v0.10.0) (2024-04-24)
+
+
+### Features
+
+* add method to obtain schemas from workflow repo ([#60](https://www.github.com/snakemake/snakedeploy/issues/60)) ([2834e39](https://www.github.com/snakemake/snakedeploy/commit/2834e3911e970ddd56c88d1614fe525acb448191))
+
+
+### Bug Fixes
+
+* type annotations ([81948e0](https://www.github.com/snakemake/snakedeploy/commit/81948e015f9bbec22788c38b2bfa179624fa0ad8))
+
 ### [0.9.1](https://www.github.com/snakemake/snakedeploy/compare/v0.9.0...v0.9.1) (2023-10-30)
 
 
