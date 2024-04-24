@@ -151,7 +151,7 @@ class WorkflowDeployer:
         with open(self.snakefile, "w") as f:
             print(module_deployment, file=f)
 
-    def get_json_schema(self, item: str) -> Dict:
+    def get_json_schema(self, item: str) -> Optional[Dict]:
         """Get schema under workflow/schemas/{item}.schema.{yaml|yml|json} as
         python dict."""
         clone = Path(self.repo_clone)
@@ -159,7 +159,7 @@ class WorkflowDeployer:
             path = clone / "workflow" / "schemas" / f"{item}.schema.{ext}"
             if path.exists():
                 return yaml.safe_load(path.read_text())
-        raise UserError(f"Schema {item} not found in repository.")
+        return None
 
 
 def deploy(
