@@ -222,7 +222,7 @@ class CondaEnvProcessor:
                 if prior_version is not None and version < VersionOrder(prior_version):
                     yield pkg_name
 
-        downgraded = list(downgraded())
+        downgraded = set(unconstrained_deps) & set(downgraded()) 
         if downgraded:
             msg = (
                 f"Env {conda_env_path} could not be updated because the following packages "
