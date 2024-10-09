@@ -223,7 +223,7 @@ class CondaEnvProcessor:
                 if prior_version is not None and version < VersionOrder(prior_version):
                     yield pkg_name
 
-        downgraded = set(unconstrained_deps) & set(downgraded()) 
+        downgraded = set(unconstrained_deps) & set(downgraded())
         if downgraded:
             msg = (
                 f"Env {conda_env_path} could not be updated because the following packages "
@@ -343,9 +343,7 @@ class PR:
         for file in self.files:
             sha = None
             if branch_exists:
-                logger.info(
-                    f"Obtaining sha of {file.path} on branch {self.branch}..."
-                )
+                logger.info(f"Obtaining sha of {file.path} on branch {self.branch}...")
                 try:
                     # try to get sha if file exists
                     sha = self.repo.get_contents(file.path, self.branch).sha
