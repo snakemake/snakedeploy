@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.10.1](https://www.github.com/snakemake/snakedeploy/compare/v0.10.0...v0.10.1) (2024-10-09)
+
+
+### Bug Fixes
+
+* only consider specified packages when stopping because of downgrading ([#65](https://www.github.com/snakemake/snakedeploy/issues/65)) ([2aa3f82](https://www.github.com/snakemake/snakedeploy/commit/2aa3f82bb44b91dd6288f88226ffdac28d4fcf78))
+
 ## [0.10.0](https://www.github.com/snakemake/snakedeploy/compare/v0.9.1...v0.10.0) (2024-04-24)
 
 
