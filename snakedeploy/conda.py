@@ -8,6 +8,7 @@ import tempfile
 import re
 from glob import glob
 from itertools import chain
+import github
 from urllib3.util.retry import Retry
 import random
 
@@ -222,7 +223,7 @@ class CondaEnvProcessor:
                 if prior_version is not None and version < VersionOrder(prior_version):
                     yield pkg_name
 
-        downgraded = list(downgraded())
+        downgraded = set(unconstrained_deps) & set(downgraded())
         if downgraded:
             msg = (
                 f"Env {conda_env_path} could not be updated because the following packages "
@@ -338,19 +339,24 @@ class PR:
                 ref=f"refs/heads/{self.branch}",
                 sha=self.repo.get_branch(self.base_ref).commit.sha,
             )
+        breakpoint()
         for file in self.files:
-            if file.is_updated:
-                sha = None
-                if branch_exists:
-                    logger.info(
-                        f"Obtaining sha of {file.path} on branch {self.branch}..."
-                    )
+            sha = None
+            if branch_exists:
+                logger.info(f"Obtaining sha of {file.path} on branch {self.branch}...")
+                try:
+                    # try to get sha if file exists
                     sha = self.repo.get_contents(file.path, self.branch).sha
-                else:
-                    logger.info(
-                        f"Obtaining sha of {file.path} on branch {self.base_ref}..."
-                    )
-                    sha = self.repo.get_contents(file.path, self.base_ref).sha
+                except github.GithubException.UnknownObjectException as e:
+                    if e.status != 404:
+                        raise e
+            elif file.is_updated:
+                logger.info(
+                    f"Obtaining sha of {file.path} on branch {self.base_ref}..."
+                )
+                sha = self.repo.get_contents(file.path, self.base_ref).sha
+
+            if sha is not None:
                 self.repo.update_file(
                     file.path,
                     file.msg,
@@ -362,6 +368,7 @@ class PR:
                 self.repo.create_file(
                     file.path, file.msg, file.content, branch=self.branch
                 )
+
         pr_exists = any(
             pr.head.label.split(":", 1)[1] == self.branch
             for pr in self.repo.get_pulls(state="open", base=self.base_ref)
