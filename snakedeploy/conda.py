@@ -193,7 +193,7 @@ class CondaEnvProcessor:
                     self.exec_conda(f"list --json --prefix {tmpdir}").stdout
                 )
                 pkg_versions = {pkg["name"]: pkg["version"] for pkg in results}
-                self.exec_conda(f"env remove --prefix {tmpdir}")
+                self.exec_conda(f"env remove --prefix {tmpdir} -y")
             return pkg_versions, results
 
         logger.info("Resolving prior versions...")
@@ -292,7 +292,7 @@ class CondaEnvProcessor:
                         is_updated=old_content is not None,
                         msg=msg,
                     )
-            self.exec_conda(f"env remove --prefix {tmpdir}")
+            self.exec_conda(f"env remove --prefix {tmpdir} -y")
 
     def exec_conda(self, subcmd):
         return sp.run(
