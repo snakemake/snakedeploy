@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/snakemake/snakedeploy/compare/v0.10.1...v0.10.2) (2024-10-16)
+
+
+### Bug Fixes
+
+* Fix snakedeploy hanging forever ([#67](https://github.com/snakemake/snakedeploy/issues/67)) ([f6d1ce5](https://github.com/snakemake/snakedeploy/commit/f6d1ce55cfd21d5362307881c08b22ab09aa57f9))
+
 ### [0.10.1](https://www.github.com/snakemake/snakedeploy/compare/v0.10.0...v0.10.1) (2024-10-09)
 
 
