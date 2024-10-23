@@ -339,7 +339,6 @@ class PR:
                 ref=f"refs/heads/{self.branch}",
                 sha=self.repo.get_branch(self.base_ref).commit.sha,
             )
-        breakpoint()
         for file in self.files:
             sha = None
             if branch_exists:
