@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.3](https://github.com/snakemake/snakedeploy/compare/v0.10.2...v0.10.3) (2024-10-23)
+
+
+### Bug Fixes
+
+* remove dbg code ([575be43](https://github.com/snakemake/snakedeploy/commit/575be4385ec6a412161c56535cf8eeb71f4e21d6))
+
 ## [0.10.2](https://github.com/snakemake/snakedeploy/compare/v0.10.1...v0.10.2) (2024-10-16)
 
 
