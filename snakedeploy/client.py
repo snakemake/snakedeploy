@@ -129,9 +129,9 @@ def get_parser():
     )
     pin_conda_envs.add_argument(
         "--conda-frontend",
-        choices=["mamba", "conda"],
-        default="mamba",
-        help="Conda frontend to use (default: mamba).",
+        choices=["conda", "mamba"],
+        default="conda",
+        help="Conda frontend to use (default: conda).",
     )
     pin_conda_envs.add_argument(
         "--create-prs",
