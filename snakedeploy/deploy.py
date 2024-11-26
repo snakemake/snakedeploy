@@ -70,6 +70,21 @@ class WorkflowDeployer:
             shutil.copytree(config_dir, self.config, dirs_exist_ok=self.force)
         return no_config
 
+    def deploy_schemas(self):
+        """
+        Deploy the schemas directory.
+        """
+        schema_dir = Path(self.repo_clone) / "workflow" / "schemas"
+        dest_dir = self.dest_path / "workflow" / "schemas"
+        if not schema_dir.exists():
+            logger.warning("No schemas directory found...")
+        else:
+            logger.info("Writing schemas...")
+            shutil.copytree(
+                schema_dir,
+                dest_dir,
+            )
+
     @property
     def repo_clone(self):
         if self._cloned is None:
@@ -83,7 +98,7 @@ class WorkflowDeployer:
 
         return self._cloned.name
 
-    def deploy(self, name: str):
+    def deploy(self, name: str, schemas: bool = False):
         """
         Deploy a source to a destination.
         """
@@ -94,6 +109,9 @@ class WorkflowDeployer:
 
         # Inspect repository to find existing snakefile
         self.deploy_snakefile(self.repo_clone, name)
+
+        if schemas:
+            self.deploy_schemas()
 
         logger.info(
             self.env.get_template("post-instructions.txt.jinja").render(
