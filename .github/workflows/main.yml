@@ -5,13 +5,13 @@ on:
     branches:
       - main
   pull_request:
-    branches_ignore: []
+    branches-ignore: []
 
 jobs:
   code-quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup environments
         run: |
@@ -39,11 +39,11 @@ jobs:
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup test environment
         run: |
