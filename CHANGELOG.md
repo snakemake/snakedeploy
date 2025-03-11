@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.4](https://github.com/snakemake/snakedeploy/compare/v0.10.3...v0.10.4) (2025-03-11)
+
+
+### Bug Fixes
+
+* get release-please to work again, by removing package-name entry ([#77](https://github.com/snakemake/snakedeploy/issues/77)) ([44a46ed](https://github.com/snakemake/snakedeploy/commit/44a46ed495e3848b7971c3c0cf4517b4b1382a6a))
+
 ## [0.10.3](https://github.com/snakemake/snakedeploy/compare/v0.10.2...v0.10.3) (2024-10-23)
 
 
