@@ -14,7 +14,6 @@ jobs:
         id: release
         with:
           release-type: python
-          package-name: snakedeploy
 
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
