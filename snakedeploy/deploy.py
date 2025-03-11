@@ -43,7 +43,7 @@ class WorkflowDeployer:
     @property
     def config(self):
         return self.dest_path / "config"
-    
+
     @property
     def profile(self):
         return self.dest_path / "profile"
@@ -102,9 +102,16 @@ class WorkflowDeployer:
         returns a boolean "no_license" to indicate if there is no license (True)
         """
         # List possible license file names and extensions
-        license_variants = ["license*", "License*", "LICENSE*", "licence*", "Licence*", "LICENCE*"]
-        licenses = [] # licenses found
-    
+        license_variants = [
+            "license*",
+            "License*",
+            "LICENSE*",
+            "licence*",
+            "Licence*",
+            "LICENCE*",
+        ]
+        licenses = []  # licenses found
+
         # Iterate over the variants and check if a license file exists in the directory
         for variant in license_variants:
             # Use glob to match files with any extension
@@ -148,10 +155,10 @@ class WorkflowDeployer:
         no_config = self.deploy_config()
 
         # Copy profile directory if it exists, see issue #64
-        no_profile = self.deploy_profile()
+        self.deploy_profile()
 
         # Copy license if it exists
-        no_license = self.deploy_license()
+        self.deploy_license()
 
         # Inspect repository to find existing snakefile
         self.deploy_snakefile(self.repo_clone, name)
@@ -175,7 +182,7 @@ class WorkflowDeployer:
             raise UserError(
                 f"{self.config} already exists, aborting (use --force to overwrite)"
             )
-        
+
         if self.profile.exists() and not self.force:
             raise UserError(
                 f"{self.profile} already exists, aborting (use --force to overwrite)"
