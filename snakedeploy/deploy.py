@@ -45,8 +45,8 @@ class WorkflowDeployer:
         return self.dest_path / "config"
 
     @property
-    def profile(self):
-        return self.dest_path / "profile"
+    def profiles(self):
+        return self.dest_path / "profiles"
 
     def deploy_config(self):
         """
@@ -82,7 +82,7 @@ class WorkflowDeployer:
         returns a boolean "no_profile" to indicate if there is not a profile (True)
         """
         # Handle the profile/
-        profile_dir = Path(self.repo_clone) / "profile"
+        profile_dir = Path(self.repo_clone) / "profiles"
         no_profile = not profile_dir.exists()
         if no_profile:
             logger.warning(
@@ -183,9 +183,9 @@ class WorkflowDeployer:
                 f"{self.config} already exists, aborting (use --force to overwrite)"
             )
 
-        if self.profile.exists() and not self.force:
+        if self.profiles.exists() and not self.force:
             raise UserError(
-                f"{self.profile} already exists, aborting (use --force to overwrite)"
+                f"{self.profiles} already exists, aborting (use --force to overwrite)"
             )
 
     def deploy_snakefile(self, tmpdir: str, name: str):
