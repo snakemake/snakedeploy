@@ -94,6 +94,7 @@ class WorkflowDeployer:
             logger.info("Writing template profiles")
             shutil.copytree(profile_dir, self.profiles, dirs_exist_ok=self.force)
         return no_profile
+
     def deploy_license(self):
         """
         Deploy the license file if it exists
