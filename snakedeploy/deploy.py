@@ -1,3 +1,4 @@
+import glob
 import tempfile
 from pathlib import Path
 import os
@@ -43,6 +44,10 @@ class WorkflowDeployer:
     def config(self):
         return self.dest_path / "config"
 
+    @property
+    def profiles(self):
+        return self.dest_path / "profiles"
+
     def deploy_config(self):
         """
         Deploy the config directory, either using an existing or creating a dummy.
@@ -70,6 +75,63 @@ class WorkflowDeployer:
             shutil.copytree(config_dir, self.config, dirs_exist_ok=self.force)
         return no_config
 
+    def deploy_profile(self):
+        """
+        Deploy the profile directory if it exists
+
+        returns a boolean "no_profile" to indicate if there is not a profile (True)
+        """
+        # Handle the profile/
+        profile_dir = Path(self.repo_clone) / "profiles"
+        no_profile = not profile_dir.exists()
+        if no_profile:
+            logger.warning(
+                "No profile directory found in source repository. "
+                "Please check whether the source repository really does not "
+                "need or provide any profiles."
+            )
+        else:
+            logger.info("Writing template profiles")
+            shutil.copytree(profile_dir, self.profiles, dirs_exist_ok=self.force)
+        return no_profile
+
+    def deploy_license(self):
+        """
+        Deploy the license file if it exists
+
+        returns a boolean "no_license" to indicate if there is no license (True)
+        """
+        # List possible license file names and extensions
+        license_variants = [
+            "license*",
+            "License*",
+            "LICENSE*",
+            "licence*",
+            "Licence*",
+            "LICENCE*",
+        ]
+        licenses = []  # licenses found
+
+        # Iterate over the variants and check if a license file exists in the directory
+        for variant in license_variants:
+            # Use glob to match files with any extension
+            matching_files = glob.glob(os.path.join(self.repo_clone, variant))
+            if matching_files:
+                licenses.extend(matching_files)
+
+        license_file = Path(licenses[0]) if len(licenses) != 0 else None
+        if license_file is None:
+            no_license = True
+        else:
+            no_license = not license_file.exists()
+
+        if no_license:
+            pass
+        else:
+            logger.info("Writing license")
+            shutil.copy(license_file, self.dest_path)
+        return no_license
+
     @property
     def repo_clone(self):
         if self._cloned is None:
@@ -92,6 +154,12 @@ class WorkflowDeployer:
         # Either copy existing config or create a dummy config
         no_config = self.deploy_config()
 
+        # Copy profile directory if it exists, see issue #64
+        self.deploy_profile()
+
+        # Copy license if it exists
+        self.deploy_license()
+
         # Inspect repository to find existing snakefile
         self.deploy_snakefile(self.repo_clone, name)
 
@@ -113,6 +181,11 @@ class WorkflowDeployer:
         if self.config.exists() and not self.force:
             raise UserError(
                 f"{self.config} already exists, aborting (use --force to overwrite)"
+            )
+
+        if self.profiles.exists() and not self.force:
+            raise UserError(
+                f"{self.profiles} already exists, aborting (use --force to overwrite)"
             )
 
     def deploy_snakefile(self, tmpdir: str, name: str):

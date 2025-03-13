@@ -8,7 +8,6 @@ __license__ = "MPL 2.0"
 from setuptools import setup, find_packages
 import versioneer
 import os
-import urllib.request
 
 
 def get_lookup():

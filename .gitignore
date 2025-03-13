@@ -1,5 +1,6 @@
 snakedeploy.egg-info/
 _build
+build
 .eggs/
 __pycache__
 dist
