@@ -53,6 +53,15 @@ repo="https://github.com/snakemake-workflows/rna-seq-star-deseq2"
 dest=${tmpdir}/use-workflow-as-module
 git clone ${repo} ${local}
 runTest 0 $output snakedeploy deploy-workflow "${local}" ${dest} --tag v1.2.0
+# Assure fix for #80 does not affect previous functionality
+runTest 0 $output grep "config.yaml" ${dest}/workflow/Snakefile
+
+echo
+echo "#### Testing non-default config.yml filename (fixes #80)"
+repo="https://github.com/MPUSP/snakemake-workflow-template"
+dest=${tmpdir}/snakemake-workflow-template
+runTest 0 $output snakedeploy deploy-workflow "${repo}" ${dest} --tag v1.0.0 
+runTest 0 $output grep "config.yml" ${dest}/workflow/Snakefile
 
 echo
 echo "#### Testing snakedeploy update-conda-envs"

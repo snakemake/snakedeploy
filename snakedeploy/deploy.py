@@ -211,6 +211,16 @@ class WorkflowDeployer:
                     "No Snakefile was found at root or in workflow directory."
                 )
 
+        # fixes #80: Also consider config.yml as name for configuration file
+        config_path = Path(tmpdir) / "config" / "config.yaml"
+        config = os.path.join("config", "config.yaml")
+        if not config_path.exists():
+            config_path = Path(tmpdir) / "config" / "config.yml"
+            config = os.path.join("config", "config.yml")
+            if not config_path.exists():
+                # Neither config.yaml nor config.yml exists, stick to the default.
+                config = os.path.join("config", "config.yaml")
+
         template = self.env.get_template("use_module.smk.jinja")
         logger.info("Writing Snakefile with module definition...")
         os.makedirs(self.dest_path / "workflow", exist_ok=True)
@@ -220,6 +230,7 @@ class WorkflowDeployer:
                 snakefile, self.tag, self.branch
             ),
             repo=self.provider.source_url,
+            config=config,
         )
         with open(self.snakefile, "w") as f:
             print(module_deployment, file=f)
