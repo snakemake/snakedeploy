@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0](https://github.com/snakemake/snakedeploy/compare/v0.10.4...v0.11.0) (2025-03-14)
+
+
+### Features
+
+* add profile directory and license file to deployment ([#75](https://github.com/snakemake/snakedeploy/issues/75)) ([f52f7ef](https://github.com/snakemake/snakedeploy/commit/f52f7eff212fcdecd83c4eb39ad79223167e7790))
+
+
+### Bug Fixes
+
+* consider config.yml as configuration filename ([#85](https://github.com/snakemake/snakedeploy/issues/85)) ([6a8fd0d](https://github.com/snakemake/snakedeploy/commit/6a8fd0d2369adc7b9c05ec4d7e719c436cd4576f))
+
 ## [0.10.4](https://github.com/snakemake/snakedeploy/compare/v0.10.3...v0.10.4) (2025-03-11)
 
 
