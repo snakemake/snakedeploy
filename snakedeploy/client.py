@@ -19,7 +19,8 @@ from .snakemake_wrappers import update_snakemake_wrappers
 
 def get_parser():
     parser = argparse.ArgumentParser(
-        description="Snakedeploy: deploy snakemake pipelines from version control."
+        description="Snakedeploy: deploy snakemake pipelines from version control.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
@@ -122,7 +123,7 @@ def get_parser():
         "<prefix>.<platform>.pin.txt with prefix being the path to the original definition file and "
         "<platform> being the name of the platform the pinning was performed on (e.g. linux-64). "
         "The resulting file will be automatically used by Snakemake to restore exactly the pinned "
-        "environment. Also you can use it manually, e.g. with 'mamba create -f <path-to-pin-file> -n <env-name>'.",
+        "environment. Also you can use it manually, e.g. with 'conda create -f <path-to-pin-file> -n <env-name>'.",
     )
     pin_conda_envs.add_argument(
         "envfiles", nargs="+", help="Environment definition YAML files to pin."
@@ -130,8 +131,8 @@ def get_parser():
     pin_conda_envs.add_argument(
         "--conda-frontend",
         choices=["mamba", "conda"],
-        default="mamba",
-        help="Conda frontend to use (default: mamba).",
+        default="conda",
+        help="Conda frontend to use.",
     )
     pin_conda_envs.add_argument(
         "--create-prs",
@@ -172,8 +173,8 @@ def get_parser():
     update_conda_envs.add_argument(
         "--conda-frontend",
         choices=["mamba", "conda"],
-        default="mamba",
-        help="Conda frontend to use (default: mamba).",
+        default="conda",
+        help="Conda frontend to use.",
     )
     update_conda_envs.add_argument(
         "--pin-envs",
