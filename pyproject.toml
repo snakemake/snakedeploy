@@ -38,6 +38,7 @@ dependencies = [
     "pygithub",
     "packaging",
     "reretry",
+    "setuptools",
 ]
 
 [project.optional-dependencies]

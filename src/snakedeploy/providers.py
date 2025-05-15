@@ -1,5 +1,11 @@
 from abc import abstractmethod, ABC
-from distutils.dir_util import copy_tree
+try:
+    from setuptools.distutils.dir_util import copy_tree
+except ImportError:
+    try:
+        from distutils.dir_util import copy_tree
+    except ImportError:
+        from shutil import copytree as copy_tree
 from snakedeploy.exceptions import UserError
 import subprocess as sp
 import os
