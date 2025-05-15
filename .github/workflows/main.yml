@@ -17,7 +17,11 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.8.8
         with:
           pixi-version: v0.24.0
-          cache: true
+          cache: false
+
+      - name: Initialize pixi
+        run: |
+          pixi install
 
       - name: Check formatting with black
         run: pixi run format -- --check
@@ -44,7 +48,7 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.8.8
         with:
           pixi-version: v0.24.0
-          cache: true
+          cache: false
 
       - name: Setup test environment with pixi
         run: |
