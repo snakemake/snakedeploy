@@ -53,3 +53,37 @@ local_scheme = "no-local-version"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pixi.project]
+name = "snakedeploy"
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "osx-arm64", "win-64", "osx-64", "linux-aarch64"]
+
+[tool.pixi.pypi-dependencies]
+snakedeploy = { editable = true }
+
+[tool.pixi.environments]
+dev = { features = ["test", "style"] }
+py38 = { features = ["py38", "test"] }
+py39 = { features = ["py39", "test"] }
+quality = { features = ["style"] }
+
+[tool.pixi.feature.py38.dependencies]
+python = ">=3.8.0,<3.9"
+
+[tool.pixi.feature.py39.dependencies]
+python = ">=3.9.0,<3.10"
+
+[tool.pixi.feature.test.dependencies]
+pytest = ">=4.6.2"
+
+[tool.pixi.feature.style.dependencies]
+black = "*"
+pyflakes = "*"
+
+[tool.pixi.feature.style.tasks]
+format = { cmd = "black src/ tests/*.py", description = "Format the code" }
+lint = { cmd = "pyflakes src/snakedeploy", description = "Check imports with pyflakes" }
+
+[tool.pixi.feature.test.tasks]
+test = { cmd = "bash tests/test_client.sh", description = "Run the test suite" }
