@@ -73,7 +73,7 @@ py39 = { features = ["py39", "test"] }
 py310 = { features = ["py310", "test"] }
 py311 = { features = ["py311", "test"] }
 py312 = { features = ["py312", "test"] }
-py313 = { features = ["py33", "test"] }
+py313 = { features = ["py313", "test"] }
 quality = { features = ["style"] }
 
 [tool.pixi.feature.py38.dependencies]
