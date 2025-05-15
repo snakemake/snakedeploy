@@ -13,42 +13,45 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup environments
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.8.8
+        with:
+          environments: quality
+          pixi-version: v0.47.0
+          cache: false
+          locked: false
+
+      - name: Initialize pixi
         run: |
-          conda create -c conda-forge --quiet --name black black>=22
-          conda create -c conda-forge --quiet --name pyflakes pyflakes
+          pixi install
 
       - name: Check formatting with black
-        run: |
-          export PATH="/usr/share/miniconda/bin:$PATH"
-          source activate black
-          black --check snakedeploy
+        run: pixi run -e quality format --check --diff .
 
       - name: Check imports with pyflakes
-        run: |
-          export PATH="/usr/share/miniconda/bin:$PATH"
-          source activate pyflakes
-          pyflakes snakedeploy
+        run: pixi run -e quality lint
 
   testing:
     needs: code-quality
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        environment: [py39, py310, py311, py312, py313]
 
     steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
       - uses: actions/checkout@v4
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.8.8
+        with:
+          environments: ${{ matrix.environment }}
+          pixi-version: v0.47.0
+          cache: false
+          locked: false
 
-      - name: Setup test environment
+      - name: Setup test environment with Pixi
         run: |
-          pip install -e .
+          pixi install
 
       - name: Test snakedeploy
         run: |
-          /bin/bash tests/test_client.sh
+          pixi run -e ${{matrix.environment}} test

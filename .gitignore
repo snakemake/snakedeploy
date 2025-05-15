@@ -5,3 +5,4 @@ build
 __pycache__
 dist
 .env
+src/snakedeploy/_version.py

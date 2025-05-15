@@ -1,7 +1,7 @@
 include README.md LICENSE
-recursive-include snakedeploy *
+include pyproject.toml
+global-exclude *
+graft src
 recursive-exclude * __pycache__
 recursive-exclude * *.pyc
 recursive-exclude * *.pyo
-include versioneer.py
-include snakedeploy/_version.py

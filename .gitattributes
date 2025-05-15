@@ -1,1 +1,1 @@
-snakedeploy/_version.py export-subst
+src/snakedeploy/_version.py export-subst
