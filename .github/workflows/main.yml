@@ -17,7 +17,7 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.8.8
         with:
           environments: "quality"
-          pixi-version: v0.42.1
+          pixi-version: v0.47.0
           cache: false
           locked: false
 
@@ -50,7 +50,7 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.8.8
         with:
           environments: "py${{ matrix.python-version }}"
-          pixi-version: v0.42.1
+          pixi-version: v0.47.0
           cache: false
           locked: false
 
