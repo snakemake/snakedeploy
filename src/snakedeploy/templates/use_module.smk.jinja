@@ -1,0 +1,19 @@
+from snakemake.utils import min_version
+
+
+min_version("6.10.0")
+
+
+configfile: "{{ config }}"
+
+
+# declare {{ repo }} as a module
+module {{ name }}:
+    snakefile: 
+        {{ snakefile }}
+    config:
+        config
+
+
+# use all rules from {{ repo }}
+use rule * from {{ name }}

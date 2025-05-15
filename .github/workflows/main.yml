@@ -22,13 +22,13 @@ jobs:
         run: |
           export PATH="/usr/share/miniconda/bin:$PATH"
           source activate black
-          black --check snakedeploy
+          black --check src/snakedeploy
 
       - name: Check imports with pyflakes
         run: |
           export PATH="/usr/share/miniconda/bin:$PATH"
           source activate pyflakes
-          pyflakes snakedeploy
+          pyflakes src/snakedeploy
 
   testing:
     needs: code-quality

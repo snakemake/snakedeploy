@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snakedeploy"
+dynamic = ["version"]
+description = "Deploy a snakemake pipeline from GitHub"
+readme = "README.md"
+authors = [
+    {name = "Vanessa Sochat", email = "vsochat@stanford.edu"}
+]
+license = {text = "MPL 2.0"}
+requires-python = ">=3.8"
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Topic :: Software Development",
+    "Topic :: Scientific/Engineering",
+    "Natural Language :: English",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
+keywords = ["snakemake", "pipeline", "deployment"]
+
+dependencies = [
+    "requests",
+    "pandas",
+    "jinja2",
+    "pyyaml",
+    "pygithub",
+    "packaging",
+    "reretry",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=4.6.2"]
+all = ["pytest>=4.6.2"]
+
+[project.urls]
+Homepage = "https://github.com/snakemake/snakedeploy"
+Documentation = "https://snakedeploy.readthedocs.io"
+
+[project.scripts]
+snakedeploy = "snakedeploy.client:main"
+
+[tool.setuptools_scm]
+version_file = "src/snakedeploy/_version.py"
+local_scheme = "no-local-version"
+
+[tool.setuptools.packages.find]
+where = ["src"]
