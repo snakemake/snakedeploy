@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+
 try:
     from setuptools.distutils.dir_util import copy_tree
 except ImportError:
