@@ -26,10 +26,10 @@ jobs:
           pixi install
 
       - name: Check formatting with black
-        run: pixi run format -e quality -- --check
+        run: pixi run -e quality format -- --check
 
       - name: Check imports with pyflakes
-        run: pixi run lint -e quality
+        run: pixi run -e quality lint
 
   testing:
     needs: code-quality
@@ -54,4 +54,4 @@ jobs:
 
       - name: Test snakedeploy
         run: |
-          pixi run test -e ${{matrix.environment}}
+          pixi run -e ${{matrix.environment}} test
