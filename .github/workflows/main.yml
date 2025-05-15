@@ -26,10 +26,10 @@ jobs:
           pixi install
 
       - name: Check formatting with black
-        run: pixi run --environment dev format -- --check
+        run: pixi run format -- --check
 
       - name: Check imports with pyflakes
-        run: pixi run --environment dev lint
+        run: pixi run lint
 
   testing:
     needs: code-quality
