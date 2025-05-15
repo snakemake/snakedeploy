@@ -26,7 +26,7 @@ jobs:
           pixi install
 
       - name: Check formatting with black
-        run: pixi run -e quality format -- --check
+        run: pixi run -e quality format --check --diff .
 
       - name: Check imports with pyflakes
         run: pixi run -e quality lint
