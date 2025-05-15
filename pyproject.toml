@@ -23,6 +23,10 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 keywords = ["snakemake", "pipeline", "deployment"]
 
@@ -37,8 +41,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=4.6.2"]
-all = ["pytest>=4.6.2"]
+test = ["pytest>=8.3.5"]
+all = ["pytest>=8.3.5"]
 
 [project.urls]
 Homepage = "https://github.com/snakemake/snakedeploy"
@@ -66,6 +70,10 @@ snakedeploy = { path = ".", editable = true }
 dev = { features = ["test", "style"] }
 py38 = { features = ["py38", "test"] }
 py39 = { features = ["py39", "test"] }
+py310 = { features = ["py310", "test"] }
+py311 = { features = ["py311", "test"] }
+py312 = { features = ["py312", "test"] }
+py313 = { features = ["py33", "test"] }
 quality = { features = ["style"] }
 
 [tool.pixi.feature.py38.dependencies]
@@ -74,8 +82,20 @@ python = ">=3.8.0,<3.9"
 [tool.pixi.feature.py39.dependencies]
 python = ">=3.9.0,<3.10"
 
+[tool.pixi.feature.py310.dependencies]
+python = ">=3.10.0,<3.11"
+
+[tool.pixi.feature.py311.dependencies]
+python = ">=3.11.0,<3.12"
+
+[tool.pixi.feature.py312.dependencies]
+python = ">=3.12.0,<3.13"
+
+[tool.pixi.feature.py313.dependencies]
+python = ">=3.13.0,<3.14"
+
 [tool.pixi.feature.test.dependencies]
-pytest = ">=4.6.2"
+pytest = ">=8.3.5"
 
 [tool.pixi.feature.style.dependencies]
 black = "*"
