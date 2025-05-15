@@ -16,8 +16,10 @@ jobs:
       - name: Set up Pixi
         uses: prefix-dev/setup-pixi@v0.8.8
         with:
-          pixi-version: v0.24.0
+          environments: "quality"
+          pixi-version: v0.42.1
           cache: false
+          locked: false
 
       - name: Initialize pixi
         run: |
@@ -47,8 +49,10 @@ jobs:
       - name: Set up Pixi
         uses: prefix-dev/setup-pixi@v0.8.8
         with:
-          pixi-version: v0.24.0
+          environments: "py${{ matrix.python-version }}"
+          pixi-version: v0.42.1
           cache: false
+          locked: false
 
       - name: Setup test environment with pixi
         run: |
