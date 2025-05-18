@@ -6,3 +6,5 @@ __pycache__
 dist
 .env
 src/snakedeploy/_version.py
+.pixi
+.pytest_cache/
