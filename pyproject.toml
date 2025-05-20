@@ -76,7 +76,7 @@ py311 = { features = ["py311", "test"] }
 py312 = { features = ["py312", "test"] }
 py313 = { features = ["py313", "test"] }
 quality = { features = ["style"] }
-build = { features = ["build"] }
+publish = { features = ["publish"] }
 
 [tool.pixi.feature.py38.dependencies]
 python = ">=3.8.0,<3.9"
@@ -110,11 +110,11 @@ lint = { cmd = "pyflakes src/snakedeploy", description = "Check imports with pyf
 [tool.pixi.feature.test.tasks]
 test = { cmd = "bash tests/test_client.sh", description = "Run the test suite" }
 
-[tool.pixi.feature.build.dependencies]
+[tool.pixi.feature.publish.dependencies]
 twine = ">=6.1.0,<7"
 python-build = ">=1.2.2,<2"
 
-[tool.pixi.feature.build.tasks]
+[tool.pixi.feature.publish.tasks]
 build = { cmd = "python -m build", description = "Build the package into the dist/ directory" }
 build-check = { cmd = "python -m twine check --strict dist/*", depends-on = [
   "build",
