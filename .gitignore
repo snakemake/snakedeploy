@@ -8,3 +8,4 @@ dist
 src/snakedeploy/_version.py
 .pixi
 .pytest_cache/
+pixi.lock
