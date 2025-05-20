@@ -10,12 +10,12 @@ readme = "README.md"
 authors = [
     {name = "Vanessa Sochat", email = "vsochat@stanford.edu"}
 ]
-license = {text = "MPL 2.0"}
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.8"
 classifiers = [
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
     "Topic :: Software Development",
     "Topic :: Scientific/Engineering",
     "Natural Language :: English",
