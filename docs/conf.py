@@ -17,6 +17,8 @@ import sys
 import os
 from recommonmark.parser import CommonMarkParser
 
+import snakedeploy
+
 source_parsers = {".md": CommonMarkParser}
 
 
@@ -60,8 +62,6 @@ master_doc = "index"
 # General information about the project.
 project = "Snakedeploy"
 copyright = "2020, Johannes Koester and Vanessa Sochat"
-
-import snakedeploy
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
