@@ -25,12 +25,18 @@ Homepage = "https://snakedeploy.readthedocs.io"
 Repository = "https://github.com/snakemake/snakedeploy"
 Documentation = "https://snakedeploy.readthedocs.io"
 
+[project.scripts]
+snakedeploy = "snakedeploy.client:main"
 
 [dependency-groups]
 dev = [
     "pytest>=8.4.1",
     "ruff>=0.12.4",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.pixi.workspace]
 channels = ["conda-forge", "bioconda"]

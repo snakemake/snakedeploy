@@ -13,42 +13,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup environments
-        run: |
-          conda create -c conda-forge --quiet --name black black>=22
-          conda create -c conda-forge --quiet --name pyflakes pyflakes
+      - uses: prefix-dev/setup-pixi@v0
 
-      - name: Check formatting with black
+      - name: Test snakedeploy
         run: |
-          export PATH="/usr/share/miniconda/bin:$PATH"
-          source activate black
-          black --check snakedeploy
-
-      - name: Check imports with pyflakes
-        run: |
-          export PATH="/usr/share/miniconda/bin:$PATH"
-          source activate pyflakes
-          pyflakes snakedeploy
+          pixi run format --check
+          pixi run check
 
   testing:
     needs: code-quality
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9]
 
     steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
       - uses: actions/checkout@v4
 
-      - name: Setup test environment
-        run: |
-          pip install -e .
+      - uses: prefix-dev/setup-pixi@v0
 
       - name: Test snakedeploy
         run: |
-          /bin/bash tests/test_client.sh
+          pixi run test
