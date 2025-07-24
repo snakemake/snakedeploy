@@ -13,14 +13,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
-import os
+from sphinxawesome_theme.postprocess import Icons
 
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath("../"))
 
 # -- General configuration ------------------------------------------------
 
@@ -39,13 +33,15 @@ extensions = [
 ]
 
 # Snakmake theme (made by SciAni).
-html_css_files = ["theme.css"]
+#html_css_files = ["theme.css"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
+html_permalinks_icon = Icons.permalinks_icon
+
 # The suffix of source filenames.
-source_suffix = [".rst", ".md"]
+#source_suffix = [".rst"]
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
@@ -87,7 +83,7 @@ exclude_patterns = ["_build"]
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+#pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -178,32 +174,11 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "Snakedeploydoc"
+#htmlhelp_basename = "Snakedeploydoc"
 
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #'papersize': 'letterpaper',
-    # The font size ('10pt', '11pt' or '12pt').
-    #'pointsize': '10pt',
-    # Additional stuff for the LaTeX preamble.
-    #'preamble': '',
-}
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (
-        "index",
-        "Snakedeploy.tex",
-        "Snakedeploy Documentation",
-        "Johannes Koester",
-        "manual",
-    ),
-]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -228,47 +203,6 @@ latex_documents = [
 
 # -- Options for manual page output ---------------------------------------
 
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [
-    (
-        "index",
-        "snakedeploy",
-        "Snakedeploy Documentation",
-        ["Johannes Koester", "Vanessa Sochat"],
-        1,
-    )
-]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
-
-
-# -- Options for Texinfo output -------------------------------------------
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-    (
-        "index",
-        "Snakemake",
-        "Snakedeploy Documentation",
-        ["Johannes Koester", "Vanessa Sochat"],
-        "Snakedeploy",
-        "Easily deploy snakemake pipeline templates.",
-        "Miscellaneous",
-    ),
-]
-
-# Documents to append as an appendix to all manuals.
-# texinfo_appendices = []
-
-# If false, no module index is generated.
-# texinfo_domain_indices = True
-
-# How to display URL addresses: 'footnote', 'no', or 'inline'.
-# texinfo_show_urls = 'footnote'
-
-# If true, do not generate a @detailmenu in the "Top" node's menu.
-# texinfo_no_detailmenu = False
