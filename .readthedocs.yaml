@@ -4,8 +4,7 @@ build:
   os: ubuntu-22.04
   commands:
     - curl -fsSL https://pixi.sh/install.sh | sh
-    - export PATH=$HOME/.pixi/bin:$PATH
-    - pixi run build-docs
+    - $HOME/.pixi/bin/pixi run build-docs
     - mkdir -p $READTHEDOCS_OUTPUT/html
     - rm -rf $READTHEDOCS_OUTPUT/html && mv docs/_build/html $READTHEDOCS_OUTPUT/html
 
