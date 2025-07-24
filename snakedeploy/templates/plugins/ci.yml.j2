@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  PYTHON_VERSION: 3.11
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: {{ "${{ env.PYTHON_VERSION }}" }}
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Determine dependencies
+        run: poetry lock
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: {{ "${{ env.PYTHON_VERSION }}" }}
+          cache: poetry
+
+      - name: Install Dependencies using Poetry
+        run: poetry install
+
+      - name: Check formatting
+        run: poetry run ruff format --check .
+      
+      - name: Lint
+        run: poetry run ruff check .
+
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: {{ "${{ env.PYTHON_VERSION }}" }}
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Determine dependencies
+        run: poetry lock
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: {{ "${{ env.PYTHON_VERSION }}" }}
+          cache: poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run pytest
+        run: poetry run coverage run -m pytest
+
+      - name: Run Coverage
+        run: poetry run coverage report -m

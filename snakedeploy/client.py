@@ -14,6 +14,7 @@ from snakedeploy.deploy import deploy
 from snakedeploy.collect_files import collect_files
 import snakedeploy
 from snakedeploy.exceptions import UserError
+from snakedeploy.scaffold_plugins import scaffold_plugin
 from .snakemake_wrappers import update_snakemake_wrappers
 
 
@@ -222,6 +223,22 @@ def get_parser():
         "If nothing specified, the latest release will be used.",
     )
 
+    scaffold_snakemake_plugin = subparsers.add_parser(
+        "scaffold-snakemake-plugin",
+        description="Scaffold a snakemake plugin by adding recommended dependencies and code snippets.",
+    )
+    scaffold_snakemake_plugin.add_argument(
+        "plugin_type",
+        choices=[
+            "executor",
+            "report",
+            "scheduler",
+            "storage",
+            "software-deployment",
+        ],
+        help="Type of the plugin to scaffold.",
+    )
+
     return parser
 
 
@@ -293,6 +310,8 @@ def main():
             )
         elif args.subcommand == "update-snakemake-wrappers":
             update_snakemake_wrappers(args.snakefiles, git_ref=args.git_ref)
+        elif args.subcommand == "scaffold-snakemake-plugin":
+            scaffold_plugin(args.plugin_type)
     except UserError as e:
         logger.error(e)
         sys.exit(1)
