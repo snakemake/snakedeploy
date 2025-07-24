@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Optional, List
 from snakemake_interface_storage_plugins.settings import StorageProviderSettingsBase
-from snakemake_interface_storage_plugins.storage_provider import (  # noqa: F401
+from snakemake_interface_storage_plugins.storage_provider import (  # noqa
     StorageProviderBase,
     StorageQueryValidationResult,
     ExampleQuery,
@@ -19,7 +19,7 @@ from snakemake_interface_storage_plugins.io import IOCacheStorageInterface
 
 # Raise errors that will not be handled within this plugin but thrown upwards to
 # Snakemake and the user as WorkflowError.
-from snakemake_interface_common.exceptions import WorkflowError  # noqa: F401
+from snakemake_interface_common.exceptions import WorkflowError  # noqa
 
 
 # Optional:
