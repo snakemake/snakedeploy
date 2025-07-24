@@ -82,4 +82,12 @@ echo "#### Testing snakedeploy update-snakemake-wrappers without git ref"
 runTest 0 $output snakedeploy update-snakemake-wrappers $tmpdir/test-snakefile.smk
 
 
+echo
+echo "#### Testing snakedeploy scaffold-snakemake-plugin"
+for plugin_type in executor storage report software-deployment
+do
+    pixi init --format pyproject /tmp/snakemake-$plugin_type-plugin-test
+    runTest 0 $output snakedeploy scaffold-snakemake-plugin $plugin_type /tmp/snakemake-$plugin_type-plugin-test
+done
+
 rm -rf ${tmpdir}
