@@ -60,7 +60,7 @@ echo
 echo "#### Testing non-default config.yml filename (fixes #80)"
 repo="https://github.com/MPUSP/snakemake-workflow-template"
 dest=${tmpdir}/snakemake-workflow-template
-runTest 0 $output snakedeploy deploy-workflow "${repo}" ${dest} --tag v1.0.0 
+runTest 0 $output snakedeploy deploy-workflow "${repo}" ${dest}
 runTest 0 $output grep "config.yml" ${dest}/workflow/Snakefile
 
 echo
