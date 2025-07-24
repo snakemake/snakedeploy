@@ -1,5 +1,4 @@
 from abc import abstractmethod, ABC
-from distutils.dir_util import copy_tree
 from shutil import copytree
 import shutil
 from snakedeploy.exceptions import UserError
