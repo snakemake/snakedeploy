@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
-from distutils.dir_util import copy_tree
+from shutil import copytree
+import shutil
 from snakedeploy.exceptions import UserError
 import subprocess as sp
 import os
@@ -54,7 +55,12 @@ class Local(Provider):
         """
         A local "clone" means moving files.
         """
-        copy_tree(self.source_url, tmpdir)
+        if os.path.exists(tmpdir):
+            try:
+                shutil.rmtree(tmpdir)
+            except OSError as e:
+                raise UserError(f"Failed to remove existing directory {tmpdir}: {e}")
+        copytree(self.source_url, tmpdir)
 
     def checkout(self, path: str, ref: str):
         # Local repositories don't need to check out anything

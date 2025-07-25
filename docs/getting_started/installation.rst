@@ -4,7 +4,21 @@
 Installation
 ============
 
-Snakedeploy can be installed via conda, pypi or from source.
+Snakedeploy can be installed via pixi, conda, pypi or from source.
+
+Install via pixi
+================
+For global installation (recommended), run
+
+.. code:: console
+
+    $ pixi global install snakedeploy
+
+For local installation into an existing pixi workspace, run
+
+.. code:: console
+
+    $ pixi add snakedeploy
 
 Install via mamba/conda
 =======================
@@ -42,7 +56,7 @@ Install from source
 
     $ pip install -e .
 
-========================
+
 Testing the installation
 ========================
 
