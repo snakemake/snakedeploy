@@ -20,7 +20,7 @@ from .snakemake_wrappers import update_snakemake_wrappers
 
 def get_parser():
     parser = argparse.ArgumentParser(
-        description="Snakedeploy: deploy snakemake pipelines from version control.",
+        description="Snakedeploy: deployment and maintenance related toolbox for Snakemake.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -62,7 +62,9 @@ def get_parser():
     subparsers = parser.add_subparsers(title="Subcommands", dest="subcommand")
 
     deploy_workflow_parser = subparsers.add_parser(
-        "deploy-workflow", description="Deploy a workflow from a git repository."
+        "deploy-workflow",
+        description="Deploy a workflow from a git repository.",
+        help="Deploy a workflow from a git repository.",
     )
 
     deploy_group = deploy_workflow_parser.add_argument_group("DEPLOY")
@@ -119,7 +121,8 @@ def get_parser():
 
     pin_conda_envs = subparsers.add_parser(
         "pin-conda-envs",
-        description="Pin given conda environment definition files (in YAML format) "
+        help="Pin/lock given conda envrionments to compatible package URLs at the time of invocation.",
+        description="Pin/lock given conda environment definition files (in YAML format) "
         "into a list of explicit package URLs including checksums, stored in a file "
         "<prefix>.<platform>.pin.txt with prefix being the path to the original definition file and "
         "<platform> being the name of the platform the pinning was performed on (e.g. linux-64). "
@@ -165,6 +168,8 @@ def get_parser():
 
     update_conda_envs = subparsers.add_parser(
         "update-conda-envs",
+        help="Update given conda environment definition files (in YAML format) "
+        "so that all contained packages are set to the latest feasible versions.",
         description="Update given conda environment definition files (in YAML format) "
         "so that all contained packages are set to the latest feasible versions.",
     )
@@ -212,6 +217,7 @@ def get_parser():
 
     update_snakemake_wrappers = subparsers.add_parser(
         "update-snakemake-wrappers",
+        help="Update all snakemake wrappers in given Snakefiles.",
         description="Update all snakemake wrappers in given Snakefiles.",
     )
     update_snakemake_wrappers.add_argument(
@@ -225,6 +231,7 @@ def get_parser():
 
     scaffold_snakemake_plugin = subparsers.add_parser(
         "scaffold-snakemake-plugin",
+        help="Scaffold a snakemake plugin by adding recommended dependencies and code snippets.",
         description="Scaffold a snakemake plugin by adding recommended dependencies and code snippets.",
     )
     scaffold_snakemake_plugin.add_argument(
