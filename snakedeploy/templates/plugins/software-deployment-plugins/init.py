@@ -18,14 +18,14 @@ from snakemake_interface_common.exceptions import WorkflowError  # noqa
 
 
 # Optional:
-# Define settings for your storage plugin (e.g. host url, credentials).
+# Define settings for your software deployment plugin (e.g. configuration parameters).
 # They will occur in the Snakemake CLI as --sdm-<plugin-name>-<param-name>
 # Make sure that all defined fields are 'Optional' and specify a default value
 # of None or anything else that makes sense in your case.
-# Note that we allow storage plugin settings to be tagged by the user. That means,
+# Note that we allow software deployment plugin settings to be tagged by the user. That means,
 # that each of them can be specified multiple times (an implicit nargs=+), and
 # the user can add a tag in front of each value (e.g. tagname1:value1 tagname2:value2).
-# This way, a storage plugin can be used multiple times within a workflow with different
+# This way, a software deployment plugin can be used multiple times within a workflow with different
 # settings.
 @dataclass
 class SoftwareDeploymentSettings(SoftwareDeploymentSettingsBase):
@@ -35,7 +35,8 @@ class SoftwareDeploymentSettings(SoftwareDeploymentSettingsBase):
             "help": "Some help text",
             # Optionally request that setting is also available for specification
             # via an environment variable. The variable will be named automatically as
-            # SNAKEMAKE_<storage-plugin-name>_<param-name>, all upper case.
+            # via an environment variable. The variable will be named automatically as
+            # SNAKEMAKE_<software-deployment-plugin-name>_<param-name>, all upper case.
             # This mechanism should only be used for passwords, usernames, and other
             # credentials.
             # For other items, we rather recommend to let people use a profile
