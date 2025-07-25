@@ -27,8 +27,13 @@ class ScaffoldPlugin(ABC):
         return f"snakemake-{self.get_plugin_type()}-plugin-"
 
     def handle(self) -> None:
-        with open("pyproject.toml", "r") as f:
-            pyproject = toml.load(f)
+        try:
+            with open("pyproject.toml", "r") as f:
+                pyproject = toml.load(f)
+        except FileNotFoundError:
+            raise UserError("pyproject.toml not found in current directory")
+        except Exception as e:
+            raise UserError(f"Failed to read pyproject.toml: {e}")
 
         package_name = pyproject["project"]["name"]
 
