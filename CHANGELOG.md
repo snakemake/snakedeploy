@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/snakemake/snakedeploy/compare/v0.12.0...v0.12.1) (2025-07-25)
+
+
+### Documentation
+
+* improved help and docs ([#91](https://github.com/snakemake/snakedeploy/issues/91)) ([80f9837](https://github.com/snakemake/snakedeploy/commit/80f9837349bdf5cb16d40f94c46dbd2fc306946e))
+
 ## [0.12.0](https://github.com/snakemake/snakedeploy/compare/v0.11.0...v0.12.0) (2025-07-25)
 
 
