@@ -42,7 +42,7 @@ class ScaffoldPlugin(ABC):
                     toml.dump(pyproject, f)
             except Exception as e:
                 raise UserError(f"Failed to write pyproject.toml: {e}") from e
-        
+
         pyproject = load_pyproject()
 
         package_name = pyproject["project"]["name"]
