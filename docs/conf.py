@@ -97,6 +97,17 @@ exclude_patterns = ["_build"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = "sphinxawesome_theme"
+html_theme_options = {
+    "logo_light": "logo-snake.svg",
+    "logo_dark": "logo-snake.svg",
+    "main_nav_links": {
+        "Snakemake Homepage": "https://snakemake.github.io",
+        "Snakemake Documentation": "https://snakemake.readthedocs.io",
+    },
+    "awesome_external_links": True,
+    "awesome_headerlinks": True,
+    "show_prev_next": False,
+}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

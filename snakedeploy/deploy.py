@@ -256,6 +256,23 @@ def deploy(
 ):
     """
     Deploy a given workflow to the local machine, using the Snakemake module system.
+
+    Example
+    =======
+
+    Given that you want to deploy a workflow to the path /tmp/dest:
+    
+    .. code-block:: python
+
+       from snakedeploy.deploy import deploy
+       deploy(
+           "https://github.com/snakemake-workflows/dna-seq-varlociraptor",
+           dest_path="/tmp/dest",
+           name="dna_seq",
+           tag="v1.0.0",
+           force=True
+       )
+
     """
     with WorkflowDeployer(
         source=source_url, dest=dest_path, tag=tag, branch=branch, force=force
