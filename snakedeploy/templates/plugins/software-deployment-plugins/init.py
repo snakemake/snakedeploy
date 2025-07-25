@@ -35,7 +35,8 @@ class SoftwareDeploymentSettings(SoftwareDeploymentSettingsBase):
             "help": "Some help text",
             # Optionally request that setting is also available for specification
             # via an environment variable. The variable will be named automatically as
-            # SNAKEMAKE_<storage-plugin-name>_<param-name>, all upper case.
+            # via an environment variable. The variable will be named automatically as
+            # SNAKEMAKE_<software-deployment-plugin-name>_<param-name>, all upper case.
             # This mechanism should only be used for passwords, usernames, and other
             # credentials.
             # For other items, we rather recommend to let people use a profile
