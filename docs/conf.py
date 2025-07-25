@@ -33,7 +33,7 @@ extensions = [
 ]
 
 # Snakmake theme (made by SciAni).
-#html_css_files = ["theme.css"]
+# html_css_files = ["theme.css"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -41,7 +41,7 @@ templates_path = ["_templates"]
 html_permalinks_icon = Icons.permalinks_icon
 
 # The suffix of source filenames.
-#source_suffix = [".rst"]
+# source_suffix = [".rst"]
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
@@ -83,7 +83,7 @@ exclude_patterns = ["_build"]
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-#pygments_style = "sphinx"
+# pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -185,7 +185,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-#htmlhelp_basename = "Snakedeploydoc"
+# htmlhelp_basename = "Snakedeploydoc"
 
 
 # -- Options for LaTeX output ---------------------------------------------

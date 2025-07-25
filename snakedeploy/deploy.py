@@ -261,7 +261,7 @@ def deploy(
     =======
 
     Given that you want to deploy a workflow to the path /tmp/dest:
-    
+
     .. code-block:: python
 
        from snakedeploy.deploy import deploy

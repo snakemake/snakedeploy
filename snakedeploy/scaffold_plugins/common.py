@@ -73,10 +73,16 @@ class ScaffoldPlugin(ABC):
         ]
         if self.include_snakemake_dev_dependency():
             dev_deps.append("snakemake")
-        sp.run(dev_deps)
+        sp.run(dev_deps, check=True)
 
-        sp.run(["pixi", "task", "add", "--feature", "dev", "lint", "ruff check"])
-        sp.run(["pixi", "task", "add", "--feature", "dev", "format", "ruff format"])
+        sp.run(
+            ["pixi", "task", "add", "--feature", "dev", "lint", "ruff check"],
+            check=True,
+        )
+        sp.run(
+            ["pixi", "task", "add", "--feature", "dev", "format", "ruff format"],
+            check=True,
+        )
         sp.run(
             [
                 "pixi",
@@ -90,9 +96,13 @@ class ScaffoldPlugin(ABC):
                 "--cov-report=xml:coverage-report/coverage.xml "
                 "--cov-report=term-missing "
                 "tests/tests.py",
-            ]
+            ],
+            check=True,
         )
-        sp.run(["pixi", "task", "add", "--feature", "dev", "build", "python -m build"])
+        sp.run(
+            ["pixi", "task", "add", "--feature", "dev", "build", "python -m build"],
+            check=True,
+        )
         sp.run(
             [
                 "pixi",
@@ -104,7 +114,8 @@ class ScaffoldPlugin(ABC):
                 "python -m twine check dist/*",
                 "--depends-on",
                 "build",
-            ]
+            ],
+            check=True,
         )
 
         # add skeleton code
