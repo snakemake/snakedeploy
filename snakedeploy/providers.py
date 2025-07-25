@@ -55,10 +55,6 @@ class Local(Provider):
         """
         A local "clone" means moving files.
         """
-    def clone(self, tmpdir: str):
-        """
-        A local "clone" means moving files.
-        """
         if os.path.exists(tmpdir):
             try:
                 shutil.rmtree(tmpdir)
