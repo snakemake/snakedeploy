@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/snakemake/snakedeploy/compare/v0.11.0...v0.12.0) (2025-07-25)
+
+
+### Features
+
+* add plugin scaffolding ([#89](https://github.com/snakemake/snakedeploy/issues/89)) ([c1b8fa0](https://github.com/snakemake/snakedeploy/commit/c1b8fa00d4554e5aa24be630fbd2663d6e002d04))
+
 ## [0.11.0](https://github.com/snakemake/snakedeploy/compare/v0.10.4...v0.11.0) (2025-03-14)
 
 

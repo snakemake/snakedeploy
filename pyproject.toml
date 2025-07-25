@@ -1,6 +1,6 @@
 [project]
 name = "snakedeploy"
-version = "0.11.0"
+version = "0.12.0"
 description = "Deployment and maintenance related toolbox for Snakemake"
 license = "MPL-2.0"
 authors = [
