@@ -6,7 +6,6 @@ from snakemake_interface_storage_plugins.storage_provider import (  # noqa
     StorageQueryValidationResult,
     ExampleQuery,
     Operation,
-    QueryType,
 )
 from snakemake_interface_storage_plugins.storage_object import (
     StorageObjectRead,
