@@ -55,8 +55,15 @@ class Local(Provider):
         """
         A local "clone" means moving files.
         """
+    def clone(self, tmpdir: str):
+        """
+        A local "clone" means moving files.
+        """
         if os.path.exists(tmpdir):
-            shutil.rmtree(tmpdir)
+            try:
+                shutil.rmtree(tmpdir)
+            except OSError as e:
+                raise UserError(f"Failed to remove existing directory {tmpdir}: {e}")
         copytree(self.source_url, tmpdir)
 
     def checkout(self, path: str, ref: str):
