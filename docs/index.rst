@@ -81,7 +81,7 @@ Support
    :hidden:
    :maxdepth: 1
 
-   snakemake_developers/scaffold_plugins
+   snakemake_developers/scaffold_snakemake_plugins
 
 .. toctree::
     :caption: API Reference
