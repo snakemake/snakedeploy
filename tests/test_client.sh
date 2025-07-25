@@ -92,5 +92,6 @@ do
     cd $dest
     runTest 0 $output snakedeploy scaffold-snakemake-plugin $plugin_type
 done
+cd $workdir
 
 rm -rf ${tmpdir}
