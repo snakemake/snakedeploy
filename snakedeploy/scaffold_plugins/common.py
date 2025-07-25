@@ -92,7 +92,7 @@ class ScaffoldPlugin(ABC):
                 "dev",
                 "test",
                 "pytest "
-                "--cov=snakemake_interface_scheduler_plugins "
+                f"--cov={package_name} "
                 "--cov-report=xml:coverage-report/coverage.xml "
                 "--cov-report=term-missing "
                 "tests/tests.py",
