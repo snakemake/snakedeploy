@@ -36,10 +36,25 @@ class ScaffoldPlugin(ABC):
             except Exception as e:
                 raise UserError(f"Failed to read pyproject.toml: {e}")
 
-        def save_pyproject(pyproject):
-            with open("pyproject.toml", "w") as f:
-                toml.dump(pyproject, f)
+def load_pyproject():
+    try:
+        with open("pyproject.toml", "r") as f:
+            pyproject = toml.load(f)
+    except FileNotFoundError:
+        raise UserError("pyproject.toml not found in current directory")
+    except Exception as e:
+-        raise UserError(f"Failed to read pyproject.toml: {e}")
++        raise UserError(f"Failed to read pyproject.toml: {e}") from e
+    return pyproject
 
+def save_pyproject(pyproject):
+-    with open("pyproject.toml", "w") as f:
+-        toml.dump(pyproject, f)
++    try:
++        with open("pyproject.toml", "w") as f:
++            toml.dump(pyproject, f)
++    except Exception as e:
++        raise UserError(f"Failed to write pyproject.toml: {e}") from e
         pyproject = load_pyproject()
 
         package_name = pyproject["project"]["name"]
