@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.2](https://github.com/snakemake/snakedeploy/compare/v0.12.1...v0.12.2) (2025-07-25)
+
+
+### Documentation
+
+* add missing docs ([33b2c80](https://github.com/snakemake/snakedeploy/commit/33b2c80fb3948e6963856f4cb0c67c8d2a4f11ef))
+
 ## [0.12.1](https://github.com/snakemake/snakedeploy/compare/v0.12.0...v0.12.1) (2025-07-25)
 
 
