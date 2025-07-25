@@ -62,7 +62,9 @@ def get_parser():
     subparsers = parser.add_subparsers(title="Subcommands", dest="subcommand")
 
     deploy_workflow_parser = subparsers.add_parser(
-        "deploy-workflow", description="Deploy a workflow from a git repository.", help="Deploy a workflow from a git repository."
+        "deploy-workflow",
+        description="Deploy a workflow from a git repository.",
+        help="Deploy a workflow from a git repository.",
     )
 
     deploy_group = deploy_workflow_parser.add_argument_group("DEPLOY")
