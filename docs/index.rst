@@ -35,7 +35,7 @@ Snakedeploy
 
 Snakedeploy is a command line tool and Python library for automation of deployment and maintenance tasks around `Snakemake and Snakemake workflows <https://snakemake.github.io>`.
 
-* **Workflow users** can apply it to automatically :ref:`deploy (i.e. set up for use) <deploy>` public workflows for execution on their local machine or use it to :ref:`register input data <input_registration>` for their workflow configuration.
+* **Workflow users** can apply it to automatically :ref:`deploy (i.e. set up for use) <deploy>` public workflows for execution from machine or use it to :ref:`register input data <input_registration>` for their workflow configuration.
 * **Workflow developers** can use it to automatically :ref:`update conda environment files <update_conda_envs>` or :ref:`Snakemake wrapper versions <update_snakemake_wrappers>` and :ref:`pin/lock conda environments<pin_conda_envs>` in their workflows.
 * **Snakemake developers** can use it to :ref:`scaffold Snakemake plugins <scaffold_snakemake_plugins>` (i.e. to obtain a skeleton codebase as a starting point for each type of possible Snakemake plugin).
 

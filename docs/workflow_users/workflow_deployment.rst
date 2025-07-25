@@ -1,10 +1,12 @@
 .. _deploy:
 
-===================
-Deploying workflows
-===================
+================
+Deploy workflows
+================
 
 Snakedeploy enables you to automatically deploy a workflow from a public git repository to your local machine, by using Snakemake's module system.
+This way, public workflow can be used and configured for your data.
+For example, you can use this in combination with the standardized Snakemake workflows avalailable in the `Snakemake workflow catalog <https://snakemake.github.io/snakemake-workflow-catalog/docs/all_standardized_workflows.html>`__.
 Via the command line, deployment works as follows:
 
 .. code-block:: console
@@ -22,16 +24,17 @@ For the example above, it will have the following content
 
 
     # declare https://github.com/snakemake-workflows/dna-seq-varlociraptor as a module
-    module dna_seq:
+    module dna_seq_varlociraptor:
         snakefile: 
-            "https://github.com/snakemake-workflows/raw/v1.0.0/workflow/Snakefile"
+            github("snakemake-workflows/dna-seq-varlociraptor", path="workflow/Snakefile", tag="v1.0.0")
         config:
             config
 
 
     # use all rules from https://github.com/snakemake-workflows/dna-seq-varlociraptor
-    use rule * from dna_seq
+    use rule * from dna_seq_varlociraptor
 
+utilizing `Snakemake's module system <https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-and-combining-pre-exising-workflows>`__.
 In addition, it will copy over the contents of the ``config`` directory of the given repository into ``/tmp/dest/workflow/Snakefile``.
 These should be seen as a template, can be modified according to your needs.
 Further, the workflow definition Snakefile can be arbitrarily extended and modified, thereby making any changes to the used workflow transparent (also see the `snakemake module documentation <https://snakemake.readthedocs.io/en/stable/snakefiles/modularization.html#snakefiles-modules>`_).

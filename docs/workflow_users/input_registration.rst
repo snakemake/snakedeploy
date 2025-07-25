@@ -1,8 +1,8 @@
 .. _input_registration:
 
-======================
-Registering input data
-======================
+===================
+Register input data
+===================
 
 Snakedeploy can help with generating sample/unit sheets from files on the filesystem.
 These can then be used to configure a Snakemake workflow.
