@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
 import subprocess as sp
 from jinja2 import Environment, PackageLoader, select_autoescape
 import toml
@@ -27,13 +27,20 @@ class ScaffoldPlugin(ABC):
         return f"snakemake-{self.get_plugin_type()}-plugin-"
 
     def handle(self) -> None:
-        try:
-            with open("pyproject.toml", "r") as f:
-                pyproject = toml.load(f)
-        except FileNotFoundError:
-            raise UserError("pyproject.toml not found in current directory")
-        except Exception as e:
-            raise UserError(f"Failed to read pyproject.toml: {e}")
+        def load_pyproject() -> Dict[str, Any]:
+            try:
+                with open("pyproject.toml", "r") as f:
+                    return toml.load(f)
+            except FileNotFoundError:
+                raise UserError("pyproject.toml not found in current directory")
+            except Exception as e:
+                raise UserError(f"Failed to read pyproject.toml: {e}")
+
+        def save_pyproject(pyproject):
+            with open("pyproject.toml", "w") as f:
+                toml.dump(pyproject, f)
+
+        pyproject = load_pyproject()
 
         package_name = pyproject["project"]["name"]
 
@@ -54,10 +61,8 @@ class ScaffoldPlugin(ABC):
         )
         # the python dependency should be in line with the dependencies
         pyproject["project"]["requires-python"] = ">=3.11,<4.0"
-        pyproject["tool"]["pixi"]["environments"] = {"dev": {"features": ["dev"]}}
 
-        with open("pyproject.toml", "w") as f:
-            toml.dump(pyproject, f)
+        save_pyproject(pyproject)
 
         # add dependencies
         sp.run(
@@ -79,6 +84,10 @@ class ScaffoldPlugin(ABC):
         if self.include_snakemake_dev_dependency():
             dev_deps.append("snakemake")
         sp.run(dev_deps, check=True)
+
+        pyproject = load_pyproject()
+        pyproject["tool"]["pixi"]["environments"] = {"dev": {"features": ["dev"]}}
+        save_pyproject(pyproject)
 
         sp.run(
             ["pixi", "task", "add", "--feature", "dev", "lint", "ruff check"],
