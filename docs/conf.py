@@ -32,9 +32,6 @@ extensions = [
     "sphinx.ext.autosectionlabel",
 ]
 
-# Snakmake theme (made by SciAni).
-# html_css_files = ["theme.css"]
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
@@ -108,6 +105,7 @@ html_theme_options = {
     "awesome_headerlinks": True,
     "show_prev_next": False,
 }
+html_css_files = ["custom.css"]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
