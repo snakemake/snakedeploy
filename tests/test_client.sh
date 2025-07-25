@@ -84,10 +84,13 @@ runTest 0 $output snakedeploy update-snakemake-wrappers $tmpdir/test-snakefile.s
 
 echo
 echo "#### Testing snakedeploy scaffold-snakemake-plugin"
+workdir=$(pwd)
 for plugin_type in executor storage report software-deployment
 do
-    pixi init --format pyproject /tmp/snakemake-$plugin_type-plugin-test
-    runTest 0 $output snakedeploy scaffold-snakemake-plugin $plugin_type /tmp/snakemake-$plugin_type-plugin-test
+    dest=/tmp/snakemake-$plugin_type-plugin-test
+    pixi init --format pyproject $dest
+    cd $dest
+    runTest 0 $output snakedeploy scaffold-snakemake-plugin $plugin_type
 done
 
 rm -rf ${tmpdir}
