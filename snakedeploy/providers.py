@@ -73,7 +73,9 @@ class Local(Provider):
             )
         return f"{self.source_url}/{path}"
 
-    def get_source_file_declaration(self, path: str, tag: str, branch: str):
+    def get_source_file_declaration(
+        self, path: str, tag: str, branch: str, host: Optional[str] = None
+    ):
         relative_path = path.replace(self.source_url, "").strip(os.sep)
         return f'"{relative_path}"'
 
@@ -105,7 +107,9 @@ class Github(Provider):
     def get_raw_file(self, path: str, tag: str):
         return f"{self.source_url}/raw/{tag}/{path}"
 
-    def get_source_file_declaration(self, path: str, tag: str, branch: str):
+    def get_source_file_declaration(
+        self, path: str, tag: str, branch: str, host: Optional[str] = None
+    ):
         owner_repo = "/".join(self.source_url.split("/")[-2:])
         if not (tag or branch):
             raise UserError("Either tag or branch has to be specified for deployment.")
@@ -116,6 +120,18 @@ class Github(Provider):
 class Gitlab(Github):
     def get_raw_file(self, path: str, tag: str):
         return f"{self.source_url}/-/raw/{tag}/{path}"
+
+    def get_source_file_declaration(
+        self, path: str, tag: str, branch: str, host: Optional[str] = None
+    ):
+        owner_repo = "/".join(self.source_url.split("/")[-2:])
+        url_host = self.source_url.split("/")[2]
+        breakpoint()
+        if not (tag or branch):
+            raise UserError("Either tag or branch has to be specified for deployment.")
+        ref_arg = f'tag="{tag}"' if tag is not None else f'branch="{branch}"'
+        host_arg = f'host="{host}"' if host is not None else ""
+        return f'{self.name}("{owner_repo}", path="{path}", {ref_arg}, {host_arg})'
 
 
 PROVIDERS = [Github, Gitlab, Local]
