@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.3](https://github.com/snakemake/snakedeploy/compare/v0.12.2...v0.12.3) (2025-09-09)
+
+
+### Bug Fixes
+
+* synchronize scheduler skeleton ([#99](https://github.com/snakemake/snakedeploy/issues/99)) ([0f0b4c1](https://github.com/snakemake/snakedeploy/commit/0f0b4c1381af5ac8c0f644ce744d2155c5e7c98e))
+
 ## [0.12.2](https://github.com/snakemake/snakedeploy/compare/v0.12.1...v0.12.2) (2025-07-25)
 
 
