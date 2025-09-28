@@ -10,7 +10,7 @@ from snakedeploy.scaffold_plugins.software_deployment_plugins import (
     ScaffoldSnakemakeSoftwareDeploymentPlugin,
 )
 from snakedeploy.scaffold_plugins.storage_plugins import ScaffoldSnakemakeStoragePlugin
-
+from snakedeploy.scaffold_plugins.logger_plugins import ScaffoldSnakemakeLoggerPlugin
 
 def scaffold_plugin(plugin_type: str):
     match plugin_type:
@@ -24,6 +24,8 @@ def scaffold_plugin(plugin_type: str):
             scaffold = ScaffoldSnakemakeStoragePlugin()
         case "scheduler":
             scaffold = ScaffoldSnakemakeSchedulerPlugin()
+        case "logger":
+            scaffold = ScaffoldSnakemakeLoggerPlugin()
         case _:
             raise UserError(f"Unknown plugin type: {plugin_type}")
     scaffold.handle()
