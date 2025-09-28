@@ -12,6 +12,7 @@ from snakedeploy.scaffold_plugins.software_deployment_plugins import (
 from snakedeploy.scaffold_plugins.storage_plugins import ScaffoldSnakemakeStoragePlugin
 from snakedeploy.scaffold_plugins.logger_plugins import ScaffoldSnakemakeLoggerPlugin
 
+
 def scaffold_plugin(plugin_type: str):
     match plugin_type:
         case "software-deployment":
