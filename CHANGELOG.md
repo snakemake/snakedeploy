@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/snakemake/snakedeploy/compare/v0.12.3...v0.13.0) (2025-09-29)
+
+
+### Features
+
+* add logger plugin scaffold ([#94](https://github.com/snakemake/snakedeploy/issues/94)) ([da2d149](https://github.com/snakemake/snakedeploy/commit/da2d149dbf056c027872aba753ea5c500fcf76a4))
+
 ## [0.12.3](https://github.com/snakemake/snakedeploy/compare/v0.12.2...v0.12.3) (2025-09-09)
 
 
