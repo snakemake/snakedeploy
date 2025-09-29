@@ -61,7 +61,7 @@ echo "#### Testing non-default config.yml filename (fixes #80)"
 repo="https://github.com/MPUSP/snakemake-workflow-template"
 dest=${tmpdir}/snakemake-workflow-template
 runTest 0 $output snakedeploy deploy-workflow "${repo}" ${dest} --branch main
-runTest 0 $output grep "config.yml" ${dest}/workflow/Snakefile
+runTest 0 $output grep "config.yaml" ${dest}/workflow/Snakefile
 
 echo
 echo "#### Testing snakedeploy update-conda-envs"
@@ -85,9 +85,9 @@ runTest 0 $output snakedeploy update-snakemake-wrappers $tmpdir/test-snakefile.s
 echo
 echo "#### Testing snakedeploy scaffold-snakemake-plugin"
 workdir=$(pwd)
-for plugin_type in executor storage report software-deployment
+for plugin_type in executor storage report software-deployment logger
 do
-    dest=/tmp/snakemake-$plugin_type-plugin-test
+    dest=$tmpdir/snakemake-$plugin_type-plugin-test
     pixi init --format pyproject $dest
     cd $dest
     runTest 0 $output snakedeploy scaffold-snakemake-plugin $plugin_type

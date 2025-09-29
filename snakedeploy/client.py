@@ -242,6 +242,7 @@ def get_parser():
             "scheduler",
             "storage",
             "software-deployment",
+            "logger",
         ],
         help="Type of the plugin to scaffold.",
     )
