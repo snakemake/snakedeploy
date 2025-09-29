@@ -61,7 +61,7 @@ echo "#### Testing non-default config.yml filename (fixes #80)"
 repo="https://github.com/MPUSP/snakemake-workflow-template"
 dest=${tmpdir}/snakemake-workflow-template
 runTest 0 $output snakedeploy deploy-workflow "${repo}" ${dest} --branch main
-runTest 0 $output grep "config.yml" ${dest}/workflow/Snakefile
+runTest 0 $output grep "config.yaml" ${dest}/workflow/Snakefile
 
 echo
 echo "#### Testing snakedeploy update-conda-envs"
