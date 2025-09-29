@@ -65,3 +65,6 @@ check-build = { cmd = "python -m twine check dist/*", depends-on = [
   "build",
 ], description = "Check that the package can be uploaded" }
 
+[tool.pixi.feature.dev.dependencies]
+conda = ">=25.7.0,<26"
+
