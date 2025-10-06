@@ -217,16 +217,11 @@ def get_parser():
 
     update_snakemake_wrappers = subparsers.add_parser(
         "update-snakemake-wrappers",
-        help="Update all snakemake wrappers in given Snakefiles.",
-        description="Update all snakemake wrappers in given Snakefiles.",
+        help="Update all snakemake wrappers in given Snakefiles to their latest versions.",
+        description="Update all snakemake wrappers in given Snakefiles to their latest versions.",
     )
     update_snakemake_wrappers.add_argument(
         "snakefiles", nargs="+", help="Paths to Snakefiles which should be updated."
-    )
-    update_snakemake_wrappers.add_argument(
-        "--git-ref",
-        help="Git reference to use for updating the wrappers (e.g. a snakemake-wrapper release). "
-        "If nothing specified, the latest release will be used.",
     )
 
     scaffold_snakemake_plugin = subparsers.add_parser(
@@ -317,7 +312,7 @@ def main():
                 warn_on_error=args.warn_on_error,
             )
         elif args.subcommand == "update-snakemake-wrappers":
-            update_snakemake_wrappers(args.snakefiles, git_ref=args.git_ref)
+            update_snakemake_wrappers(args.snakefiles)
         elif args.subcommand == "scaffold-snakemake-plugin":
             scaffold_plugin(args.plugin_type)
     except UserError as e:
