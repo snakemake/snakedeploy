@@ -55,13 +55,29 @@ class WrapperRepo:
         self.tmpdir = tempfile.TemporaryDirectory()
         logger.info("Cloning snakemake-wrappers repository...")
         sp.run(
-            ["git", "clone", "--filter=blob:none", "--no-checkout", "https://github.com/snakemake/snakemake-wrappers.git", "."],
+            [
+                "git",
+                "clone",
+                "--filter=blob:none",
+                "--no-checkout",
+                "https://github.com/snakemake/snakemake-wrappers.git",
+                ".",
+            ],
             cwd=self.tmpdir.name,
             check=True,
         )
-        sp.run(["git", "config", "core.sparseCheckoutCone", "false"], cwd=self.tmpdir.name, check=True)
+        sp.run(
+            ["git", "config", "core.sparseCheckoutCone", "false"],
+            cwd=self.tmpdir.name,
+            check=True,
+        )
         sp.run(["git", "sparse-checkout", "disable"], cwd=self.tmpdir.name, check=True)
-        sp.run(["git", "sparse-checkout",  "set", "--no-cone"] + list(get_sparse_checkout_patterns()), cwd=self.tmpdir.name, check=True)
+        sp.run(
+            ["git", "sparse-checkout", "set", "--no-cone"]
+            + list(get_sparse_checkout_patterns()),
+            cwd=self.tmpdir.name,
+            check=True,
+        )
         sp.run(["git", "read-tree", "-mu", "HEAD"], cwd=self.tmpdir.name, check=True)
         self.repo_dir = Path(self.tmpdir.name)
 
@@ -92,12 +108,18 @@ def update_snakemake_wrappers(snakefiles: List[str]):
                     old_git_ref, rest = spec.split("/", 1)
                     git_ref = wrapper_repo.get_wrapper_version(rest)
                     if git_ref is None:
-                        logger.warning(f"Could not determine latest version of wrapper '{rest}'. Leaving unchanged.")
+                        logger.warning(
+                            f"Could not determine latest version of wrapper '{rest}'. Leaving unchanged."
+                        )
                         git_ref = old_git_ref
                     elif git_ref != old_git_ref:
-                        logger.info(f"Updated wrapper '{rest}' from {old_git_ref} to {git_ref}.")
+                        logger.info(
+                            f"Updated wrapper '{rest}' from {old_git_ref} to {git_ref}."
+                        )
                     else:
-                        logger.info(f"Wrapper '{rest}' is already at latest version {git_ref}.")
+                        logger.info(
+                            f"Wrapper '{rest}' is already at latest version {git_ref}."
+                        )
                     return (
                         matchobj.group("def")
                         + matchobj.group("quote")
@@ -107,7 +129,9 @@ def update_snakemake_wrappers(snakefiles: List[str]):
                 else:
                     return matchobj.group()
 
-            logger.info(f"Updating snakemake-wrappers and meta-wrappers in {snakefile}...")
+            logger.info(
+                f"Updating snakemake-wrappers and meta-wrappers in {snakefile}..."
+            )
             snakefile_content = re.sub(
                 "(?P<def>(meta_)?wrapper:\\n?\\s*)(?P<quote>['\"])(?P<spec>.+)(?P=quote)",
                 update_spec,
