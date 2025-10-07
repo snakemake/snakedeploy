@@ -6,8 +6,6 @@ from urllib.parse import urlparse
 import subprocess as sp
 from snakedeploy.logger import logger
 
-from github import Github
-
 
 def get_latest_git_tag(path: Path, repo: Path) -> str | None:
     """Get the latest git tag of any file in the given directory or below.
