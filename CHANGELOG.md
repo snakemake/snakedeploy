@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.0](https://github.com/snakemake/snakedeploy/compare/v0.13.0...v0.14.0) (2025-10-07)
+
+
+### Features
+
+* update wrappers to their specific latest version instead of the global latest version of the wrapper repo ([#105](https://github.com/snakemake/snakedeploy/issues/105)) ([a5d3bf8](https://github.com/snakemake/snakedeploy/commit/a5d3bf8dc894dde96893b1b9557dfb4247da216d))
+
+
+### Bug Fixes
+
+* update pixi envs for building ([#104](https://github.com/snakemake/snakedeploy/issues/104)) ([a4aabc9](https://github.com/snakemake/snakedeploy/commit/a4aabc9e38430b972e934b8db7db9d6fdc81d326)), closes [#102](https://github.com/snakemake/snakedeploy/issues/102)
+
 ## [0.13.0](https://github.com/snakemake/snakedeploy/compare/v0.12.3...v0.13.0) (2025-09-29)
 
 
