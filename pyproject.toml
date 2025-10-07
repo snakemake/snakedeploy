@@ -52,6 +52,7 @@ snakedeploy = { path = ".", editable = true }
 [tool.pixi.environments]
 default = { solve-group = "default" }
 dev = { features = ["dev"], solve-group = "default" }
+publish = { features = ["publish"] }
 
 [tool.pixi.tasks]
 
@@ -60,11 +61,17 @@ format = "ruff format"
 check = "ruff check"
 test = "/bin/bash tests/test_client.sh"
 build-docs = "sphinx-build -b html docs/ docs/_build/html"
-build = { cmd = "python -m build", description = "Build the package into the dist/ directory" }
-check-build = { cmd = "python -m twine check dist/*", depends-on = [
-  "build",
-], description = "Check that the package can be uploaded" }
+
 
 [tool.pixi.feature.dev.dependencies]
 conda = ">=25.7.0,<26"
 
+[tool.pixi.feature.publish.dependencies]
+twine = ">=6.1.0,<7"
+python-build = ">=1.2.2,<2"
+
+[tool.pixi.feature.publish.tasks]
+build = { cmd = "python -m build", description = "Build the package into the dist/ directory" }
+check-build = { cmd = "python -m twine check dist/*", depends-on = [
+  "build",
+], description = "Check that the package can be uploaded" }
