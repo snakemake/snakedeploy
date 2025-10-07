@@ -24,6 +24,8 @@ def get_latest_git_tag(path: Path, repo: Path) -> str | None:
         .strip()
     )
     # get the first git tag that includes this commit:
+    # Note: We want the EARLIEST tag containing the commit, which represents
+    # the first version where this wrapper reached its current state
     tags = (
         sp.run(
             ["git", "tag", "--sort", "creatordate", "--contains", commit],
