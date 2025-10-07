@@ -73,14 +73,9 @@ echo "#### Testing snakedeploy pin-conda-envs"
 runTest 0 $output snakedeploy pin-conda-envs --conda-frontend conda $tmpdir/test-env.yaml
 
 echo
-echo "#### Testing snakedeploy update-snakemake-wrappers with given git ref"
+echo "#### Testing snakedeploy update-snakemake-wrappers"
 cp tests/test-snakefile.smk $tmpdir
-runTest 0 $output snakedeploy update-snakemake-wrappers --git-ref v1.4.0 $tmpdir/test-snakefile.smk
-
-echo
-echo "#### Testing snakedeploy update-snakemake-wrappers without git ref"
 runTest 0 $output snakedeploy update-snakemake-wrappers $tmpdir/test-snakefile.smk
-
 
 echo
 echo "#### Testing snakedeploy scaffold-snakemake-plugin"
