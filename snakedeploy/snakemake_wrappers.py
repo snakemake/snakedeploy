@@ -92,7 +92,7 @@ class WrapperRepo:
 
 
 def update_snakemake_wrappers(snakefiles: List[str]):
-    """Set all snakemake wrappers to the given git ref (e.g. tag or branch)."""
+    """Update all snakemake wrappers to their specific latest versions."""
 
     with WrapperRepo() as wrapper_repo:
         for snakefile in snakefiles:
@@ -103,13 +103,22 @@ def update_snakemake_wrappers(snakefiles: List[str]):
                 spec = matchobj.group("spec")
                 url = urlparse(spec)
                 if not url.scheme:
-                    old_git_ref, rest = spec.split("/", 1)
+                    parts = spec.split("/", 1)
+                    if len(parts) != 2:
+                        logger.warning(
+                            f"Could not parse wrapper specification '{spec}' "
+                            "(expected version/cat/name or version/cat/name/subcommand). "
+                            "Leaving unchanged."
+                        )
+                        return matchobj.group()
+                    old_git_ref, rest = parts
                     git_ref = wrapper_repo.get_wrapper_version(rest)
                     if git_ref is None:
                         logger.warning(
-                            f"Could not determine latest version of wrapper '{rest}'. Leaving unchanged."
+                            f"Could not determine latest version of wrapper '{rest}'. "
+                            "Leaving unchanged."
                         )
-                        git_ref = old_git_ref
+                        return matchobj.group()
                     elif git_ref != old_git_ref:
                         logger.info(
                             f"Updated wrapper '{rest}' from {old_git_ref} to {git_ref}."
