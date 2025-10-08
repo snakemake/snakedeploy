@@ -147,11 +147,7 @@ class CondaEnvProcessor:
                     updated = self.update_env(
                         conda_env_path, pr=pr, warn_on_error=warn_on_error
                     )
-                if pin_envs and (
-                    not update_envs
-                    or updated
-                    or not self.get_pin_file_path(conda_env_path).exists()
-                ):
+                if pin_envs:
                     logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(conda_env_path, pr)
             except sp.CalledProcessError as e:
