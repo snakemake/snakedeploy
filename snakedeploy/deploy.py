@@ -81,8 +81,13 @@ class WorkflowDeployer:
 
         returns a boolean "no_profile" to indicate if there is not a profile (True)
         """
-        # Handle the profile/
+        # Check for profiles directory at root level first
         profile_dir = Path(self.repo_clone) / "profiles"
+        
+        # If not found at root, check under workflow directory
+        if not profile_dir.exists():
+            profile_dir = Path(self.repo_clone) / "workflow" / "profiles"
+        
         no_profile = not profile_dir.exists()
         if no_profile:
             logger.warning(
@@ -91,7 +96,7 @@ class WorkflowDeployer:
                 "need or provide any profiles."
             )
         else:
-            logger.info("Writing template profiles")
+            logger.info(f"Writing template profiles from {profile_dir.relative_to(self.repo_clone)}")
             shutil.copytree(profile_dir, self.profiles, dirs_exist_ok=self.force)
         return no_profile
 
