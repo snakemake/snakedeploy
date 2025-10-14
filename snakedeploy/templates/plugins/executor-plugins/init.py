@@ -85,7 +85,7 @@ class Executor(RemoteExecutor):
         # access workflow
         self.workflow
         # access executor specific settings
-        self.workflow.executor_settings
+        self.executor_settings
 
         # IMPORTANT: in your plugin, only access methods and properties of
         # Snakemake objects (like Workflow, Persistence, etc.) that are
