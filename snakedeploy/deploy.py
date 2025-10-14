@@ -83,11 +83,11 @@ class WorkflowDeployer:
         """
         # Check for profiles directory at root level first
         profile_dir = Path(self.repo_clone) / "profiles"
-        
+
         # If not found at root, check under workflow directory
         if not profile_dir.exists():
             profile_dir = Path(self.repo_clone) / "workflow" / "profiles"
-        
+
         no_profile = not profile_dir.exists()
         if no_profile:
             logger.warning(
@@ -96,7 +96,13 @@ class WorkflowDeployer:
                 "need or provide any profiles."
             )
         else:
-            logger.info(f"Writing template profiles from {profile_dir.relative_to(self.repo_clone)}")
+            logger.info(
+                f"Writing template profiles from {profile_dir.relative_to(self.repo_clone)}"
+            )
+            logger.info(
+                "If you adapt this profile for your HPC or VM cluster consider "
+                "contributing this profile to the original repository."
+            )
             shutil.copytree(profile_dir, self.profiles, dirs_exist_ok=self.force)
         return no_profile
 

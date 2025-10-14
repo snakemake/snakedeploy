@@ -127,9 +127,9 @@ class CondaEnvProcessor:
                         "Cannot add label to PR without --entity-regex specified."
                     )
 
-                assert pin_envs or update_envs, (
-                    "bug: either pin_envs or update_envs must be True"
-                )
+                assert (
+                    pin_envs or update_envs
+                ), "bug: either pin_envs or update_envs must be True"
                 mode = "bump" if update_envs else "pin"
                 pr = PR(
                     f"perf: auto{mode} {entity}",
