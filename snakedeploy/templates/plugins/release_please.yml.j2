@@ -19,6 +19,7 @@ jobs:
         with:
           release-type: python
           package-name: {{ pyproject["project"]["name"] }}
+          token: {{ "${{ secrets.RELEASE_PLEASE_PR_CI_TOKEN }}" }}
 
   publish:
     runs-on: ubuntu-latest
@@ -36,7 +37,7 @@ jobs:
 
       - name: Build source and wheel distribution + check build
         run: |
-          pixi run check-build
+          pixi run -e dev check-build
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
