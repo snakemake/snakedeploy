@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.15.0](https://github.com/snakemake/snakedeploy/compare/v0.14.0...v0.15.0) (2025-10-31)
+
+
+### Features
+
+* Allow creation of PRs upon wrapper updates ([#111](https://github.com/snakemake/snakedeploy/issues/111)) ([6f7ed82](https://github.com/snakemake/snakedeploy/commit/6f7ed8253b59b0afc3d16730f54c55798c03e8e7))
+
+
+### Bug Fixes
+
+* scheduler template ([#110](https://github.com/snakemake/snakedeploy/issues/110)) ([d7c8907](https://github.com/snakemake/snakedeploy/commit/d7c8907e2c59b004485d9d8081c606790074e08a))
+
 ## [0.14.0](https://github.com/snakemake/snakedeploy/compare/v0.13.0...v0.14.0) (2025-10-07)
 
 
