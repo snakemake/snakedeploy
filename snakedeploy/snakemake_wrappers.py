@@ -1,10 +1,12 @@
 from pathlib import Path
 import re
 import tempfile
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 from urllib.parse import urlparse
 import subprocess as sp
+from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
+from snakedeploy.prs import PR, get_repo
 
 
 def get_latest_git_tag(path: Path, repo: Path) -> str | None:
@@ -93,11 +95,46 @@ class WrapperRepo:
         self.tmpdir.cleanup()
 
 
-def update_snakemake_wrappers(snakefiles: List[str]):
+def update_snakemake_wrappers(
+    snakefiles: List[str],
+    create_prs: bool = False,
+    per_snakefile_prs: bool = False,
+    pr_add_label: bool = False,
+    entity_regex: Optional[str] = None,
+):
     """Update all snakemake wrappers to their specific latest versions."""
+
+    repo = None
+    pr = None
+    if create_prs:
+        repo = get_repo()
+        if pr_add_label and not entity_regex:
+            raise UserError("Cannot add label to PR without --entity-regex specified.")
+
+    if create_prs and not per_snakefile_prs:
+        if pr_add_label:
+            raise UserError(
+                "Cannot add label to PR when updating all snakefiles at once."
+            )
+        pr = PR(
+            "perf: autobump wrappers",
+            f"Automatic bump of wrappers in {', '.join(snakefiles)}.",
+            "autobump/wrappers",
+            repo,
+        )
 
     with WrapperRepo() as wrapper_repo:
         for snakefile in snakefiles:
+            if create_prs and per_snakefile_prs:
+                pr = PR(
+                    f"perf: autobump wrappers in {snakefile}",
+                    f"Automatic bump of wrappers in {snakefile}.",
+                    f"autobump/wrappers/{snakefile.replace('/', '-')}",
+                    repo,
+                    entity=snakefile,
+                    label_entity_regex=entity_regex if pr_add_label else None,
+                )
+
             with open(snakefile, "r") as infile:
                 snakefile_content = infile.read()
 
@@ -148,3 +185,11 @@ def update_snakemake_wrappers(snakefiles: List[str]):
             )
             with open(snakefile, "w") as outfile:
                 outfile.write(snakefile_content)
+
+            if create_prs:
+                assert pr is not None
+                pr.create()
+
+        if create_prs and not per_snakefile_prs:
+            assert pr is not None
+            pr.create()
