@@ -1,24 +1,20 @@
-from collections import namedtuple
 import copy
 import json
-import os
 from pathlib import Path
 import subprocess as sp
 import tempfile
 import re
 from glob import glob
 from itertools import chain
-import github
-from urllib3.util.retry import Retry
 import random
+from typing import Optional
 
 from packaging import version as packaging_version
 import yaml
-from github import Github, GithubException
-from reretry import retry
 
 from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
+from snakedeploy.prs import PR, get_repo
 from snakedeploy.utils import YamlDumper
 from snakedeploy.conda_version import VersionOrder
 
@@ -66,9 +62,6 @@ def update_conda_envs(
     )
 
 
-File = namedtuple("File", "path, content, is_updated, msg")
-
-
 class CondaEnvProcessor:
     def __init__(self, conda_frontend="mamba"):
         self.conda_frontend = conda_frontend
@@ -84,22 +77,16 @@ class CondaEnvProcessor:
     def process(
         self,
         conda_env_paths,
-        create_prs=False,
-        update_envs=True,
-        pin_envs=True,
-        pr_add_label=False,
-        entity_regex=None,
-        warn_on_error=False,
+        create_prs: bool = False,
+        update_envs: bool = True,
+        pin_envs: bool = True,
+        pr_add_label: bool = False,
+        entity_regex: Optional[str] = None,
+        warn_on_error: bool = False,
     ):
         repo = None
         if create_prs:
-            g = Github(
-                os.environ["GITHUB_TOKEN"],
-                retry=Retry(
-                    total=10, status_forcelist=(500, 502, 504), backoff_factor=0.3
-                ),
-            )
-            repo = g.get_repo(os.environ["GITHUB_REPOSITORY"]) if create_prs else None
+            repo = get_repo()
         conda_envs = list(chain.from_iterable(map(glob, conda_env_paths)))
         random.shuffle(conda_envs)
 
@@ -109,19 +96,6 @@ class CondaEnvProcessor:
             )
         for conda_env_path in conda_envs:
             if create_prs:
-                entity = conda_env_path
-                if entity_regex is not None:
-                    m = re.match(entity_regex, conda_env_path)
-                    if m is None:
-                        raise UserError(
-                            f"Given --entity-regex did not match any {conda_env_path}."
-                        )
-                    try:
-                        entity = m.group("entity")
-                    except IndexError:
-                        raise UserError(
-                            "No group 'entity' found in given --entity-regex."
-                        )
                 if pr_add_label and not entity_regex:
                     raise UserError(
                         "Cannot add label to PR without --entity-regex specified."
@@ -132,11 +106,12 @@ class CondaEnvProcessor:
                 )
                 mode = "bump" if update_envs else "pin"
                 pr = PR(
-                    f"perf: auto{mode} {entity}",
-                    f"Automatic {mode} of {entity}.",
-                    f"auto{mode}/{entity.replace('/', '-')}",
+                    f"perf: auto{mode} {conda_env_path}",
+                    f"Automatic {mode} of {conda_env_path}.",
+                    f"auto{mode}/{conda_env_path.replace('/', '-')}",
                     repo,
-                    label=entity if pr_add_label else None,
+                    entity=conda_env_path,
+                    label_entity_regex=entity_regex if pr_add_label else None,
                 )
             else:
                 pr = None
@@ -161,6 +136,7 @@ class CondaEnvProcessor:
                 else:
                     raise UserError(msg)
             if create_prs:
+                assert pr is not None
                 pr.create()
 
     def update_env(
@@ -303,83 +279,3 @@ class CondaEnvProcessor:
             universal_newlines=True,
             check=True,
         )
-
-
-class PR:
-    def __init__(self, title, body, branch, repo, label=None):
-        self.title = title
-        self.body = body
-        self.files = []
-        self.branch = branch
-        self.repo = repo
-        self.base_ref = (
-            os.environ.get("GITHUB_BASE_REF") or os.environ["GITHUB_REF_NAME"]
-        )
-        self.label = label
-
-    def add_file(self, filepath, content, is_updated, msg):
-        self.files.append(File(str(filepath), content, is_updated, msg))
-
-    @retry(tries=2, delay=60)
-    def create(self):
-        if not self.files:
-            logger.info("No files to commit.")
-            return
-
-        branch_exists = False
-        try:
-            b = self.repo.get_branch(self.branch)
-            logger.info(f"Branch {b} already exists.")
-            branch_exists = True
-        except GithubException as e:
-            if e.status != 404:
-                raise e
-            logger.info(f"Creating branch {self.branch}...")
-            self.repo.create_git_ref(
-                ref=f"refs/heads/{self.branch}",
-                sha=self.repo.get_branch(self.base_ref).commit.sha,
-            )
-        for file in self.files:
-            sha = None
-            if branch_exists:
-                logger.info(f"Obtaining sha of {file.path} on branch {self.branch}...")
-                try:
-                    # try to get sha if file exists
-                    sha = self.repo.get_contents(file.path, self.branch).sha
-                except github.GithubException.UnknownObjectException as e:
-                    if e.status != 404:
-                        raise e
-            elif file.is_updated:
-                logger.info(
-                    f"Obtaining sha of {file.path} on branch {self.base_ref}..."
-                )
-                sha = self.repo.get_contents(file.path, self.base_ref).sha
-
-            if sha is not None:
-                self.repo.update_file(
-                    file.path,
-                    file.msg,
-                    file.content,
-                    sha,
-                    branch=self.branch,
-                )
-            else:
-                self.repo.create_file(
-                    file.path, file.msg, file.content, branch=self.branch
-                )
-
-        pr_exists = any(
-            pr.head.label.split(":", 1)[1] == self.branch
-            for pr in self.repo.get_pulls(state="open", base=self.base_ref)
-        )
-        if pr_exists:
-            logger.info("PR already exists.")
-        else:
-            pr = self.repo.create_pull(
-                title=self.title,
-                body=self.body,
-                head=self.branch,
-                base=self.base_ref,
-            )
-            pr.add_to_labels(self.label)
-            logger.info(f"Created PR: {pr.html_url}")
