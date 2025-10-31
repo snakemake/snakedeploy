@@ -118,5 +118,6 @@ class PR:
                 head=self.branch,
                 base=self.base_ref,
             )
-            pr.add_to_labels(self.label)
+            if self.label is not None:
+                pr.add_to_labels(self.label)
             logger.info(f"Created PR: {pr.html_url}")
