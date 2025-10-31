@@ -82,7 +82,7 @@ class ScaffoldPlugin(ABC):
             "coverage",
             "pytest",
             "twine",
-            "python-build",
+            "build",
         ]
         if self.include_snakemake_dev_dependency():
             dev_deps.append("snakemake")
