@@ -30,7 +30,7 @@ jobs:
             
             There is a new release of the Snakedeploy tool to deploy Snakemake workflows from the snakemake catalog. Its version now is {{ version }}!
             
-            Give us some time, and you will automatically find the plugin on #Bioconda and #Pypi.
+            Give us some time, and you will automatically find Snakedeploy on #Bioconda and #Pypi.
             
             If you want to discuss the release, you will find the maintainers here on Mastodon!
             @johanneskoester@fosstodon.org
