@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/snakemake/snakedeploy/compare/v0.15.0...v0.16.0) (2025-11-26)
+
+
+### Features
+
+* added announcement robot ([#109](https://github.com/snakemake/snakedeploy/issues/109)) ([3cb9b56](https://github.com/snakemake/snakedeploy/commit/3cb9b56d1ed1aadec8837b41ddfb7852bce1b17f))
+
 ## [0.15.0](https://github.com/snakemake/snakedeploy/compare/v0.14.0...v0.15.0) (2025-10-31)
 
 
