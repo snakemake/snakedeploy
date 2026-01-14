@@ -36,7 +36,7 @@ For the example above, it will have the following content
 
 utilizing `Snakemake's module system <https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-and-combining-pre-exising-workflows>`__.
 In addition, it will copy over the ``config/`` and ``profiles/`` directories of the given repository (and their contents) into respective directories under ``/tmp/dest/``.
-These should be seen as a template, and can be modified according to your needs.
+These should be seen as templates, and can be modified according to your needs.
 Further, the workflow definition Snakefile can be arbitrarily extended and modified, thereby making any changes to the used workflow transparent (also see the `snakemake module documentation <https://snakemake.readthedocs.io/en/stable/snakefiles/modularization.html#snakefiles-modules>`_).
 
 It is highly advisable to put the deployed workflow into a new (perhaps private) git repository (e.g., see `here <https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line>`_ for instructions how to do that with Github).
