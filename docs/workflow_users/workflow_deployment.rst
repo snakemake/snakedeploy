@@ -35,7 +35,7 @@ For the example above, it will have the following content
     use rule * from dna_seq_varlociraptor
 
 utilizing `Snakemake's module system <https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-and-combining-pre-exising-workflows>`__.
-In addition, it will copy over the ``config/`` and ``profiles/`` directories of the given repository (and their contents) into respective directories under``/tmp/dest/``.
+In addition, it will copy over the ``config/`` and ``profiles/`` directories of the given repository (and their contents) into respective directories under ``/tmp/dest/``.
 These should be seen as a template, and can be modified according to your needs.
 Further, the workflow definition Snakefile can be arbitrarily extended and modified, thereby making any changes to the used workflow transparent (also see the `snakemake module documentation <https://snakemake.readthedocs.io/en/stable/snakefiles/modularization.html#snakefiles-modules>`_).
 
