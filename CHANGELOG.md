@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.16.0](https://github.com/snakemake/snakedeploy/compare/v0.15.0...v0.16.0) (2026-02-13)
+
+
+### Features
+
+* added announcement robot ([#109](https://github.com/snakemake/snakedeploy/issues/109)) ([3cb9b56](https://github.com/snakemake/snakedeploy/commit/3cb9b56d1ed1aadec8837b41ddfb7852bce1b17f))
+* expose subcommand for collecting files into tabular structure, improved output ([#115](https://github.com/snakemake/snakedeploy/issues/115)) ([8794901](https://github.com/snakemake/snakedeploy/commit/87949015af811362631bb923b9a139d7d03cf261))
+
+
+### Documentation
+
+* add info on `profiles/` deployment to workflow_deployment.rst ([#114](https://github.com/snakemake/snakedeploy/issues/114)) ([7a45aff](https://github.com/snakemake/snakedeploy/commit/7a45aff3c0f1192ec3b3ebd4e3ef357d9c5645a0))
+
 ## [0.15.0](https://github.com/snakemake/snakedeploy/compare/v0.14.0...v0.15.0) (2025-10-31)
 
 
