@@ -104,6 +104,8 @@ def get_parser():
         "collect-files",
         description="Collect files into a tabular structure, given input from "
         "STDIN formats glob patterns defined in a config sheet.",
+        help="Collect files into a tabular structure, given input from "
+        "STDIN formats glob patterns defined in a config sheet.",
     )
     collect_files.add_argument(
         "config",
