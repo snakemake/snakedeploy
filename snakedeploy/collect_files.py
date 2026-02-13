@@ -13,7 +13,9 @@ def collect_files(config_sheet_path: str):
     """
     config_sheet = pd.read_csv(config_sheet_path, sep="\t")
     config_sheet["input_re"] = config_sheet["input_pattern"].apply(re.compile)
-    re_groups = sorted({group for regex in config_sheet["input_re"] for group in regex.groupindex})
+    re_groups = sorted(
+        {group for regex in config_sheet["input_re"] for group in regex.groupindex}
+    )
 
     for item in sys.stdin:
         item = item[:-1]  # remove newline
@@ -42,7 +44,9 @@ def collect_files(config_sheet_path: str):
 
         match_groupdict = match.match.groupdict(default="")
 
-        print(*[match_groupdict.get(group, "") for group in re_groups], *files, sep="\t")
+        print(
+            *[match_groupdict.get(group, "") for group in re_groups], *files, sep="\t"
+        )
 
 
 Match = namedtuple("Match", "rule match")
