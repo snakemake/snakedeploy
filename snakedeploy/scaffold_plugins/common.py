@@ -65,6 +65,17 @@ class ScaffoldPlugin(ABC):
         # the python dependency should be in line with the dependencies
         pyproject["project"]["requires-python"] = ">=3.11,<4.0"
 
+        # configure coverage
+        pyproject["tool"]["coverage"] = {
+            "report": {
+                "exclude_lines": [
+                    "pass",
+                    "\\.\\.\\.",
+                ],
+                "fail_under": 90.0,
+            }
+        }
+
         save_pyproject(pyproject)
 
         # add dependencies
@@ -157,7 +168,6 @@ class ScaffoldPlugin(ABC):
 
         (tests_path / "__init__.py").unlink(missing_ok=True)
 
-        render_template("setup.cfg.j2", Path("setup.cfg"))
         render_template("release_please.yml.j2", workflows_path / "release-please.yml")
         render_template("ci.yml.j2", workflows_path / "ci.yml")
         render_template(
