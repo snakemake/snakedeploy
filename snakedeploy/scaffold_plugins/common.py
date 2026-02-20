@@ -86,14 +86,14 @@ class ScaffoldPlugin(ABC):
         dev_deps = [
             "pixi",
             "add",
-            "--pypi",
             "--feature",
             "dev",
             "ruff",
-            "coverage",
             "pytest",
+            "pytest-cov",
+            "pyrefly",
             "twine",
-            "build",
+            "python-build",
         ]
         if self.include_snakemake_dev_dependency():
             dev_deps.append("snakemake")
@@ -109,6 +109,10 @@ class ScaffoldPlugin(ABC):
         )
         sp.run(
             ["pixi", "task", "add", "--feature", "dev", "format", "ruff format"],
+            check=True,
+        )
+        sp.run(
+            ["pixi", "task", "add", "--feature", "dev", "typecheck", "pyrefly check"],
             check=True,
         )
         sp.run(
