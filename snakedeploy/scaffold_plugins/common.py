@@ -125,7 +125,7 @@ class ScaffoldPlugin(ABC):
                 "dev",
                 "test",
                 "pytest "
-                f"--cov={package_name} "
+                f"--cov={package_name.replace('-', '_')} "
                 "--cov-report=xml:coverage-report/coverage.xml "
                 "--cov-report=term-missing "
                 "tests/test_plugin.py",
