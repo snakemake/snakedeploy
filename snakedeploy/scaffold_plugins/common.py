@@ -127,7 +127,7 @@ class ScaffoldPlugin(ABC):
                 f"--cov={package_name} "
                 "--cov-report=xml:coverage-report/coverage.xml "
                 "--cov-report=term-missing "
-                "tests/tests.py",
+                "tests/test_plugin.py",
             ],
             check=True,
         )
