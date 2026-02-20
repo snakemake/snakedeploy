@@ -86,6 +86,7 @@ class ScaffoldPlugin(ABC):
         dev_deps = [
             "pixi",
             "add",
+            "--pypi",
             "--feature",
             "dev",
             "ruff",
@@ -93,7 +94,7 @@ class ScaffoldPlugin(ABC):
             "pytest-cov",
             "pyrefly",
             "twine",
-            "python-build",
+            "build",
         ]
         if self.include_snakemake_dev_dependency():
             dev_deps.append("snakemake")
