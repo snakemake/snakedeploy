@@ -117,6 +117,10 @@ class ScaffoldPlugin(ABC):
             check=True,
         )
         sp.run(
+            ["pixi", "task", "add", "--feature", "dev", "coverage-report", "coverage report -m"],
+            check=True,
+        )
+        sp.run(
             [
                 "pixi",
                 "task",
