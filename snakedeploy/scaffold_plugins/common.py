@@ -105,15 +105,15 @@ class ScaffoldPlugin(ABC):
         save_pyproject(pyproject)
 
         sp.run(
-            ["pixi", "task", "add", "--feature", "dev", "lint", "ruff check"],
+            ["pixi", "task", "add", "--feature", "dev", "lint", "ruff check src tests"],
             check=True,
         )
         sp.run(
-            ["pixi", "task", "add", "--feature", "dev", "format", "ruff format"],
+            ["pixi", "task", "add", "--feature", "dev", "format", "ruff format src tests"],
             check=True,
         )
         sp.run(
-            ["pixi", "task", "add", "--feature", "dev", "typecheck", "pyrefly check"],
+            ["pixi", "task", "add", "--feature", "dev", "typecheck", "pyrefly check src tests"],
             check=True,
         )
         sp.run(
