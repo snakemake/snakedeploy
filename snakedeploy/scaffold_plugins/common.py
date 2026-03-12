@@ -109,15 +109,39 @@ class ScaffoldPlugin(ABC):
             check=True,
         )
         sp.run(
-            ["pixi", "task", "add", "--feature", "dev", "format", "ruff format src tests"],
+            [
+                "pixi",
+                "task",
+                "add",
+                "--feature",
+                "dev",
+                "format",
+                "ruff format src tests",
+            ],
             check=True,
         )
         sp.run(
-            ["pixi", "task", "add", "--feature", "dev", "typecheck", "pyrefly check src tests"],
+            [
+                "pixi",
+                "task",
+                "add",
+                "--feature",
+                "dev",
+                "typecheck",
+                "pyrefly check src tests",
+            ],
             check=True,
         )
         sp.run(
-            ["pixi", "task", "add", "--feature", "dev", "coverage-report", "coverage report -m"],
+            [
+                "pixi",
+                "task",
+                "add",
+                "--feature",
+                "dev",
+                "coverage-report",
+                "coverage report -m",
+            ],
             check=True,
         )
         sp.run(
