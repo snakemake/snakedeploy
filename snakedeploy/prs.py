@@ -2,7 +2,7 @@ from collections import namedtuple
 import os
 import re
 from typing import Optional
-from reretry import retry
+from tenacity import retry
 from urllib3.util.retry import Retry
 
 import github
