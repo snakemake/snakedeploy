@@ -2,7 +2,7 @@ from collections import namedtuple
 import os
 import re
 from typing import Optional
-from tenacity import retry,, stop_after_attempt, wait_exponential
+from tenacity import retry, stop_after_attempt, wait_exponential
 from urllib3.util.retry import Retry
 
 from github import Github, GithubException
