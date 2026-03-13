@@ -5,7 +5,6 @@ from typing import Optional
 from tenacity import retry
 from urllib3.util.retry import Retry
 
-import github
 from github import Github, GithubException
 
 from snakedeploy.exceptions import UserError
@@ -83,7 +82,7 @@ class PR:
                 try:
                     # try to get sha if file exists
                     sha = self.repo.get_contents(file.path, self.branch).sha
-                except github.GithubException.UnknownObjectException as e:
+                except GithubException.UnknownObjectException as e:
                     if e.status != 404:
                         raise e
             elif file.is_updated:
