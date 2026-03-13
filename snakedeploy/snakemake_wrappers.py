@@ -190,7 +190,7 @@ def update_snakemake_wrappers(
                 assert pr is not None
                 pr.add_file(
                     snakefile,
-                    content,
+                    snakefile_content,
                     is_updated=True,
                     msg=f"perf: update {snakefile}.",
                 )
