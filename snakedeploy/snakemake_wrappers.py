@@ -188,6 +188,13 @@ def update_snakemake_wrappers(
 
             if create_prs:
                 assert pr is not None
+                pr.add_file(
+                    snakefile,
+                    content,
+                    is_updated=True,
+                    msg=f"perf: update {snakefile}.",
+                )
+
                 pr.create()
 
         if create_prs and not per_snakefile_prs:
