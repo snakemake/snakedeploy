@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Mapping, Optional, Sequence, Union
+from typing import Dict, Mapping, Optional, Sequence, Union
 
 from snakemake_interface_scheduler_plugins.settings import SchedulerSettingsBase
 from snakemake_interface_scheduler_plugins.base import SchedulerBase
