@@ -164,7 +164,12 @@ class CondaEnvProcessor:
                         return dep
                 return func(m.group("name"))
 
-            return list(filter(process_dependency, conda_env["dependencies"]))
+            return list(
+                filter(
+                    lambda item: item is not None,
+                    map(process_dependency, conda_env["dependencies"]),
+                )
+            )
 
         def get_pkg_versions(conda_env_path):
             with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
