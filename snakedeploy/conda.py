@@ -133,6 +133,7 @@ class CondaEnvProcessor:
                 msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
                 if warn_on_error:
                     logger.warning(msg)
+                    continue
                 else:
                     raise UserError(msg)
             if create_prs:
