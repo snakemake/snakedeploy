@@ -202,7 +202,9 @@ class CondaEnvProcessor:
                 if prior_version is not None and version < VersionOrder(prior_version):
                     yield pkg_name
 
-        downgraded = set(process_dependencies(lambda name: name, only_constrained=True)) & set(downgraded())
+        downgraded = set(
+            process_dependencies(lambda name: name, only_constrained=True)
+        ) & set(downgraded())
         if downgraded:
             msg = (
                 f"Env {conda_env_path} could not be updated because the following packages "
