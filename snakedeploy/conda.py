@@ -149,18 +149,21 @@ class CondaEnvProcessor:
         with open(conda_env_path, "r") as infile:
             conda_env = yaml.load(infile, Loader=yaml.SafeLoader)
 
-        def process_dependencies(func):
+        def process_dependencies(func, only_constrained=False):
             def process_dependency(dep):
                 if isinstance(dep, dict):
                     # leave e.g. pip subdicts unchanged
                     return dep
-                m = spec_re.match(dep)
+                m = spec_re.match(dep.strip())
                 if m is None:
-                    # cannot parse the spec, leave unchanged
-                    return dep
+                    if only_constrained:
+                        return None
+                    else:
+                        # cannot parse the spec, leave unchanged
+                        return dep
                 return func(m.group("name"))
 
-            return [process_dependency(dep) for dep in conda_env["dependencies"]]
+            return list(filter(process_dependency, conda_env["dependencies"]))
 
         def get_pkg_versions(conda_env_path):
             with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
@@ -199,7 +202,7 @@ class CondaEnvProcessor:
                 if prior_version is not None and version < VersionOrder(prior_version):
                     yield pkg_name
 
-        downgraded = set(unconstrained_deps) & set(downgraded())
+        downgraded = set(process_dependencies(lambda name: name, only_constrained=True)) & set(downgraded())
         if downgraded:
             msg = (
                 f"Env {conda_env_path} could not be updated because the following packages "
@@ -208,6 +211,7 @@ class CondaEnvProcessor:
             )
             if warn_on_error:
                 logger.warning(msg)
+                return False
             else:
                 raise UserError(msg)
 
