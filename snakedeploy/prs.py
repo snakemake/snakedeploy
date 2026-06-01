@@ -2,10 +2,9 @@ from collections import namedtuple
 import os
 import re
 from typing import Optional
-from reretry import retry
+from tenacity import retry, stop_after_attempt, wait_exponential
 from urllib3.util.retry import Retry
 
-import github
 from github import Github, GithubException
 
 from snakedeploy.exceptions import UserError
@@ -57,7 +56,7 @@ class PR:
     def add_file(self, filepath, content, is_updated, msg):
         self.files.append(File(str(filepath), content, is_updated, msg))
 
-    @retry(tries=2, delay=60)
+    @retry(stop=stop_after_attempt(2), wait=wait_exponential(multiplier=2, min=60))
     def create(self):
         if not self.files:
             logger.info("No files to commit.")
@@ -83,7 +82,7 @@ class PR:
                 try:
                     # try to get sha if file exists
                     sha = self.repo.get_contents(file.path, self.branch).sha
-                except github.GithubException.UnknownObjectException as e:
+                except GithubException.UnknownObjectException as e:
                     if e.status != 404:
                         raise e
             elif file.is_updated:
