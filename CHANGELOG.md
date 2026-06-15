@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.16.1](https://github.com/snakemake/snakedeploy/compare/v0.16.0...v0.16.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* add files to PR and switch reretry with tenacity ([#119](https://github.com/snakemake/snakedeploy/issues/119)) ([87a7e59](https://github.com/snakemake/snakedeploy/commit/87a7e5994faab75971ede3dc748c0896c9b0c2c2))
+* only check for downgraded packages among the constrained dependencies, do not perform update in that case if warn on error is active ([#121](https://github.com/snakemake/snakedeploy/issues/121)) ([4ace455](https://github.com/snakemake/snakedeploy/commit/4ace455ba911dd13d387b355bfd1784ad7b5015b))
+
 ## [0.16.0](https://github.com/snakemake/snakedeploy/compare/v0.15.0...v0.16.0) (2026-02-13)
 
 
