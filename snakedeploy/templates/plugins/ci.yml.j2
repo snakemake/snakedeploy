@@ -6,65 +6,53 @@ on:
       - main
   pull_request:
 
-env:
-  PYTHON_VERSION: 3.11
-
 jobs:
-  linting:
+  format:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: {{ "${{ env.PYTHON_VERSION }}" }}
-
-      - name: Install poetry
-        run: pip install poetry
-
-      - name: Determine dependencies
-        run: poetry lock
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: {{ "${{ env.PYTHON_VERSION }}" }}
-          cache: poetry
-
-      - name: Install Dependencies using Poetry
-        run: poetry install
+      - name: Setup pixi
+        uses: prefix-dev/setup-pixi@v0
 
       - name: Check formatting
-        run: poetry run ruff format --check .
-      
-      - name: Lint
-        run: poetry run ruff check .
+        run: pixi run format --check
 
-  testing:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out the code
+        uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: {{ "${{ env.PYTHON_VERSION }}" }}
+      - name: Setup pixi
+        uses: prefix-dev/setup-pixi@v0
 
-      - name: Install poetry
-        run: pip install poetry
+      - name: Check code
+        run: pixi run lint
 
-      - name: Determine dependencies
-        run: poetry lock
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: {{ "${{ env.PYTHON_VERSION }}" }}
-          cache: poetry
+      - name: Setup pixi
+        uses: prefix-dev/setup-pixi@v0
 
-      - name: Install dependencies
-        run: poetry install
+      - name: Check code
+        run: pixi run typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup pixi
+        uses: prefix-dev/setup-pixi@v0
 
       - name: Run pytest
-        run: poetry run coverage run -m pytest
+        run: pixi run test -v
 
       - name: Run Coverage
-        run: poetry run coverage report -m
+        run: pixi run coverage-report

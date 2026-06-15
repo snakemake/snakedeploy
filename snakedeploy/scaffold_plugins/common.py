@@ -65,6 +65,19 @@ class ScaffoldPlugin(ABC):
         # the python dependency should be in line with the dependencies
         pyproject["project"]["requires-python"] = ">=3.11,<4.0"
 
+        # configure coverage
+        if "tool" not in pyproject:
+            pyproject["tool"] = {}
+        pyproject["tool"]["coverage"] = {
+            "report": {
+                "exclude_lines": [
+                    "pass",
+                    "\\.\\.\\.",
+                ],
+                "fail_under": 90.0,
+            }
+        }
+
         save_pyproject(pyproject)
 
         # add dependencies
@@ -79,8 +92,9 @@ class ScaffoldPlugin(ABC):
             "--feature",
             "dev",
             "ruff",
-            "coverage",
             "pytest",
+            "pytest-cov",
+            "pyrefly",
             "twine",
             "build",
         ]
@@ -93,11 +107,43 @@ class ScaffoldPlugin(ABC):
         save_pyproject(pyproject)
 
         sp.run(
-            ["pixi", "task", "add", "--feature", "dev", "lint", "ruff check"],
+            ["pixi", "task", "add", "--feature", "dev", "lint", "ruff check src tests"],
             check=True,
         )
         sp.run(
-            ["pixi", "task", "add", "--feature", "dev", "format", "ruff format"],
+            [
+                "pixi",
+                "task",
+                "add",
+                "--feature",
+                "dev",
+                "format",
+                "ruff format src tests",
+            ],
+            check=True,
+        )
+        sp.run(
+            [
+                "pixi",
+                "task",
+                "add",
+                "--feature",
+                "dev",
+                "typecheck",
+                "pyrefly check src tests",
+            ],
+            check=True,
+        )
+        sp.run(
+            [
+                "pixi",
+                "task",
+                "add",
+                "--feature",
+                "dev",
+                "coverage-report",
+                "coverage report -m",
+            ],
             check=True,
         )
         sp.run(
@@ -109,10 +155,10 @@ class ScaffoldPlugin(ABC):
                 "dev",
                 "test",
                 "pytest "
-                f"--cov={package_name} "
+                f"--cov={package_name.replace('-', '_')} "
                 "--cov-report=xml:coverage-report/coverage.xml "
                 "--cov-report=term-missing "
-                "tests/tests.py",
+                "tests/test_plugin.py",
             ],
             check=True,
         )
@@ -157,7 +203,6 @@ class ScaffoldPlugin(ABC):
 
         (tests_path / "__init__.py").unlink(missing_ok=True)
 
-        render_template("setup.cfg.j2", Path("setup.cfg"))
         render_template("release_please.yml.j2", workflows_path / "release-please.yml")
         render_template("ci.yml.j2", workflows_path / "ci.yml")
         render_template(
