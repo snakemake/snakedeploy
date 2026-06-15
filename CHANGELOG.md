@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.2](https://github.com/snakemake/snakedeploy/compare/v0.16.1...v0.16.2) (2026-06-15)
+
+
+### Bug Fixes
+
+* update scaffolding to make full use of pixi ([#116](https://github.com/snakemake/snakedeploy/issues/116)) ([9858803](https://github.com/snakemake/snakedeploy/commit/9858803960ff5bda8212e7f95cd6dc0a877e0b67))
+
 ## [0.16.1](https://github.com/snakemake/snakedeploy/compare/v0.16.0...v0.16.1) (2026-06-01)
 
 
