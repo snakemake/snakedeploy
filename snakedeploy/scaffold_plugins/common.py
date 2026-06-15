@@ -66,6 +66,8 @@ class ScaffoldPlugin(ABC):
         pyproject["project"]["requires-python"] = ">=3.11,<4.0"
 
         # configure coverage
+        if "tool" not in pyproject:
+            pyproject["tool"] = {}
         pyproject["tool"]["coverage"] = {
             "report": {
                 "exclude_lines": [
