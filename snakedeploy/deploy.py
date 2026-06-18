@@ -21,6 +21,7 @@ class WorkflowDeployer:
         tag: Optional[str] = None,
         branch: Optional[str] = None,
         force=False,
+        host: Optional[str] = None,
     ):
         self.provider = get_provider(source)
         self.env = Environment(loader=PackageLoader("snakedeploy"))
@@ -29,6 +30,7 @@ class WorkflowDeployer:
         self._cloned = None
         self.tag = tag
         self.branch = branch
+        self.host = host
 
     def __enter__(self):
         return self
@@ -227,7 +229,7 @@ class WorkflowDeployer:
         module_deployment = template.render(
             name=name,
             snakefile=self.provider.get_source_file_declaration(
-                snakefile, self.tag, self.branch
+                snakefile, self.tag, self.branch, self.host
             ),
             repo=self.provider.source_url,
             config=config,
@@ -253,6 +255,7 @@ def deploy(
     branch: Optional[str],
     dest_path: Path,
     force=False,
+    host: Optional[str] = None,
 ):
     """
     Deploy a given workflow to the local machine, using the Snakemake module system.
