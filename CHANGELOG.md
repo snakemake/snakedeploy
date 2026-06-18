@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.3](https://github.com/snakemake/snakedeploy/compare/v0.16.2...v0.16.3) (2026-06-18)
+
+
+### Bug Fixes
+
+* Fix --version ([#125](https://github.com/snakemake/snakedeploy/issues/125)) ([fb1ea2b](https://github.com/snakemake/snakedeploy/commit/fb1ea2b96e693294c1d8ed72c379c49c2ab9d248))
+
 ## [0.16.2](https://github.com/snakemake/snakedeploy/compare/v0.16.1...v0.16.2) (2026-06-15)
 
 
