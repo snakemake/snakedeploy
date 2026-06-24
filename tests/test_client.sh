@@ -47,6 +47,14 @@ repo="https://gitlab.com/nate-d-olson/snaketestworkflow"
 runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}" --name snake-test --branch master
 
 echo
+echo "#### Testing snakedeploy deployment pinned to a specific commit"
+dest=$tmpdir/commit-testing
+repo="https://github.com/snakemake-workflows/dna-seq-varlociraptor"
+commit_sha="87709354b54391aee5dbb01a64cacfc20aed5ec3"
+runTest 0 $output snakedeploy deploy-workflow "${repo}" "${dest}" --branch master --commit ${commit_sha} --name dna-seq-commit
+runTest 0 $output grep "commit=\"${commit_sha}\"" ${dest}/workflow/Snakefile
+
+echo
 echo "#### Testing snakedeploy local deployment"
 local=$tmpdir/rna-seq-star-deseq2
 repo="https://github.com/snakemake-workflows/rna-seq-star-deseq2"
