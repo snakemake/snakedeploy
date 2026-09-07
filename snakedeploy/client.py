@@ -79,14 +79,21 @@ def get_parser():
         help="Path to create the deploying workflow in.",
     )
 
-    deploy_workflow_parser.add_argument(
+    ref_group = deploy_workflow_parser.add_mutually_exclusive_group(required=True)
+
+    ref_group.add_argument(
         "--tag",
         help="Git tag to deploy from (e.g. a certain release).",
     )
 
-    deploy_workflow_parser.add_argument(
+    ref_group.add_argument(
         "--branch",
         help="Git branch to deploy from.",
+    )
+
+    ref_group.add_argument(
+        "--commit",
+        help="Git commit (SHA) to deploy from and pin the resulting module to.",
     )
 
     deploy_group.add_argument(
@@ -291,13 +298,12 @@ def main():
 
     try:
         if args.subcommand == "deploy-workflow":
-            if not (args.tag or args.branch):
-                raise UserError("Please specify either --tag or --branch")
             deploy(
                 args.repo,
                 name=args.name,
                 tag=args.tag,
                 branch=args.branch,
+                commit=args.commit,
                 dest_path=Path(args.dest),
                 force=args.force,
             )
