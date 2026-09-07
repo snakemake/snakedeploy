@@ -20,6 +20,7 @@ class WorkflowDeployer:
         dest: Path,
         tag: Optional[str] = None,
         branch: Optional[str] = None,
+        commit: Optional[str] = None,
         force=False,
     ):
         self.provider = get_provider(source)
@@ -29,6 +30,7 @@ class WorkflowDeployer:
         self._cloned = None
         self.tag = tag
         self.branch = branch
+        self.commit = commit
 
     def __enter__(self):
         return self
@@ -138,7 +140,9 @@ class WorkflowDeployer:
             logger.info("Obtaining source repository...")
             self._cloned = tempfile.TemporaryDirectory()
             self.provider.clone(self._cloned.name)
-            if self.tag is not None:
+            if self.commit is not None:
+                self.provider.checkout(self._cloned.name, self.commit)
+            elif self.tag is not None:
                 self.provider.checkout(self._cloned.name, self.tag)
             elif self.branch is not None:
                 self.provider.checkout(self._cloned.name, self.branch)
@@ -227,7 +231,7 @@ class WorkflowDeployer:
         module_deployment = template.render(
             name=name,
             snakefile=self.provider.get_source_file_declaration(
-                snakefile, self.tag, self.branch
+                snakefile, self.tag, self.branch, self.commit
             ),
             repo=self.provider.source_url,
             config=config,
@@ -252,6 +256,7 @@ def deploy(
     tag: Optional[str],
     branch: Optional[str],
     dest_path: Path,
+    commit: Optional[str] = None,
     force=False,
 ):
     """
@@ -273,8 +278,27 @@ def deploy(
            force=True
        )
 
+    Instead of a tag or branch, a specific commit can be pinned (the three
+    are mutually exclusive):
+
+    .. code-block:: python
+
+       from snakedeploy.deploy import deploy
+       deploy(
+           "https://github.com/snakemake-workflows/dna-seq-varlociraptor",
+           dest_path="/tmp/dest",
+           name="dna_seq",
+           commit="a1b2c3d4e5f6...",
+           force=True
+       )
+
     """
     with WorkflowDeployer(
-        source=source_url, dest=dest_path, tag=tag, branch=branch, force=force
+        source=source_url,
+        dest=dest_path,
+        tag=tag,
+        branch=branch,
+        commit=commit,
+        force=force,
     ) as sd:
         sd.deploy(name=name)

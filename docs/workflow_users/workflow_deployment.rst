@@ -41,6 +41,24 @@ Further, the workflow definition Snakefile can be arbitrarily extended and modif
 
 It is highly advisable to put the deployed workflow into a new (perhaps private) git repository (e.g., see `here <https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line>`_ for instructions how to do that with Github).
 
+If you want to pin the deployment to an exact commit (e.g. for full reproducibility independent of any future changes to a branch or tag), use ``--commit`` instead of ``--tag``/``--branch``:
+
+.. code-block:: console
+
+    $ snakedeploy deploy-workflow https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --commit 87709354b54391aee5dbb01a64cacfc20aed5ec3
+
+This will generate a module declaration pinned to that exact commit:
+
+.. code-block:: python
+
+    module dna_seq_varlociraptor:
+        snakefile:
+            github("snakemake-workflows/dna-seq-varlociraptor", path="workflow/Snakefile", commit="87709354b54391aee5dbb01a64cacfc20aed5ec3")
+        config:
+            config
+
+Note that ``--commit``, ``--tag``, and ``--branch`` are mutually exclusive: exactly one of them has to be specified.
+
 For more options and details, run
 
 .. code-block:: console
