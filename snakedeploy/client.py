@@ -79,22 +79,21 @@ def get_parser():
         help="Path to create the deploying workflow in.",
     )
 
-    deploy_workflow_parser.add_argument(
+    ref_group = deploy_workflow_parser.add_mutually_exclusive_group(required=True)
+
+    ref_group.add_argument(
         "--tag",
         help="Git tag to deploy from (e.g. a certain release).",
     )
 
-    deploy_workflow_parser.add_argument(
+    ref_group.add_argument(
         "--branch",
         help="Git branch to deploy from.",
     )
 
-    deploy_workflow_parser.add_argument(
+    ref_group.add_argument(
         "--commit",
-        help="Git commit (SHA) to deploy from and pin the resulting module to. "
-        "Can be combined with --branch or --tag to determine which ref to "
-        "clone/checkout locally, while pinning the generated Snakefile module "
-        "declaration to this exact commit.",
+        help="Git commit (SHA) to deploy from and pin the resulting module to.",
     )
 
     deploy_group.add_argument(
@@ -299,8 +298,6 @@ def main():
 
     try:
         if args.subcommand == "deploy-workflow":
-            if not (args.tag or args.branch or args.commit):
-                raise UserError("Please specify either --tag, --branch, or --commit")
             deploy(
                 args.repo,
                 name=args.name,

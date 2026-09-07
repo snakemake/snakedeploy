@@ -41,11 +41,11 @@ Further, the workflow definition Snakefile can be arbitrarily extended and modif
 
 It is highly advisable to put the deployed workflow into a new (perhaps private) git repository (e.g., see `here <https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line>`_ for instructions how to do that with Github).
 
-If you want to pin the deployment to an exact commit (e.g. for full reproducibility independent of any future changes to a branch or tag), use ``--commit`` instead of (or in addition to) ``--tag``/``--branch``:
+If you want to pin the deployment to an exact commit (e.g. for full reproducibility independent of any future changes to a branch or tag), use ``--commit`` instead of ``--tag``/``--branch``:
 
 .. code-block:: console
 
-    $ snakedeploy deploy-workflow https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --branch main --commit 87709354b54391aee5dbb01a64cacfc20aed5ec3
+    $ snakedeploy deploy-workflow https://github.com/snakemake-workflows/dna-seq-varlociraptor /tmp/dest --commit 87709354b54391aee5dbb01a64cacfc20aed5ec3
 
 This will generate a module declaration pinned to that exact commit:
 
@@ -57,8 +57,7 @@ This will generate a module declaration pinned to that exact commit:
         config:
             config
 
-When ``--commit`` is combined with ``--branch`` or ``--tag``, the commit takes precedence both for checking out the repository locally during deployment and for the ref written into the generated ``Snakefile``.
-``--commit`` can also be used on its own, without ``--branch`` or ``--tag``.
+Note that ``--commit``, ``--tag``, and ``--branch`` are mutually exclusive: exactly one of them has to be specified.
 
 For more options and details, run
 

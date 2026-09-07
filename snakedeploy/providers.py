@@ -116,8 +116,6 @@ class Github(Provider):
             raise UserError(
                 "Either tag, branch, or commit has to be specified for deployment."
             )
-        # A commit pins to an exact snapshot, so prefer it over tag/branch
-        # if more than one ref was given.
         if commit is not None:
             ref_arg = f'commit="{commit}"'
         elif tag is not None:

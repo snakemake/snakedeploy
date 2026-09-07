@@ -140,8 +140,6 @@ class WorkflowDeployer:
             logger.info("Obtaining source repository...")
             self._cloned = tempfile.TemporaryDirectory()
             self.provider.clone(self._cloned.name)
-            # Check out the most specific ref available: a commit pins to an
-            # exact snapshot, so prefer it over tag/branch if given.
             if self.commit is not None:
                 self.provider.checkout(self._cloned.name, self.commit)
             elif self.tag is not None:
@@ -280,8 +278,8 @@ def deploy(
            force=True
        )
 
-    A specific commit can also be pinned, optionally alongside a tag or
-    branch used to determine what to check out locally during deployment:
+    Instead of a tag or branch, a specific commit can be pinned (the three
+    are mutually exclusive):
 
     .. code-block:: python
 
@@ -290,7 +288,6 @@ def deploy(
            "https://github.com/snakemake-workflows/dna-seq-varlociraptor",
            dest_path="/tmp/dest",
            name="dna_seq",
-           branch="main",
            commit="a1b2c3d4e5f6...",
            force=True
        )
