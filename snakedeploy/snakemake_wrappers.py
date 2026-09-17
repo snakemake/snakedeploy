@@ -187,7 +187,9 @@ def update_snakemake_wrappers(
                                 f"autobump/wrappers/{snakefile.replace('/', '-')}",
                                 repo,
                                 entity=snakefile,
-                                label_entity_regex=entity_regex if pr_add_label else None,
+                                label_entity_regex=(
+                                    entity_regex if pr_add_label else None
+                                ),
                             )
                         assert pr is not None
                         pr.add_file(
@@ -202,7 +204,6 @@ def update_snakemake_wrappers(
                             pr.create()
             else:
                 logger.info(f"No wrapper updates in {snakefile}.")
-
 
         if has_updates and create_prs and not per_snakefile_prs:
             assert pr is not None
