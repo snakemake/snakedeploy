@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.17.0](https://github.com/snakemake/snakedeploy/compare/v0.16.2...v0.17.0) (2026-09-22)
+
+
+### Features
+
+* add --commit flag to deploy-workflow ([#127](https://github.com/snakemake/snakedeploy/issues/127)) ([9bb3cc7](https://github.com/snakemake/snakedeploy/commit/9bb3cc760d4893f22f958022249c026c8bd5972e))
+
+
+### Bug Fixes
+
+* empty PRs for when meta wrappers have no changes ([#128](https://github.com/snakemake/snakedeploy/issues/128)) ([54d8c48](https://github.com/snakemake/snakedeploy/commit/54d8c484f92d1d19255d814d4080aef823574769))
+* Fix --version ([#125](https://github.com/snakemake/snakedeploy/issues/125)) ([fb1ea2b](https://github.com/snakemake/snakedeploy/commit/fb1ea2b96e693294c1d8ed72c379c49c2ab9d248))
+
 ## [0.16.2](https://github.com/snakemake/snakedeploy/compare/v0.16.1...v0.16.2) (2026-06-15)
 
 
