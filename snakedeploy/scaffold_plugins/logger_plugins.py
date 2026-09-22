@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List, Tuple
 
 from snakedeploy.scaffold_plugins.common import ScaffoldPlugin
 
@@ -13,7 +12,7 @@ class ScaffoldSnakemakeLoggerPlugin(ScaffoldPlugin):
 
     def get_templates(
         self, module_path: Path, tests_path: Path
-    ) -> List[Tuple[str, Path]]:
+    ) -> list[tuple[str, Path]]:
         return [
             ("logger-plugins/init.py", module_path / "__init__.py"),
             ("logger-plugins/tests.py", tests_path / "test_plugin.py"),

@@ -1,13 +1,10 @@
 from dataclasses import dataclass, field
-from typing import Optional
-
-from snakemake_interface_report_plugins.reporter import ReporterBase
-from snakemake_interface_report_plugins.settings import ReportSettingsBase
-
 
 # Raise errors that will not be handled within this plugin but thrown upwards to
 # Snakemake and the user as WorkflowError.
 from snakemake_interface_common.exceptions import WorkflowError  # noqa
+from snakemake_interface_report_plugins.reporter import ReporterBase
+from snakemake_interface_report_plugins.settings import ReportSettingsBase
 
 
 # Optional:
@@ -18,7 +15,7 @@ from snakemake_interface_common.exceptions import WorkflowError  # noqa
 # of None (or False) or anything else that makes sense in your case.
 @dataclass
 class ReportSettings(ReportSettingsBase):
-    myparam: Optional[int] = field(
+    myparam: int | None = field(
         default=None,
         metadata={
             "help": "Some help text",
@@ -50,7 +47,7 @@ class Reporter(ReporterBase):
         # initialize additional attributes
         # Do not overwrite the __init__ method as this is kept in control of the base
         # class in order to simplify the update process.
-        # See https://github.com/snakemake/snakemake-interface-report-plugins/snakemake_interface_report_plugins/reporter.py # noqa: E501
+        # See https://github.com/snakemake/snakemake-interface-report-plugins/snakemake_interface_report_plugins/reporter.py
         # for attributes of the base class.
         # In particular, the settings of above ReportSettings class are accessible via
         # self.settings.

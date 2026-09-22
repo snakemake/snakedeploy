@@ -1,20 +1,20 @@
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Iterable, Optional
-from snakemake_interface_software_deployment_plugins.settings import (
-    SoftwareDeploymentSettingsBase,
-    CommonSettings,
-)
-from snakemake_interface_software_deployment_plugins import (
-    EnvBase,
-    DeployableEnvBase,
-    ArchiveableEnvBase,
-    EnvSpecBase,
-    SoftwareReport,
-)
 
 # Raise errors that will not be handled within this plugin but thrown upwards to
 # Snakemake and the user as WorkflowError.
 from snakemake_interface_common.exceptions import WorkflowError  # noqa
+from snakemake_interface_software_deployment_plugins import (
+    ArchiveableEnvBase,
+    DeployableEnvBase,
+    EnvBase,
+    EnvSpecBase,
+    SoftwareReport,
+)
+from snakemake_interface_software_deployment_plugins.settings import (
+    CommonSettings,
+    SoftwareDeploymentSettingsBase,
+)
 
 
 # Optional:
@@ -29,7 +29,7 @@ from snakemake_interface_common.exceptions import WorkflowError  # noqa
 # settings.
 @dataclass
 class SoftwareDeploymentSettings(SoftwareDeploymentSettingsBase):
-    myparam: Optional[int] = field(
+    myparam: int | None = field(
         default=None,
         metadata={
             "help": "Some help text",
