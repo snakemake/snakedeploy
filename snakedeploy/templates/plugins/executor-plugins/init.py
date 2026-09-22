@@ -81,10 +81,11 @@ common_settings = CommonSettings(
 # Implementation of your executor
 class Executor(RemoteExecutor):
     def __post_init__(self):
+        ...
         # access workflow
-        self.workflow
+        # self.workflow
         # access executor specific settings
-        self.workflow.executor_settings
+        # self.workflow.executor_settings
 
         # IMPORTANT: in your plugin, only access methods and properties of
         # Snakemake objects (like Workflow, Persistence, etc.) that are

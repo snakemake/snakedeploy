@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
@@ -267,7 +265,7 @@ def main():
         """
         version = snakedeploy.__version__
 
-        print("\nSnakeDeploy Python v%s" % version)
+        print(f"\nSnakeDeploy Python v{version}")
         parser.print_help()
         sys.exit(return_code)
 
@@ -276,7 +274,7 @@ def main():
         help()
 
     # If an error occurs while parsing the arguments, the interpreter will exit with value 2
-    args, extra = parser.parse_known_args()
+    args, _extra = parser.parse_known_args()
 
     # Show the version and exit
     if args.version:

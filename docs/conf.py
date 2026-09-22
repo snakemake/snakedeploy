@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Snakemake documentation build configuration file, created by
 # sphinx-quickstart on Sat Feb  1 16:01:02 2014.

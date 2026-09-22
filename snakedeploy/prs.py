@@ -68,7 +68,7 @@ class PR:
             branch_exists = True
         except GithubException as e:
             if e.status != 404:
-                raise e
+                raise
             logger.info(f"Creating branch {self.branch}...")
             self.repo.create_git_ref(
                 ref=f"refs/heads/{self.branch}",
@@ -83,7 +83,7 @@ class PR:
                     sha = self.repo.get_contents(file.path, self.branch).sha
                 except GithubException.UnknownObjectException as e:
                     if e.status != 404:
-                        raise e
+                        raise
             elif file.is_updated:
                 logger.info(
                     f"Obtaining sha of {file.path} on branch {self.base_ref}..."

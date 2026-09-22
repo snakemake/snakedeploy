@@ -84,7 +84,8 @@ class ScaffoldPlugin(ABC):
         # add dependencies
         sp.run(
             ["pixi", "add", "--pypi", "snakemake-interface-common"]
-            + self.get_dependencies()
+            + self.get_dependencies(),
+            check=True,
         )
         dev_deps = [
             "pixi",
@@ -155,10 +156,10 @@ class ScaffoldPlugin(ABC):
                 "--feature",
                 "dev",
                 "test",
-                "pytest "
-                f"--cov={package_name.replace('-', '_')} "
-                "--cov-report=xml:coverage-report/coverage.xml "
-                "--cov-report=term-missing "
+                "pytest",
+                f"--cov={package_name.replace('-', '_')}",
+                "--cov-report=xml:coverage-report/coverage.xml",
+                "--cov-report=term-missing",
                 "tests/test_plugin.py",
             ],
             check=True,

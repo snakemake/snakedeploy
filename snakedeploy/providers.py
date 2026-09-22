@@ -12,14 +12,13 @@ def get_provider(source_url):
         if provider.matches(source_url):
             return provider(source_url)
 
-    raise UserError("No matching provider for source url %s" % source_url)
+    raise UserError(f"No matching provider for source url {source_url}")
 
 
 class Provider(ABC):
     def __init__(self, source_url):
         if not (
-            source_url.startswith("https://")
-            or source_url.startswith("file:")
+            source_url.startswith(("https://", "file:"))
             or os.path.exists(source_url)
         ):
             raise UserError(

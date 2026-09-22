@@ -200,8 +200,7 @@ class WorkflowDeployer:
         if not snakefile_path.exists():
             # Either we allow this or fail workflow here if it's not possible
             logger.warning(
-                "Snakefile path not found in traditional path %s, workflow may be error prone."
-                % snakefile_path
+                f"Snakefile path not found in traditional path {snakefile_path}, workflow may be error prone."
             )
             snakefile_path = Path(tmpdir) / "Snakefile"
             snakefile = "Snakefile"

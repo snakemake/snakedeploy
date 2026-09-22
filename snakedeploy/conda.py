@@ -285,8 +285,7 @@ class CondaEnvProcessor:
         return sp.run(
             f"{self.conda_frontend} {subcmd}",
             shell=True,
-            stderr=sp.PIPE,
-            stdout=sp.PIPE,
+            capture_output=True,
             text=True,
             check=True,
         )
