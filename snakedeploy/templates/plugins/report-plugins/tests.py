@@ -1,4 +1,3 @@
-from typing import Optional
 import snakemake.common.tests
 from snakemake_interface_report_plugins.settings import ReportSettingsBase
 
@@ -11,6 +10,6 @@ class TestWorkflowsBase(snakemake.common.tests.TestReportBase):
     def get_reporter(self) -> str:
         return "{{plugin_name}}"
 
-    def get_report_settings(self) -> Optional[ReportSettingsBase]:
+    def get_report_settings(self) -> ReportSettingsBase | None:
         # instantiate ReportSettings of this plugin as appropriate
         ...

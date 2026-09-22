@@ -1,10 +1,10 @@
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Mapping, Optional, Sequence, Union
 
-from snakemake_interface_scheduler_plugins.settings import SchedulerSettingsBase
+from snakemake_interface_common.io import AnnotatedStringInterface
 from snakemake_interface_scheduler_plugins.base import SchedulerBase
 from snakemake_interface_scheduler_plugins.interfaces.jobs import JobSchedulerInterface
-from snakemake_interface_common.io import AnnotatedStringInterface
+from snakemake_interface_scheduler_plugins.settings import SchedulerSettingsBase
 
 
 # Optional:
@@ -14,7 +14,7 @@ from snakemake_interface_common.io import AnnotatedStringInterface
 # of None or anything else that makes sense in your case.
 @dataclass
 class SchedulerSettings(SchedulerSettingsBase):
-    myparam: Optional[int] = field(
+    myparam: int | None = field(
         default=None,
         metadata={
             "help": "Some help text",
@@ -60,9 +60,9 @@ class Scheduler(SchedulerBase):
         self,
         selectable_jobs: Sequence[JobSchedulerInterface],
         remaining_jobs: Sequence[JobSchedulerInterface],
-        available_resources: Mapping[str, Union[int, str]],
+        available_resources: Mapping[str, int | str],
         input_sizes: Mapping[AnnotatedStringInterface, int],
-    ) -> Optional[Sequence[JobSchedulerInterface]]:
+    ) -> Sequence[JobSchedulerInterface] | None:
         # Select jobs from the selectable jobs sequence. Thereby, ensure that the selected
         # jobs do not exceed the available resources.
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # Snakemake documentation build configuration file, created by
 # sphinx-quickstart on Sat Feb  1 16:01:02 2014.
@@ -14,7 +12,6 @@
 # serve to show the default.
 
 from sphinxawesome_theme.postprocess import Icons
-
 
 # -- General configuration ------------------------------------------------
 

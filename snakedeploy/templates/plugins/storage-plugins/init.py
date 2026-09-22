@@ -1,24 +1,24 @@
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Optional, List
-from snakemake_interface_storage_plugins.settings import StorageProviderSettingsBase
-from snakemake_interface_storage_plugins.storage_provider import (  # noqa
-    StorageProviderBase,
-    StorageQueryValidationResult,
-    ExampleQuery,
-    Operation,
-)
-from snakemake_interface_storage_plugins.storage_object import (
-    StorageObjectRead,
-    StorageObjectWrite,
-    StorageObjectGlob,
-    retry_decorator,
-)
-from snakemake_interface_storage_plugins.io import IOCacheStorageInterface
-
+from typing import Any
 
 # Raise errors that will not be handled within this plugin but thrown upwards to
 # Snakemake and the user as WorkflowError.
 from snakemake_interface_common.exceptions import WorkflowError  # noqa
+from snakemake_interface_storage_plugins.io import IOCacheStorageInterface
+from snakemake_interface_storage_plugins.settings import StorageProviderSettingsBase
+from snakemake_interface_storage_plugins.storage_object import (
+    StorageObjectGlob,
+    StorageObjectRead,
+    StorageObjectWrite,
+    retry_decorator,
+)
+from snakemake_interface_storage_plugins.storage_provider import (
+    ExampleQuery,
+    Operation,
+    StorageProviderBase,
+    StorageQueryValidationResult,
+)
 
 
 # Optional:
@@ -33,7 +33,7 @@ from snakemake_interface_common.exceptions import WorkflowError  # noqa
 # settings.
 @dataclass
 class StorageProviderSettings(StorageProviderSettingsBase):
-    myparam: Optional[int] = field(
+    myparam: int | None = field(
         default=None,
         metadata={
             "help": "Some help text",
@@ -79,10 +79,9 @@ class StorageProvider(StorageProviderBase):
         pass
 
     @classmethod
-    def example_queries(cls) -> List[ExampleQuery]:
+    def example_queries(cls) -> list[ExampleQuery]:
         """Return an example queries with description for this storage provider (at
         least one)."""
-        ...
 
     def rate_limiter_key(self, query: str, operation: Operation) -> Any:
         """Return a key for identifying a rate limiter given a query and an operation.
@@ -91,16 +90,13 @@ class StorageProvider(StorageProviderBase):
         E.g. for a storage provider like http that would be the host name.
         For s3 it might be just the endpoint URL.
         """
-        ...
 
     def default_max_requests_per_second(self) -> float:
         """Return the default maximum number of requests per second for this storage
         provider."""
-        ...
 
     def use_rate_limiter(self) -> bool:
         """Return False if no rate limiting is needed for this provider."""
-        ...
 
     @classmethod
     def is_valid_query(cls, query: str) -> StorageQueryValidationResult:
@@ -108,7 +104,6 @@ class StorageProvider(StorageProviderBase):
         # Ensure that also queries containing wildcards (e.g. {sample}) are accepted
         # and considered valid. The wildcards will be resolved before the storage
         # object is actually used.
-        ...
 
     # If required, overwrite the method postprocess_query from StorageProviderBase
     # in order to e.g. normalize the query or add information from the settings to it.
@@ -152,22 +147,19 @@ class StorageObject(StorageObjectRead, StorageObjectWrite, StorageObjectGlob):
         # the given IOCache object, using self.cache_key() as key.
         # Optionally, this can take a custom local suffix, needed e.g. when you want
         # to cache more items than the current query: self.cache_key(local_suffix=...)
-        pass
 
-    def get_inventory_parent(self) -> Optional[str]:
+    def get_inventory_parent(self) -> str | None:
         """Return the parent directory of this object."""
         # this is optional and can be left as is
         return None
 
     def local_suffix(self) -> str:
         """Return a unique suffix for the local path, determined from self.query."""
-        ...
 
     def cleanup(self):
         """Perform local cleanup of any remainders of the storage object."""
         # self.local_path() should not be removed, as this is taken care of by
         # Snakemake.
-        ...
 
     # Fallible methods should implement some retry logic.
     # The easiest way to do this (but not the only one) is to use the retry_decorator
@@ -237,4 +229,3 @@ class StorageObject(StorageObjectRead, StorageObjectWrite, StorageObjectGlob):
         # The method has to return concretized queries without any remaining wildcards.
         # Use snakemake_executor_plugins.io.get_constant_prefix(self.query) to get the
         # prefix of the query before the first wildcard.
-        ...

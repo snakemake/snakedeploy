@@ -1,7 +1,8 @@
-import sys
-from glob import glob
 import re
+import sys
 from collections import namedtuple
+from glob import glob
+
 import pandas as pd
 
 from snakedeploy.exceptions import UserError
