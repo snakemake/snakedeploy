@@ -107,37 +107,28 @@ def update_snakemake_wrappers(
 
     repo = None
     pr = None
+    has_updates = False
     if create_prs:
         repo = get_repo()
         if pr_add_label and not entity_regex:
             raise UserError("Cannot add label to PR without --entity-regex specified.")
 
-    if create_prs and not per_snakefile_prs:
-        if pr_add_label:
-            raise UserError(
-                "Cannot add label to PR when updating all snakefiles at once."
+        if not per_snakefile_prs:
+            if pr_add_label:
+                raise UserError(
+                    "Cannot add label to PR when updating all snakefiles at once."
+                )
+            pr = PR(
+                "perf: autobump wrappers",
+                f"Automatic bump of wrappers in {', '.join(snakefiles)}.",
+                "autobump/wrappers",
+                repo,
             )
-        pr = PR(
-            "perf: autobump wrappers",
-            f"Automatic bump of wrappers in {', '.join(snakefiles)}.",
-            "autobump/wrappers",
-            repo,
-        )
 
     with WrapperRepo() as wrapper_repo:
         for snakefile in snakefiles:
-            if create_prs and per_snakefile_prs:
-                pr = PR(
-                    f"perf: autobump wrappers in {snakefile}",
-                    f"Automatic bump of wrappers in {snakefile}.",
-                    f"autobump/wrappers/{snakefile.replace('/', '-')}",
-                    repo,
-                    entity=snakefile,
-                    label_entity_regex=entity_regex if pr_add_label else None,
-                )
-
             with open(snakefile, "r") as infile:
-                snakefile_content = infile.read()
+                ori_snakefile_content = infile.read()
 
             def update_spec(matchobj):
                 spec = matchobj.group("spec")
@@ -182,22 +173,39 @@ def update_snakemake_wrappers(
             snakefile_content = re.sub(
                 "(?P<def>(meta_)?wrapper:\\n?\\s*)(?P<quote>['\"])(?P<spec>.+)(?P=quote)",
                 update_spec,
-                snakefile_content,
+                ori_snakefile_content,
             )
-            with open(snakefile, "w") as outfile:
-                outfile.write(snakefile_content)
 
-            if create_prs:
-                assert pr is not None
-                pr.add_file(
-                    snakefile,
-                    snakefile_content,
-                    is_updated=True,
-                    msg=f"perf: update {snakefile}.",
-                )
+            if snakefile_content != ori_snakefile_content:
+                with open(snakefile, "w") as outfile:
+                    outfile.write(snakefile_content)
 
-                pr.create()
+                    if create_prs:
+                        if per_snakefile_prs:
+                            pr = PR(
+                                f"perf: autobump wrappers in {snakefile}",
+                                f"Automatic bump of wrappers in {snakefile}.",
+                                f"autobump/wrappers/{snakefile.replace('/', '-')}",
+                                repo,
+                                entity=snakefile,
+                                label_entity_regex=(
+                                    entity_regex if pr_add_label else None
+                                ),
+                            )
+                        assert pr is not None
+                        pr.add_file(
+                            snakefile,
+                            snakefile_content,
+                            is_updated=True,
+                            msg=f"perf: update {snakefile}.",
+                        )
+                        has_updates = True
 
-        if create_prs and not per_snakefile_prs:
+                        if per_snakefile_prs:
+                            pr.create()
+            else:
+                logger.info(f"No wrapper updates in {snakefile}.")
+
+        if has_updates and create_prs and not per_snakefile_prs:
             assert pr is not None
             pr.create()
