@@ -1,9 +1,10 @@
-from pathlib import Path
 import re
-import tempfile
-from typing import Iterable, List, Optional
-from urllib.parse import urlparse
 import subprocess as sp
+import tempfile
+from collections.abc import Iterable
+from pathlib import Path
+from urllib.parse import urlparse
+
 from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
 from snakedeploy.prs import PR, get_repo
@@ -96,11 +97,11 @@ class WrapperRepo:
 
 
 def update_snakemake_wrappers(
-    snakefiles: List[str],
+    snakefiles: list[str],
     create_prs: bool = False,
     per_snakefile_prs: bool = False,
     pr_add_label: bool = False,
-    entity_regex: Optional[str] = None,
+    entity_regex: str | None = None,
 ):
     """Update all snakemake wrappers to their specific latest versions."""
 

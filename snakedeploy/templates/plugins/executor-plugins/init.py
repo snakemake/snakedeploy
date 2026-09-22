@@ -1,19 +1,18 @@
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import List, Generator, Optional
-from snakemake_interface_executor_plugins.executors.base import SubmittedJobInfo
-from snakemake_interface_executor_plugins.executors.remote import RemoteExecutor
-from snakemake_interface_executor_plugins.settings import (
-    ExecutorSettingsBase,
-    CommonSettings,
-)
-from snakemake_interface_executor_plugins.jobs import (
-    JobExecutorInterface,
-)
-
 
 # Raise errors that will not be handled within this plugin but thrown upwards to
 # Snakemake and the user as WorkflowError.
 from snakemake_interface_common.exceptions import WorkflowError  # noqa
+from snakemake_interface_executor_plugins.executors.base import SubmittedJobInfo
+from snakemake_interface_executor_plugins.executors.remote import RemoteExecutor
+from snakemake_interface_executor_plugins.jobs import (
+    JobExecutorInterface,
+)
+from snakemake_interface_executor_plugins.settings import (
+    CommonSettings,
+    ExecutorSettingsBase,
+)
 
 
 # Optional:
@@ -24,7 +23,7 @@ from snakemake_interface_common.exceptions import WorkflowError  # noqa
 # of None or anything else that makes sense in your case.
 @dataclass
 class ExecutorSettings(ExecutorSettingsBase):
-    myparam: Optional[int] = field(
+    myparam: int | None = field(
         default=None,
         metadata={
             "help": "Some help text",
@@ -82,10 +81,11 @@ common_settings = CommonSettings(
 # Implementation of your executor
 class Executor(RemoteExecutor):
     def __post_init__(self):
+        ...
         # access workflow
-        self.workflow
+        # self.workflow
         # access executor specific settings
-        self.workflow.executor_settings
+        # self.workflow.executor_settings
 
         # IMPORTANT: in your plugin, only access methods and properties of
         # Snakemake objects (like Workflow, Persistence, etc.) that are
@@ -117,7 +117,7 @@ class Executor(RemoteExecutor):
         ...
 
     async def check_active_jobs(
-        self, active_jobs: List[SubmittedJobInfo]
+        self, active_jobs: list[SubmittedJobInfo]
     ) -> Generator[SubmittedJobInfo, None, None]:
         # Check the status of active jobs.
 
@@ -142,7 +142,7 @@ class Executor(RemoteExecutor):
         # you can set self.next_sleep_seconds here.
         ...
 
-    def cancel_jobs(self, active_jobs: List[SubmittedJobInfo]):
+    def cancel_jobs(self, active_jobs: list[SubmittedJobInfo]):
         # Cancel all active jobs.
         # This method is called when Snakemake is interrupted.
         ...

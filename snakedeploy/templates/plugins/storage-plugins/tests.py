@@ -1,7 +1,6 @@
-from typing import Optional, Type
-from snakemake_interface_storage_plugins.tests import TestStorageBase
-from snakemake_interface_storage_plugins.storage_provider import StorageProviderBase
 from snakemake_interface_storage_plugins.settings import StorageProviderSettingsBase
+from snakemake_interface_storage_plugins.storage_provider import StorageProviderBase
+from snakemake_interface_storage_plugins.tests import TestStorageBase
 
 
 class TestStorage(TestStorageBase):
@@ -28,10 +27,10 @@ class TestStorage(TestStorageBase):
         # Return a query that is not present in the storage.
         ...
 
-    def get_storage_provider_cls(self) -> Type[StorageProviderBase]:
+    def get_storage_provider_cls(self) -> type[StorageProviderBase]:
         # Return the StorageProvider class of this plugin
         ...
 
-    def get_storage_provider_settings(self) -> Optional[StorageProviderSettingsBase]:
+    def get_storage_provider_settings(self) -> StorageProviderSettingsBase | None:
         # instantiate StorageProviderSettings of this plugin as appropriate
         ...

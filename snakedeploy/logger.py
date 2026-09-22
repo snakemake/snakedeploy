@@ -2,12 +2,13 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
+import inspect
 import logging as _logging
+import os
 import platform
 import sys
-import os
 import threading
-import inspect
+from typing import ClassVar
 
 
 class ColorizingStreamHandler(_logging.StreamHandler):
@@ -16,7 +17,7 @@ class ColorizingStreamHandler(_logging.StreamHandler):
     COLOR_SEQ = "\033[%dm"
     BOLD_SEQ = "\033[1m"
 
-    colors = {
+    colors: ClassVar[dict[str, int]] = {
         "WARNING": YELLOW,
         "INFO": GREEN,
         "DEBUG": BLUE,
@@ -32,7 +33,7 @@ class ColorizingStreamHandler(_logging.StreamHandler):
     def can_color_tty(self):
         if "TERM" in os.environ and os.environ["TERM"] == "dumb":
             return False
-        return self.is_tty and not platform.system() == "Windows"
+        return self.is_tty and platform.system() != "Windows"
 
     @property
     def is_tty(self):
@@ -46,12 +47,12 @@ class ColorizingStreamHandler(_logging.StreamHandler):
                 self.stream.write(self.decorate(record))
                 self.stream.write(getattr(self, "terminator", "\n"))
                 self.flush()
-            except BrokenPipeError as e:
-                raise e
+            except BrokenPipeError:
+                raise
             except (KeyboardInterrupt, SystemExit):
                 # ignore any exceptions in these cases as any relevant messages have been printed before
                 pass
-            except Exception:
+            except Exception:  # noqa
                 self.handleError(record)
 
     def decorate(self, record):
@@ -97,32 +98,30 @@ class Logger:
         callerframerecord = inspect.stack()[1]
         frame = callerframerecord[0]
         info = inspect.getframeinfo(frame)
-        self.debug(
-            "{}: {info.filename}, {info.function}, {info.lineno}".format(msg, info=info)
-        )
+        self.debug(f"{msg}: {info.filename}, {info.function}, {info.lineno}")
 
     def info(self, msg):
-        self.handler(dict(level="info", msg=msg))
+        self.handler({"level": "info", "msg": msg})
 
     def warning(self, msg):
-        self.handler(dict(level="warning", msg=msg))
+        self.handler({"level": "warning", "msg": msg})
 
     def debug(self, msg):
-        self.handler(dict(level="debug", msg=msg))
+        self.handler({"level": "debug", "msg": msg})
 
     def error(self, msg):
-        self.handler(dict(level="error", msg=msg))
+        self.handler({"level": "error", "msg": msg})
 
     def exit(self, msg, return_code=1):
-        self.handler(dict(level="error", msg=msg))
+        self.handler({"level": "error", "msg": msg})
         sys.exit(return_code)
 
     def progress(self, done=None, total=None):
-        self.handler(dict(level="progress", done=done, total=total))
+        self.handler({"level": "progress", "done": done, "total": total})
 
     def shellcmd(self, msg):
         if msg is not None:
-            msg = dict(level="shellcmd", msg=msg)
+            msg = {"level": "shellcmd", "msg": msg}
             self.handler(msg)
 
     def text_handler(self, msg):
@@ -145,12 +144,9 @@ class Logger:
             total = msg["total"]
             p = done / total
             percent_fmt = ("{:.2%}" if p < 0.01 else "{:.0%}").format(p)
-            self.logger.info(
-                "{} of {} steps ({}) done".format(done, total, percent_fmt)
-            )
-        elif level == "shellcmd":
-            if self.printshellcmds:
-                self.logger.warning(msg["msg"])
+            self.logger.info(f"{done} of {total} steps ({percent_fmt}) done")
+        elif level == "shellcmd" and self.printshellcmds:
+            self.logger.warning(msg["msg"])
 
 
 logger = Logger()
