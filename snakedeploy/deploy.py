@@ -254,7 +254,7 @@ def deploy(
     tag: str | None,
     branch: str | None,
     dest_path: Path,
-    commit: Optional[str] = None,
+    commit: str | None = None,
     force=False,
 ):
     """
