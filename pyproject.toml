@@ -58,7 +58,7 @@ publish = { features = ["publish"] }
 
 [tool.pixi.feature.dev.tasks]
 format = "ruff format"
-check = "ruff check --exit-zero snakedeploy"
+check = "ruff check"
 test = "/bin/bash tests/test_client.sh"
 build-docs = "sphinx-build -b html docs/ docs/_build/html"
 
