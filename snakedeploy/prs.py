@@ -1,11 +1,10 @@
-from collections import namedtuple
 import os
 import re
-from typing import Optional
-from tenacity import retry, stop_after_attempt, wait_exponential
-from urllib3.util.retry import Retry
+from collections import namedtuple
 
 from github import Github, GithubException
+from tenacity import retry, stop_after_attempt, wait_exponential
+from urllib3.util.retry import Retry
 
 from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
@@ -29,8 +28,8 @@ class PR:
         body,
         branch,
         repo,
-        entity: Optional[str] = None,
-        label_entity_regex: Optional[str] = None,
+        entity: str | None = None,
+        label_entity_regex: str | None = None,
     ):
         self.title = title
         self.body = body

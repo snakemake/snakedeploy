@@ -7,14 +7,15 @@ __license__ = "MPL 2.0"
 import argparse
 import sys
 from pathlib import Path
-from snakedeploy.conda import pin_conda_envs, update_conda_envs
 
-from snakedeploy.logger import setup_logger
-from snakedeploy.deploy import deploy
-from snakedeploy.collect_files import collect_files
 import snakedeploy
+from snakedeploy.collect_files import collect_files
+from snakedeploy.conda import pin_conda_envs, update_conda_envs
+from snakedeploy.deploy import deploy
 from snakedeploy.exceptions import UserError
+from snakedeploy.logger import setup_logger
 from snakedeploy.scaffold_plugins import scaffold_plugin
+
 from .snakemake_wrappers import update_snakemake_wrappers
 
 

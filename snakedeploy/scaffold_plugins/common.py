@@ -1,9 +1,10 @@
+import subprocess as sp
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
-import subprocess as sp
-from jinja2 import Environment, PackageLoader, select_autoescape
+from typing import Any
+
 import toml
+from jinja2 import Environment, PackageLoader, select_autoescape
 
 from snakedeploy.exceptions import UserError
 
@@ -12,12 +13,12 @@ class ScaffoldPlugin(ABC):
     @abstractmethod
     def get_templates(
         self, module_path: Path, tests_path: Path
-    ) -> List[Tuple[str, Path]]: ...
+    ) -> list[tuple[str, Path]]: ...
 
     @abstractmethod
     def get_plugin_type(self) -> str: ...
 
-    def get_dependencies(self) -> List[str]:
+    def get_dependencies(self) -> list[str]:
         return [f"snakemake-interface-{self.get_plugin_type()}-plugins"]
 
     @abstractmethod
@@ -27,7 +28,7 @@ class ScaffoldPlugin(ABC):
         return f"snakemake-{self.get_plugin_type()}-plugin-"
 
     def handle(self) -> None:
-        def load_pyproject() -> Dict[str, Any]:
+        def load_pyproject() -> dict[str, Any]:
             try:
                 with open("pyproject.toml", "r") as f:
                     return toml.load(f)

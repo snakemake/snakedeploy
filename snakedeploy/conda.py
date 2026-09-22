@@ -1,22 +1,21 @@
 import copy
 import json
-from pathlib import Path
+import random
+import re
 import subprocess as sp
 import tempfile
-import re
 from glob import glob
 from itertools import chain
-import random
-from typing import Optional
+from pathlib import Path
 
-from packaging import version as packaging_version
 import yaml
+from packaging import version as packaging_version
 
+from snakedeploy.conda_version import VersionOrder
 from snakedeploy.exceptions import UserError
 from snakedeploy.logger import logger
 from snakedeploy.prs import PR, get_repo
 from snakedeploy.utils import YamlDumper
-from snakedeploy.conda_version import VersionOrder
 
 
 def pin_conda_envs(
@@ -81,7 +80,7 @@ class CondaEnvProcessor:
         update_envs: bool = True,
         pin_envs: bool = True,
         pr_add_label: bool = False,
-        entity_regex: Optional[str] = None,
+        entity_regex: str | None = None,
         warn_on_error: bool = False,
     ):
         repo = None
@@ -288,6 +287,6 @@ class CondaEnvProcessor:
             shell=True,
             stderr=sp.PIPE,
             stdout=sp.PIPE,
-            universal_newlines=True,
+            text=True,
             check=True,
         )

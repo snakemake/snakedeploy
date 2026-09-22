@@ -8,8 +8,6 @@ class TestConcreteRichPlugin(TestLogHandlerBase):
 
     def get_log_handler_cls(self):
         """Return the rich log handler class."""
-        ...
 
     def get_log_handler_settings(self):
         """Return the rich settings with default values for testing."""
-        ...

@@ -2,12 +2,12 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
+import inspect
 import logging as _logging
+import os
 import platform
 import sys
-import os
 import threading
-import inspect
 
 
 class ColorizingStreamHandler(_logging.StreamHandler):
@@ -98,7 +98,7 @@ class Logger:
         frame = callerframerecord[0]
         info = inspect.getframeinfo(frame)
         self.debug(
-            "{}: {info.filename}, {info.function}, {info.lineno}".format(msg, info=info)
+            f"{msg}: {info.filename}, {info.function}, {info.lineno}"
         )
 
     def info(self, msg):
@@ -146,7 +146,7 @@ class Logger:
             p = done / total
             percent_fmt = ("{:.2%}" if p < 0.01 else "{:.0%}").format(p)
             self.logger.info(
-                "{} of {} steps ({}) done".format(done, total, percent_fmt)
+                f"{done} of {total} steps ({percent_fmt}) done"
             )
         elif level == "shellcmd":
             if self.printshellcmds:

@@ -1,13 +1,13 @@
-from typing import Optional, Type
-from snakemake_interface_software_deployment_plugins.tests import (
-    TestSoftwareDeploymentBase,
-)
+
 from snakemake_interface_software_deployment_plugins import (
-    EnvSpecBase,
     EnvBase,
+    EnvSpecBase,
 )
 from snakemake_interface_software_deployment_plugins.settings import (
     SoftwareDeploymentSettingsBase,
+)
+from snakemake_interface_software_deployment_plugins.tests import (
+    TestSoftwareDeploymentBase,
 )
 
 
@@ -27,13 +27,13 @@ class TestSoftwareDeployment(TestSoftwareDeploymentBase):
         # for testing
         ...
 
-    def get_env_cls(self) -> Type[EnvBase]:
+    def get_env_cls(self) -> type[EnvBase]:
         # Return the environment class that should be tested.
         ...
 
     def get_software_deployment_provider_settings(
         self,
-    ) -> Optional[SoftwareDeploymentSettingsBase]:
+    ) -> SoftwareDeploymentSettingsBase | None:
         # If your plugin has settings, return a valid settings object here.
         # Otherwise, return None.
         ...

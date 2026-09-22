@@ -1,16 +1,15 @@
 import glob
-import tempfile
-from pathlib import Path
 import os
 import shutil
-from typing import Dict, Optional
+import tempfile
+from pathlib import Path
 
-from jinja2 import Environment, PackageLoader
 import yaml
+from jinja2 import Environment, PackageLoader
 
-from snakedeploy.providers import get_provider
-from snakedeploy.logger import logger
 from snakedeploy.exceptions import UserError
+from snakedeploy.logger import logger
+from snakedeploy.providers import get_provider
 
 
 class WorkflowDeployer:
@@ -18,8 +17,8 @@ class WorkflowDeployer:
         self,
         source: str,
         dest: Path,
-        tag: Optional[str] = None,
-        branch: Optional[str] = None,
+        tag: str | None = None,
+        branch: str | None = None,
         force=False,
     ):
         self.provider = get_provider(source)
@@ -235,7 +234,7 @@ class WorkflowDeployer:
         with open(self.snakefile, "w") as f:
             print(module_deployment, file=f)
 
-    def get_json_schema(self, item: str) -> Optional[Dict]:
+    def get_json_schema(self, item: str) -> dict | None:
         """Get schema under workflow/schemas/{item}.schema.{yaml|yml|json} as
         python dict."""
         clone = Path(self.repo_clone)
@@ -248,9 +247,9 @@ class WorkflowDeployer:
 
 def deploy(
     source_url: str,
-    name: Optional[str],
-    tag: Optional[str],
-    branch: Optional[str],
+    name: str | None,
+    tag: str | None,
+    branch: str | None,
     dest_path: Path,
     force=False,
 ):
