@@ -98,9 +98,7 @@ class Logger:
         callerframerecord = inspect.stack()[1]
         frame = callerframerecord[0]
         info = inspect.getframeinfo(frame)
-        self.debug(
-            f"{msg}: {info.filename}, {info.function}, {info.lineno}"
-        )
+        self.debug(f"{msg}: {info.filename}, {info.function}, {info.lineno}")
 
     def info(self, msg):
         self.handler({"level": "info", "msg": msg})
@@ -146,9 +144,7 @@ class Logger:
             total = msg["total"]
             p = done / total
             percent_fmt = ("{:.2%}" if p < 0.01 else "{:.0%}").format(p)
-            self.logger.info(
-                f"{done} of {total} steps ({percent_fmt}) done"
-            )
+            self.logger.info(f"{done} of {total} steps ({percent_fmt}) done")
         elif level == "shellcmd" and self.printshellcmds:
             self.logger.warning(msg["msg"])
 

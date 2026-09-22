@@ -418,9 +418,7 @@ def untreeify(spec, _inand=False, depth=0):
             if _inand or depth > 0:
                 res = f"({res})"
         else:
-            res = ",".join(
-                untreeify(x, _inand=True, depth=depth + 1) for x in spec[1:]
-            )
+            res = ",".join(untreeify(x, _inand=True, depth=depth + 1) for x in spec[1:])
             if depth > 0:
                 res = f"({res})"
         return res
@@ -568,9 +566,7 @@ class VersionSpec(BaseSpec, metaclass=SingleStrArgCachingType):
             try:
                 self.operator_func = OPERATOR_MAP[operator_str]
             except KeyError:
-                raise InvalidVersionSpec(
-                    vspec_str, f"invalid operator: {operator_str}"
-                )
+                raise InvalidVersionSpec(vspec_str, f"invalid operator: {operator_str}")
             self.matcher_vo = VersionOrder(vo_str)
             matcher = self.operator_match
             is_exact = operator_str == "=="
@@ -658,9 +654,7 @@ class BuildNumberMatch(BaseSpec, metaclass=SingleStrArgCachingType):
             try:
                 self.operator_func = OPERATOR_MAP[operator_str]
             except KeyError:
-                raise InvalidVersionSpec(
-                    vspec_str, f"invalid operator: {operator_str}"
-                )
+                raise InvalidVersionSpec(vspec_str, f"invalid operator: {operator_str}")
             self.matcher_vo = VersionOrder(vo_str)
             matcher = self.operator_match
 

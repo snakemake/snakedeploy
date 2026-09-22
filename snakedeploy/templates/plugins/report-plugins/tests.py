@@ -1,4 +1,3 @@
-
 import snakemake.common.tests
 from snakemake_interface_report_plugins.settings import ReportSettingsBase
 

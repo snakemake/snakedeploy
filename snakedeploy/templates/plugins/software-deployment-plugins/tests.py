@@ -1,4 +1,3 @@
-
 from snakemake_interface_software_deployment_plugins import (
     EnvBase,
     EnvSpecBase,

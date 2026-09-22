@@ -18,8 +18,7 @@ def get_provider(source_url):
 class Provider(ABC):
     def __init__(self, source_url):
         if not (
-            source_url.startswith(("https://", "file:"))
-            or os.path.exists(source_url)
+            source_url.startswith(("https://", "file:")) or os.path.exists(source_url)
         ):
             raise UserError(
                 "Repository source URLs must be given as https:// or file://, or exist."
