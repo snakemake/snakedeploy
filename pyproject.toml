@@ -67,7 +67,7 @@ build-docs = "sphinx-build -b html docs/ docs/_build/html"
 conda = ">=25.7.0,<26"
 
 [tool.pixi.feature.publish.dependencies]
-twine = ">=6.1.0,<7"
+twine = ">=7.0,<8"
 python-build = ">=1.2.2,<2"
 
 [tool.pixi.feature.publish.tasks]
