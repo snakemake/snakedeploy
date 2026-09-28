@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.1](https://github.com/snakemake/snakedeploy/compare/v0.17.0...v0.17.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* change twine version constraint to &gt;=7.0,&lt;8 ([#130](https://github.com/snakemake/snakedeploy/issues/130)) ([608fa7c](https://github.com/snakemake/snakedeploy/commit/608fa7cabdaff790e42a9a757eb3330088a9c9fb))
+
 ## [0.17.0](https://github.com/snakemake/snakedeploy/compare/v0.16.2...v0.17.0) (2026-09-22)
 
 
