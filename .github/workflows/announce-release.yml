@@ -23,7 +23,7 @@ jobs:
         with:
           access-token: ${{ secrets.MASTODONBOT }}
           pr-title: ${{ github.event.head_commit.message }}
-          image: "snakedeploy_transparent.png"          
+          image: "snakedeploy.png"          
           image-description: "Snakedeploy logo - altered for Mastodon"
           message: |
             Beep, Beep - I am your friendly #Snakemake release announcement bot.
