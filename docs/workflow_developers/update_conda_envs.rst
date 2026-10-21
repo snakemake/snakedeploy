@@ -44,3 +44,15 @@ Or use the ``pin-conda-envs`` command after updating the conda environment files
 .. code:: console
 
     $ snakedeploy pin-conda-envs workflow/envs/*.yaml
+
+The ``--ensure`` option can ensure that package version constraints are
+satisfied by the pinned environment. If all constraints are already satisfied
+by the environment resolved from the YAML file, pinning is skipped. Otherwise
+the environment is pinned (or re-pinned), and a warning is printed if the
+result still does not satisfy every constraint. Constraints use a package
+name followed by a Conda version specifier; quote specs containing operators
+so the shell does not interpret them. Specify the option once per constraint:
+
+.. code:: console
+
+    $ snakedeploy pin-conda-envs workflow/envs/*.yaml --ensure 'python>=3.12' --ensure 'numpy>=2'

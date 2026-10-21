@@ -147,6 +147,13 @@ def get_parser():
         help="Conda frontend to use.",
     )
     pin_conda_envs.add_argument(
+        "--ensure",
+        action="append",
+        metavar="PACKAGE_SPEC",
+        help="Ensure a package version constraint is satisfied, pinning if needed. "
+        "Can be specified multiple times (e.g. --ensure 'python>=3.12').",
+    )
+    pin_conda_envs.add_argument(
         "--create-prs",
         action="store_true",
         help="Create pull request for each updated environment. "
@@ -316,6 +323,7 @@ def main():
                 entity_regex=args.entity_regex,
                 pr_add_label=args.pr_add_label,
                 warn_on_error=args.warn_on_error,
+                ensure=args.ensure,
             )
         elif args.subcommand == "update-conda-envs":
             update_conda_envs(

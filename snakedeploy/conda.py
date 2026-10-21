@@ -11,11 +11,32 @@ from pathlib import Path
 import yaml
 from packaging import version as packaging_version
 
-from snakedeploy.conda_version import VersionOrder
-from snakedeploy.exceptions import UserError
+from snakedeploy.conda_version import VersionOrder, VersionSpec
+from snakedeploy.exceptions import InvalidVersionSpec, UserError
 from snakedeploy.logger import logger
 from snakedeploy.prs import PR, get_repo
 from snakedeploy.utils import YamlDumper
+
+
+def _parse_ensure_constraints(constraints):
+    parsed_constraints = []
+    spec_re = re.compile(
+        r"^\s*([A-Za-z0-9_.-]+)\s*(==|!=|~=|<=|>=|=|<|>)\s*(\S+)\s*$"
+    )
+    for constraint in constraints or ():
+        match = spec_re.match(constraint)
+        if match is None:
+            raise UserError(
+                f"Invalid --ensure constraint '{constraint}'; expected a package name "
+                "and version specifier, e.g. 'python<3.12'."
+            )
+        package, operator, version = match.groups()
+        version_spec = operator + version
+        try:
+            parsed_constraints.append((package.lower(), VersionSpec(version_spec)))
+        except InvalidVersionSpec as e:
+            raise UserError(f"Invalid --ensure constraint '{constraint}': {e}") from e
+    return parsed_constraints
 
 
 def pin_conda_envs(
@@ -25,9 +46,11 @@ def pin_conda_envs(
     pr_add_label=False,
     entity_regex=None,
     warn_on_error=False,
+    ensure=None,
 ):
     """Pin given conda envs by creating <conda-env>.<platform>.pin.txt
     files with explicit URLs for all packages in each env."""
+    ensure = _parse_ensure_constraints(ensure)
     return CondaEnvProcessor(conda_frontend=conda_frontend).process(
         conda_env_paths,
         update_envs=False,
@@ -36,6 +59,7 @@ def pin_conda_envs(
         pr_add_label=pr_add_label,
         entity_regex=entity_regex,
         warn_on_error=warn_on_error,
+        ensure=ensure,
     )
 
 
@@ -82,6 +106,7 @@ class CondaEnvProcessor:
         pr_add_label: bool = False,
         entity_regex: str | None = None,
         warn_on_error: bool = False,
+        ensure=None,
     ):
         repo = None
         if create_prs:
@@ -127,7 +152,7 @@ class CondaEnvProcessor:
                     or not self.get_pin_file_path(conda_env_path).exists()
                 ):
                     logger.info(f"Pinning {conda_env_path}...")
-                    self.update_pinning(conda_env_path, pr)
+                    self.update_pinning(conda_env_path, pr, ensure=ensure)
             except sp.CalledProcessError as e:
                 msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
                 if warn_on_error:
@@ -248,7 +273,7 @@ class CondaEnvProcessor:
     def get_pin_file_path(self, conda_env_path):
         return Path(conda_env_path).with_suffix(f".{self.info['platform']}.pin.txt")
 
-    def update_pinning(self, conda_env_path, pr=None):
+    def update_pinning(self, conda_env_path, pr=None, ensure=None):
         pin_file = self.get_pin_file_path(conda_env_path)
         old_content = None
         updated = False
@@ -258,6 +283,27 @@ class CondaEnvProcessor:
 
         with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
             self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
+            unsatisfied_constraints = []
+            if ensure:
+                packages = json.loads(
+                    self.exec_conda(f"list --json --prefix {tmpdir}").stdout
+                )
+                package_versions = {
+                    package["name"].lower(): package["version"] for package in packages
+                }
+                unsatisfied_constraints = [
+                    (package, version_spec)
+                    for package, version_spec in ensure
+                    if package not in package_versions
+                    or not version_spec.match(package_versions[package])
+                ]
+                if not unsatisfied_constraints:
+                    logger.info(
+                        f"All --ensure constraints are satisfied for {conda_env_path}; "
+                        "skipping pinning."
+                    )
+                    self.exec_conda(f"env remove --prefix {tmpdir} -y")
+                    return
             self.exec_conda(
                 f"list --explicit --md5 --prefix {tmpdir} > {tmpdir}/pin.txt"
             )
@@ -279,6 +325,15 @@ class CondaEnvProcessor:
                         is_updated=old_content is not None,
                         msg=msg,
                     )
+            if unsatisfied_constraints:
+                details = ", ".join(
+                    f"{package}{version_spec.spec}"
+                    for package, version_spec in unsatisfied_constraints
+                )
+                logger.warning(
+                    f"Could not satisfy --ensure constraints for {conda_env_path} "
+                    f"after pinning: {details}."
+                )
             self.exec_conda(f"env remove --prefix {tmpdir} -y")
 
     def exec_conda(self, subcmd):
