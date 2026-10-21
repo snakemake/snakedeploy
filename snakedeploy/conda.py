@@ -282,7 +282,10 @@ class CondaEnvProcessor:
                 old_content = infile.read()
 
         with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
-            self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
+            if pin_file.exists():
+                self.exec_conda(f"create --prefix {tmpdir} --file {pin_file}")
+            else:
+                self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
             unsatisfied_constraints = []
             if ensure:
                 packages = json.loads(
@@ -297,9 +300,9 @@ class CondaEnvProcessor:
                     if package in package_versions
                     and not version_spec.match(package_versions[package])
                 ]
-                if not unsatisfied_constraints:
+                if not unsatisfied_constraints and pin_file.exists():
                     logger.info(
-                        f"All --ensure constraints are satisfied for {conda_env_path}; "
+                        f"All --ensure constraints are satisfied for {conda_env_path} and {pin_file}; "
                         "skipping pinning."
                     )
                     self.exec_conda(f"env remove --prefix {tmpdir} -y")
