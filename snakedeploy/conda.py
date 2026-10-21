@@ -20,9 +20,7 @@ from snakedeploy.utils import YamlDumper
 
 def _parse_ensure_constraints(constraints):
     parsed_constraints = []
-    spec_re = re.compile(
-        r"^\s*([A-Za-z0-9_.-]+)\s*(==|!=|~=|<=|>=|=|<|>)\s*(\S+)\s*$"
-    )
+    spec_re = re.compile(r"^\s*([A-Za-z0-9_.-]+)\s*(==|!=|~=|<=|>=|=|<|>)\s*(\S+)\s*$")
     for constraint in constraints or ():
         match = spec_re.match(constraint)
         if match is None:
