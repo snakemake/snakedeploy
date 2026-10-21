@@ -294,8 +294,8 @@ class CondaEnvProcessor:
                 unsatisfied_constraints = [
                     (package, version_spec)
                     for package, version_spec in ensure
-                    if package not in package_versions
-                    or not version_spec.match(package_versions[package])
+                    if package in package_versions
+                    and not version_spec.match(package_versions[package])
                 ]
                 if not unsatisfied_constraints:
                     logger.info(

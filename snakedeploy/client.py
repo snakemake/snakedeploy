@@ -151,6 +151,7 @@ def get_parser():
         action="append",
         metavar="PACKAGE_SPEC",
         help="Ensure a package version constraint is satisfied, pinning if needed. "
+        "Ensured packages don't need to be present, just their version constraints need to be satisfied. "
         "Can be specified multiple times (e.g. --ensure 'python>=3.12').",
     )
     pin_conda_envs.add_argument(
