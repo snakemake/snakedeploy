@@ -49,6 +49,7 @@ def pin_conda_envs(
     entity_regex=None,
     warn_on_error=False,
     ensure=None,
+    only_if_ensure_is_unsatisfied=False,
 ):
     """Pin given conda envs by creating <conda-env>.<platform>.pin.txt
     files with explicit URLs for all packages in each env."""
@@ -61,6 +62,7 @@ def pin_conda_envs(
         entity_regex=entity_regex,
         warn_on_error=warn_on_error,
         ensure=_parse_ensure_constraints(ensure),
+        only_if_ensure_is_unsatisfied=only_if_ensure_is_unsatisfied,
     )
 
 
@@ -73,6 +75,7 @@ def update_conda_envs(
     entity_regex=None,
     warn_on_error=False,
     ensure=None,
+    only_if_ensure_is_unsatisfied=False,
 ):
     """Update the given conda env definitions such that all dependencies
     in them are set to the latest feasible versions."""
@@ -85,6 +88,7 @@ def update_conda_envs(
         entity_regex=entity_regex,
         warn_on_error=warn_on_error,
         ensure=_parse_ensure_constraints(ensure),
+        only_if_ensure_is_unsatisfied=only_if_ensure_is_unsatisfied,
     )
 
 
@@ -110,6 +114,7 @@ class CondaEnvProcessor:
         entity_regex: str | None = None,
         warn_on_error: bool = False,
         ensure=None,
+        only_if_ensure_is_unsatisfied: bool = False,
     ):
         repo = None
         if create_prs:
@@ -123,69 +128,72 @@ class CondaEnvProcessor:
             )
         errors = []
         for conda_env_path in conda_envs:
-            try:
-                if create_prs:
-                    if pr_add_label and not entity_regex:
-                        raise UserError(
-                            "Cannot add label to PR without --entity-regex specified."
-                        )
+            if create_prs:
+                if pr_add_label and not entity_regex:
+                    raise UserError(
+                        "Cannot add label to PR without --entity-regex specified."
+                    )
 
-                    assert pin_envs or update_envs, (
-                        "bug: either pin_envs or update_envs must be True"
+                assert pin_envs or update_envs, (
+                    "bug: either pin_envs or update_envs must be True"
+                )
+                mode = "bump" if update_envs else "pin"
+                pr = PR(
+                    f"perf: auto{mode} {conda_env_path}",
+                    f"Automatic {mode} of {conda_env_path}.",
+                    f"auto{mode}/{conda_env_path.replace('/', '-')}",
+                    repo,
+                    entity=conda_env_path,
+                    label_entity_regex=entity_regex if pr_add_label else None,
+                )
+            else:
+                pr = None
+            try:
+                updated = False
+                if update_envs:
+                    logger.info(f"Updating {conda_env_path}...")
+                    updated = self.update_env(
+                        conda_env_path,
+                        pr=pr,
+                        ensure=ensure,
+                        only_if_ensure_is_unsatisfied=only_if_ensure_is_unsatisfied,
                     )
-                    mode = "bump" if update_envs else "pin"
-                    pr = PR(
-                        f"perf: auto{mode} {conda_env_path}",
-                        f"Automatic {mode} of {conda_env_path}.",
-                        f"auto{mode}/{conda_env_path.replace('/', '-')}",
-                        repo,
-                        entity=conda_env_path,
-                        label_entity_regex=entity_regex if pr_add_label else None,
+                if pin_envs and (
+                    not update_envs
+                    or updated
+                    or not self.get_pin_file_path(conda_env_path).exists()
+                ):
+                    logger.info(f"Pinning {conda_env_path}...")
+                    self.update_pinning(
+                        conda_env_path,
+                        pr,
+                        ensure=ensure if not update_envs else None,
+                        only_if_ensure_is_unsatisfied=only_if_ensure_is_unsatisfied
+                        if not update_envs
+                        else False,
                     )
-                else:
-                    pr = None
-                try:
-                    updated = False
-                    if update_envs:
-                        logger.info(f"Updating {conda_env_path}...")
-                        updated = self.update_env(
-                            conda_env_path,
-                            pr=pr,
-                            warn_on_error=warn_on_error,
-                            ensure=ensure,
-                        )
-                    if pin_envs and (
-                        not update_envs
-                        or updated
-                        or not self.get_pin_file_path(conda_env_path).exists()
-                    ):
-                        logger.info(f"Pinning {conda_env_path}...")
-                        self.update_pinning(
-                            conda_env_path,
-                            pr,
-                            ensure=ensure if not update_envs else None,
-                        )
-                except sp.CalledProcessError as e:
-                    msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
-                    if warn_on_error:
-                        logger.warning(msg)
-                        continue
-                    else:
-                        raise UserError(msg)
-                if create_prs:
-                    assert pr is not None
-                    pr.create()
+            except sp.CalledProcessError as e:
+                msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
+                errors.append(UserError(msg))
             except UserError as e:
                 errors.append(e)
+            if create_prs:
+                assert pr is not None
+                pr.create()
+
         if errors:
-            raise UserError(suberrors=errors)
+            user_error = UserError(suberrors=errors)
+            if warn_on_error:
+                logger.warning(str(user_error))
+            else:
+                raise user_error
 
     def update_env(
         self,
         conda_env_path,
         pr=None,
-        warn_on_error=False,
         ensure=None,
+        only_if_ensure_is_unsatisfied: bool = False,
     ):
         spec_re = re.compile("(?P<name>[^=>< ]+)[ =><]+")
         with open(conda_env_path, "r") as infile:
@@ -220,15 +228,15 @@ class CondaEnvProcessor:
                 unsatisfied_constraints = self.get_unsatified_constraints(
                     package_versions=pkg_versions, ensure=ensure
                 )
-                if unsatisfied_constraints:
-                    raise UnsatisfiedCondaConstraintsError(
-                        unsatisfied_constraints, conda_env_path
-                    )
                 self.exec_conda(f"env remove --prefix {tmpdir} -y")
-            return pkg_versions, package_info
+            return pkg_versions, package_info, unsatisfied_constraints
 
         logger.info("Resolving prior versions...")
-        prior_pkg_versions, _ = get_pkg_versions(conda_env_path)
+        prior_pkg_versions, _, prior_unsatisfied_constraints = get_pkg_versions(
+            conda_env_path, ensure=ensure
+        )
+        if only_if_ensure_is_unsatisfied and not prior_unsatisfied_constraints:
+            return
 
         unconstrained_deps = process_dependencies(lambda name: name)
         unconstrained_env = dict(conda_env)
@@ -239,7 +247,16 @@ class CondaEnvProcessor:
         ) as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
             logger.info("Resolving posterior versions...")
-            posterior_pkg_versions, posterior_pkg_json = get_pkg_versions(tmpenv.name)
+            (
+                posterior_pkg_versions,
+                posterior_pkg_json,
+                posterior_unsatisfied_constraints,
+            ) = get_pkg_versions(tmpenv.name, ensure=ensure)
+
+        if posterior_unsatisfied_constraints:
+            raise UnsatisfiedCondaConstraintsError(
+                posterior_unsatisfied_constraints, conda_env_path
+            )
 
         def downgraded():
             for pkg_name, version in posterior_pkg_versions.items():
@@ -263,11 +280,7 @@ class CondaEnvProcessor:
                 f"would be downgraded: {', '.join(downgraded)}. Please consider a manual update "
                 "of the environment."
             )
-            if warn_on_error:
-                logger.warning(msg)
-                return False
-            else:
-                raise UserError(msg)
+            raise UserError(msg)
 
         orig_env = copy.deepcopy(conda_env)
 
@@ -313,10 +326,35 @@ class CondaEnvProcessor:
 
         return unsatisfied_constraints
 
-    def update_pinning(self, conda_env_path, pr=None, ensure=None):
+    def pinning_ensure_is_satisfied(self, conda_env_path, ensure):
+        pin_file = self.get_pin_file_path(conda_env_path)
+        if not pin_file.exists():
+            return False
+        if ensure:
+            with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
+                self.exec_conda(f"create --prefix {tmpdir} --file {pin_file}")
+                unsatisfied_constraints = self.get_unsatified_constraints(
+                    package_versions=self.get_package_versions(
+                        self.get_package_info(tmpdir)
+                    ),
+                    ensure=ensure,
+                )
+                self.exec_conda(f"env remove --prefix {tmpdir} -y")
+                if unsatisfied_constraints:
+                    return False
+        return True
+
+    def update_pinning(
+        self, conda_env_path, pr=None, ensure=None, only_if_ensure_is_unsatisfied=False
+    ):
         pin_file = self.get_pin_file_path(conda_env_path)
         old_content = None
         updated = False
+        if only_if_ensure_is_unsatisfied and self.pinning_ensure_is_satisfied(
+            conda_env_path, ensure
+        ):
+            return False
+
         if pin_file.exists():
             with open(pin_file, "r") as infile:
                 old_content = infile.read()

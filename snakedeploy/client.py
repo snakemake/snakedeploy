@@ -18,39 +18,44 @@ from .snakemake_wrappers import update_snakemake_wrappers
 
 
 def get_parser():
-    def add_ensure_arg(subparser):
+    def add_ensure_args(subparser):
         subparser.add_argument(
             "--ensure",
-            action="append",
+            nargs="+",
             metavar="PACKAGE_SPEC",
             help="Ensure a package version constraint is satisfied after updating. "
             "Ensured packages don't need to be present, just their version constraints need to be satisfied. "
             "Can be specified multiple times (e.g. --ensure 'python>=3.12').",
         )
+        subparser.add_argument(
+            "--only-if-ensure-is-unsatisfied",
+            action="store_true",
+            help="Only update if the ensure constraints are not satisfied.",
+        )
 
     def add_create_pr_args(subparser, entity: str):
-            subparser.add_argument(
-                "--create-prs",
-                action="store_true",
-                help=f"Create pull request for each updated {entity}. "
-                "Requires GITHUB_TOKEN and GITHUB_REPOSITORY (the repo name) and one of GITHUB_REF_NAME or GITHUB_BASE_REF "
-                "(preferring the latter, representing the target branch, e.g. main or master) environment "
-                "variables to be set (the latter three are available when running as github action). "
-                "In order to enable further actions (e.g. checks) to run on the generated PRs, the "
-                "provided GITHUB_TOKEN may not be the default github actions token. See here for "
-                "options: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs.",
-            )
-            subparser.add_argument(
-                "--entity-regex",
-                help=f"Regular expression for deriving an entity name from the {entity} file name "
-                "(will be used for adding a label and for title and description). Has to contain a group 'entity' "
-                "(e.g. '(?P<entity>.+)/environment.yaml').",
-            )
-            subparser.add_argument(
-                "--pr-add-label",
-                action="store_true",
-                help="Add a label to the PR. Has to be used in combination with --entity-regex.",
-            )
+        subparser.add_argument(
+            "--create-prs",
+            action="store_true",
+            help=f"Create pull request for each updated {entity}. "
+            "Requires GITHUB_TOKEN and GITHUB_REPOSITORY (the repo name) and one of GITHUB_REF_NAME or GITHUB_BASE_REF "
+            "(preferring the latter, representing the target branch, e.g. main or master) environment "
+            "variables to be set (the latter three are available when running as github action). "
+            "In order to enable further actions (e.g. checks) to run on the generated PRs, the "
+            "provided GITHUB_TOKEN may not be the default github actions token. See here for "
+            "options: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs.",
+        )
+        subparser.add_argument(
+            "--entity-regex",
+            help=f"Regular expression for deriving an entity name from the {entity} file name "
+            "(will be used for adding a label and for title and description). Has to contain a group 'entity' "
+            "(e.g. '(?P<entity>.+)/environment.yaml').",
+        )
+        subparser.add_argument(
+            "--pr-add-label",
+            action="store_true",
+            help="Add a label to the PR. Has to be used in combination with --entity-regex.",
+        )
 
     parser = argparse.ArgumentParser(
         description="Snakedeploy: deployment and maintenance related toolbox for Snakemake.",
@@ -180,7 +185,7 @@ def get_parser():
         default="conda",
         help="Conda frontend to use.",
     )
-    add_ensure_arg(pin_conda_envs)
+    add_ensure_args(pin_conda_envs)
     pin_conda_envs.add_argument(
         "--create-prs",
         action="store_true",
@@ -230,7 +235,7 @@ def get_parser():
         action="store_true",
         help="also pin the updated environments (see pin-conda-envs subcommand).",
     )
-    add_ensure_arg(update_conda_envs)
+    add_ensure_args(update_conda_envs)
     add_create_pr_args(update_conda_envs, "environment")
     update_conda_envs.add_argument(
         "--warn-on-error",
@@ -329,6 +334,7 @@ def main():
                 pr_add_label=args.pr_add_label,
                 warn_on_error=args.warn_on_error,
                 ensure=args.ensure,
+                only_if_ensure_is_unsatisfied=args.only_if_ensure_is_unsatisfied,
             )
         elif args.subcommand == "update-conda-envs":
             update_conda_envs(
@@ -339,6 +345,8 @@ def main():
                 entity_regex=args.entity_regex,
                 pr_add_label=args.pr_add_label,
                 warn_on_error=args.warn_on_error,
+                ensure=args.ensure,
+                only_if_ensure_is_unsatisfied=args.only_if_ensure_is_unsatisfied,
             )
         elif args.subcommand == "update-snakemake-wrappers":
             update_snakemake_wrappers(
