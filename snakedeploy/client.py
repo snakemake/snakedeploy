@@ -18,6 +18,40 @@ from .snakemake_wrappers import update_snakemake_wrappers
 
 
 def get_parser():
+    def add_ensure_arg(subparser):
+        subparser.add_argument(
+            "--ensure",
+            action="append",
+            metavar="PACKAGE_SPEC",
+            help="Ensure a package version constraint is satisfied after updating. "
+            "Ensured packages don't need to be present, just their version constraints need to be satisfied. "
+            "Can be specified multiple times (e.g. --ensure 'python>=3.12').",
+        )
+
+    def add_create_pr_args(subparser, entity: str):
+            subparser.add_argument(
+                "--create-prs",
+                action="store_true",
+                help=f"Create pull request for each updated {entity}. "
+                "Requires GITHUB_TOKEN and GITHUB_REPOSITORY (the repo name) and one of GITHUB_REF_NAME or GITHUB_BASE_REF "
+                "(preferring the latter, representing the target branch, e.g. main or master) environment "
+                "variables to be set (the latter three are available when running as github action). "
+                "In order to enable further actions (e.g. checks) to run on the generated PRs, the "
+                "provided GITHUB_TOKEN may not be the default github actions token. See here for "
+                "options: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs.",
+            )
+            subparser.add_argument(
+                "--entity-regex",
+                help=f"Regular expression for deriving an entity name from the {entity} file name "
+                "(will be used for adding a label and for title and description). Has to contain a group 'entity' "
+                "(e.g. '(?P<entity>.+)/environment.yaml').",
+            )
+            subparser.add_argument(
+                "--pr-add-label",
+                action="store_true",
+                help="Add a label to the PR. Has to be used in combination with --entity-regex.",
+            )
+
     parser = argparse.ArgumentParser(
         description="Snakedeploy: deployment and maintenance related toolbox for Snakemake.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -174,40 +208,6 @@ def get_parser():
         action="store_true",
         help="Only warn if conda env evaluation fails and go on with the other envs.",
     )
-
-    def add_create_pr_args(subparser, entity: str):
-        subparser.add_argument(
-            "--create-prs",
-            action="store_true",
-            help=f"Create pull request for each updated {entity}. "
-            "Requires GITHUB_TOKEN and GITHUB_REPOSITORY (the repo name) and one of GITHUB_REF_NAME or GITHUB_BASE_REF "
-            "(preferring the latter, representing the target branch, e.g. main or master) environment "
-            "variables to be set (the latter three are available when running as github action). "
-            "In order to enable further actions (e.g. checks) to run on the generated PRs, the "
-            "provided GITHUB_TOKEN may not be the default github actions token. See here for "
-            "options: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs.",
-        )
-        subparser.add_argument(
-            "--entity-regex",
-            help=f"Regular expression for deriving an entity name from the {entity} file name "
-            "(will be used for adding a label and for title and description). Has to contain a group 'entity' "
-            "(e.g. '(?P<entity>.+)/environment.yaml').",
-        )
-        subparser.add_argument(
-            "--pr-add-label",
-            action="store_true",
-            help="Add a label to the PR. Has to be used in combination with --entity-regex.",
-        )
-
-    def add_ensure_arg(subparser):
-        subparser.add_argument(
-            "--ensure",
-            action="append",
-            metavar="PACKAGE_SPEC",
-            help="Ensure a package version constraint is satisfied after updating. "
-            "Ensured packages don't need to be present, just their version constraints need to be satisfied. "
-            "Can be specified multiple times (e.g. --ensure 'python>=3.12').",
-        )
 
     update_conda_envs = subparsers.add_parser(
         "update-conda-envs",

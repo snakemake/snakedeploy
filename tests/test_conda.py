@@ -28,11 +28,11 @@ def test_parse_invalid_ensure_constraint():
 
 
 @pytest.mark.parametrize(
-    ("constraint", "should_pin"),
+    ("constraint", "should_raise"),
     [("python<3.12", False), ("python>=3.12", True)],
 )
-def test_update_pinning_only_when_ensure_constraint_violated(
-    tmp_path, monkeypatch, constraint, should_pin
+def test_update_pinning_always_updates_and_checks_ensure(
+    tmp_path, monkeypatch, constraint, should_raise
 ):
     monkeypatch.chdir(tmp_path)
     processor = CondaEnvProcessor.__new__(CondaEnvProcessor)
@@ -52,12 +52,13 @@ def test_update_pinning_only_when_ensure_constraint_violated(
 
     processor.exec_conda = exec_conda
     ensure = _parse_ensure_constraints([constraint])
-    warnings = []
-    monkeypatch.setattr("snakedeploy.conda.logger.warning", warnings.append)
 
-    processor.update_pinning("environment.yaml", ensure=ensure)
+    if should_raise:
+        with pytest.raises(UserError, match="Could not satisfy --ensure constraints"):
+            processor.update_pinning("environment.yaml", ensure=ensure)
+    else:
+        processor.update_pinning("environment.yaml", ensure=ensure)
 
     pin_file = tmp_path / "environment.linux-64.pin.txt"
-    assert pin_file.exists() is should_pin
-    assert any("list --explicit" in command for command in commands) is should_pin
-    assert bool(warnings) is should_pin
+    assert pin_file.exists() is not should_raise
+    assert any("list --explicit" in command for command in commands)
