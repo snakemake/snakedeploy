@@ -377,7 +377,9 @@ class CondaEnvProcessor:
             updated = old_content != new_content
 
             if unsatisfied_constraints:
-                logger.warning(f"Unsatisfied constraints for {conda_env_path} (full error upon termination).")
+                logger.warning(
+                    f"Unsatisfied constraints for {conda_env_path} (full error upon termination)."
+                )
                 raise UnsatisfiedCondaConstraintsError(
                     unsatisfied_constraints, conda_env_path
                 )
