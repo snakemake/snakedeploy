@@ -151,7 +151,6 @@ class CondaEnvProcessor:
             try:
                 updated = False
                 if update_envs:
-                    logger.info(f"Updating {conda_env_path}...")
                     updated = self.update_env(
                         conda_env_path,
                         pr=pr,
@@ -163,7 +162,6 @@ class CondaEnvProcessor:
                     or updated
                     or not self.get_pin_file_path(conda_env_path).exists()
                 ):
-                    logger.info(f"Pinning {conda_env_path}...")
                     self.update_pinning(
                         conda_env_path,
                         pr,
@@ -195,6 +193,7 @@ class CondaEnvProcessor:
         ensure=None,
         only_if_ensure_is_unsatisfied: bool = False,
     ):
+        logger.info(f"Checking {conda_env_path} for updates...")
         spec_re = re.compile("(?P<name>[^=>< ]+)[ =><]+")
         with open(conda_env_path, "r") as infile:
             conda_env = yaml.load(infile, Loader=yaml.SafeLoader)
@@ -300,9 +299,10 @@ class CondaEnvProcessor:
                     is_updated=True,
                     msg=f"perf: update {conda_env_path}.",
                 )
+            logger.info(f"Updated {conda_env_path}.")
             return True
         else:
-            logger.info("No updates in env.")
+            logger.info(f"No updates in {conda_env_path}.")
             return False
 
     def get_pin_file_path(self, conda_env_path):
@@ -347,6 +347,7 @@ class CondaEnvProcessor:
     def update_pinning(
         self, conda_env_path, pr=None, ensure=None, only_if_ensure_is_unsatisfied=False
     ):
+        logger.info(f"Checking {conda_env_path} pinning...")
         pin_file = self.get_pin_file_path(conda_env_path)
         old_content = None
         updated = False
@@ -380,6 +381,7 @@ class CondaEnvProcessor:
                 )
 
             if updated:
+                logger.info(f"Updated pinning for {conda_env_path}.")
                 with open(pin_file, "w") as outfile:
                     outfile.write(new_content)
                 if pr:
@@ -394,6 +396,8 @@ class CondaEnvProcessor:
                         is_updated=old_content is not None,
                         msg=msg,
                     )
+            else:
+                logger.info(f"No updates for pinning of {conda_env_path}.")
             self.exec_conda(f"env remove --prefix {tmpdir} -y")
 
     def exec_conda(self, subcmd):
