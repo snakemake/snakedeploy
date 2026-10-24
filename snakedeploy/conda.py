@@ -332,7 +332,7 @@ class CondaEnvProcessor:
             return False
         if ensure:
             with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
-                self.exec_conda(f"create --prefix {tmpdir} --file {pin_file}")
+                self.exec_conda(f"create --yes --prefix {tmpdir} --file {pin_file}")
                 unsatisfied_constraints = self.get_unsatified_constraints(
                     package_versions=self.get_package_versions(
                         self.get_package_info(tmpdir)
