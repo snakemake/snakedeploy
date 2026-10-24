@@ -12,7 +12,11 @@ import yaml
 from packaging import version as packaging_version
 
 from snakedeploy.conda_version import VersionOrder, VersionSpec
-from snakedeploy.exceptions import InvalidVersionSpec, UserError
+from snakedeploy.exceptions import (
+    InvalidVersionSpec,
+    UnsatisfiedCondaConstraintsError,
+    UserError,
+)
 from snakedeploy.logger import logger
 from snakedeploy.prs import PR, get_repo
 from snakedeploy.utils import YamlDumper
@@ -48,7 +52,6 @@ def pin_conda_envs(
 ):
     """Pin given conda envs by creating <conda-env>.<platform>.pin.txt
     files with explicit URLs for all packages in each env."""
-    ensure = _parse_ensure_constraints(ensure)
     return CondaEnvProcessor(conda_frontend=conda_frontend).process(
         conda_env_paths,
         update_envs=False,
@@ -57,7 +60,7 @@ def pin_conda_envs(
         pr_add_label=pr_add_label,
         entity_regex=entity_regex,
         warn_on_error=warn_on_error,
-        ensure=ensure,
+        ensure=_parse_ensure_constraints(ensure),
     )
 
 
@@ -69,6 +72,7 @@ def update_conda_envs(
     pr_add_label=False,
     entity_regex=None,
     warn_on_error=False,
+    ensure=None,
 ):
     """Update the given conda env definitions such that all dependencies
     in them are set to the latest feasible versions."""
@@ -80,6 +84,7 @@ def update_conda_envs(
         pr_add_label=pr_add_label,
         entity_regex=entity_regex,
         warn_on_error=warn_on_error,
+        ensure=_parse_ensure_constraints(ensure),
     )
 
 
@@ -116,57 +121,71 @@ class CondaEnvProcessor:
             logger.info(
                 f"No conda envs found at given paths: {', '.join(conda_env_paths)}"
             )
+        errors = []
         for conda_env_path in conda_envs:
-            if create_prs:
-                if pr_add_label and not entity_regex:
-                    raise UserError(
-                        "Cannot add label to PR without --entity-regex specified."
-                    )
-
-                assert pin_envs or update_envs, (
-                    "bug: either pin_envs or update_envs must be True"
-                )
-                mode = "bump" if update_envs else "pin"
-                pr = PR(
-                    f"perf: auto{mode} {conda_env_path}",
-                    f"Automatic {mode} of {conda_env_path}.",
-                    f"auto{mode}/{conda_env_path.replace('/', '-')}",
-                    repo,
-                    entity=conda_env_path,
-                    label_entity_regex=entity_regex if pr_add_label else None,
-                )
-            else:
-                pr = None
             try:
-                updated = False
-                if update_envs:
-                    logger.info(f"Updating {conda_env_path}...")
-                    updated = self.update_env(
-                        conda_env_path, pr=pr, warn_on_error=warn_on_error
+                if create_prs:
+                    if pr_add_label and not entity_regex:
+                        raise UserError(
+                            "Cannot add label to PR without --entity-regex specified."
+                        )
+
+                    assert pin_envs or update_envs, (
+                        "bug: either pin_envs or update_envs must be True"
                     )
-                if pin_envs and (
-                    not update_envs
-                    or updated
-                    or not self.get_pin_file_path(conda_env_path).exists()
-                ):
-                    logger.info(f"Pinning {conda_env_path}...")
-                    self.update_pinning(conda_env_path, pr, ensure=ensure)
-            except sp.CalledProcessError as e:
-                msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
-                if warn_on_error:
-                    logger.warning(msg)
-                    continue
+                    mode = "bump" if update_envs else "pin"
+                    pr = PR(
+                        f"perf: auto{mode} {conda_env_path}",
+                        f"Automatic {mode} of {conda_env_path}.",
+                        f"auto{mode}/{conda_env_path.replace('/', '-')}",
+                        repo,
+                        entity=conda_env_path,
+                        label_entity_regex=entity_regex if pr_add_label else None,
+                    )
                 else:
-                    raise UserError(msg)
-            if create_prs:
-                assert pr is not None
-                pr.create()
+                    pr = None
+                try:
+                    updated = False
+                    if update_envs:
+                        logger.info(f"Updating {conda_env_path}...")
+                        updated = self.update_env(
+                            conda_env_path,
+                            pr=pr,
+                            warn_on_error=warn_on_error,
+                            ensure=ensure,
+                        )
+                    if pin_envs and (
+                        not update_envs
+                        or updated
+                        or not self.get_pin_file_path(conda_env_path).exists()
+                    ):
+                        logger.info(f"Pinning {conda_env_path}...")
+                        self.update_pinning(
+                            conda_env_path,
+                            pr,
+                            ensure=ensure if not update_envs else None,
+                        )
+                except sp.CalledProcessError as e:
+                    msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
+                    if warn_on_error:
+                        logger.warning(msg)
+                        continue
+                    else:
+                        raise UserError(msg)
+                if create_prs:
+                    assert pr is not None
+                    pr.create()
+            except UserError as e:
+                errors.append(e)
+        if errors:
+            raise UserError(suberrors=errors)
 
     def update_env(
         self,
         conda_env_path,
         pr=None,
         warn_on_error=False,
+        ensure=None,
     ):
         spec_re = re.compile("(?P<name>[^=>< ]+)[ =><]+")
         with open(conda_env_path, "r") as infile:
@@ -193,15 +212,20 @@ class CondaEnvProcessor:
                 )
             )
 
-        def get_pkg_versions(conda_env_path):
+        def get_pkg_versions(conda_env_path, ensure=None):
             with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
                 self.exec_conda(f"env create --file {conda_env_path} --prefix {tmpdir}")
-                results = json.loads(
-                    self.exec_conda(f"list --json --prefix {tmpdir}").stdout
+                package_info = self.get_package_info(tmpdir)
+                pkg_versions = self.get_package_versions(package_info)
+                unsatisfied_constraints = self.get_unsatified_constraints(
+                    package_versions=pkg_versions, ensure=ensure
                 )
-                pkg_versions = {pkg["name"]: pkg["version"] for pkg in results}
+                if unsatisfied_constraints:
+                    raise UnsatisfiedCondaConstraintsError(
+                        unsatisfied_constraints, conda_env_path
+                    )
                 self.exec_conda(f"env remove --prefix {tmpdir} -y")
-            return pkg_versions, results
+            return pkg_versions, package_info
 
         logger.info("Resolving prior versions...")
         prior_pkg_versions, _ = get_pkg_versions(conda_env_path)
@@ -271,6 +295,24 @@ class CondaEnvProcessor:
     def get_pin_file_path(self, conda_env_path):
         return Path(conda_env_path).with_suffix(f".{self.info['platform']}.pin.txt")
 
+    def get_package_info(self, prefix):
+        return json.loads(self.exec_conda(f"list --json --prefix {prefix}").stdout)
+
+    def get_package_versions(self, package_info):
+        return {package["name"].lower(): package["version"] for package in package_info}
+
+    def get_unsatified_constraints(self, package_versions, ensure=None):
+        unsatisfied_constraints = []
+        if ensure:
+            unsatisfied_constraints = [
+                (package, version_spec)
+                for package, version_spec in ensure
+                if package in package_versions
+                and not version_spec.match(package_versions[package])
+            ]
+
+        return unsatisfied_constraints
+
     def update_pinning(self, conda_env_path, pr=None, ensure=None):
         pin_file = self.get_pin_file_path(conda_env_path)
         old_content = None
@@ -281,20 +323,12 @@ class CondaEnvProcessor:
 
         with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
             self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
-            unsatisfied_constraints = []
-            if ensure:
-                packages = json.loads(
-                    self.exec_conda(f"list --json --prefix {tmpdir}").stdout
-                )
-                package_versions = {
-                    package["name"].lower(): package["version"] for package in packages
-                }
-                unsatisfied_constraints = [
-                    (package, version_spec)
-                    for package, version_spec in ensure
-                    if package in package_versions
-                    and not version_spec.match(package_versions[package])
-                ]
+            unsatisfied_constraints = self.get_unsatified_constraints(
+                package_versions=self.get_package_versions(
+                    self.get_package_info(tmpdir)
+                ),
+                ensure=ensure,
+            )
             self.exec_conda(
                 f"list --explicit --md5 --prefix {tmpdir} > {tmpdir}/pin.txt"
             )
@@ -303,13 +337,8 @@ class CondaEnvProcessor:
             updated = old_content != new_content
 
             if unsatisfied_constraints:
-                details = ", ".join(
-                    f"{package}{version_spec.spec}"
-                    for package, version_spec in unsatisfied_constraints
-                )
-                raise UserError(
-                    f"Could not satisfy --ensure constraints for {conda_env_path}"
-                    f": {details}."
+                raise UnsatisfiedCondaConstraintsError(
+                    unsatisfied_constraints, conda_env_path
                 )
 
             if updated:

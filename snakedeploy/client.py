@@ -146,14 +146,7 @@ def get_parser():
         default="conda",
         help="Conda frontend to use.",
     )
-    pin_conda_envs.add_argument(
-        "--ensure",
-        action="append",
-        metavar="PACKAGE_SPEC",
-        help="Ensure a package version constraint is satisfied after pinning. "
-        "Ensured packages don't need to be present, just their version constraints need to be satisfied. "
-        "Can be specified multiple times (e.g. --ensure 'python>=3.12').",
-    )
+    add_ensure_arg(pin_conda_envs)
     pin_conda_envs.add_argument(
         "--create-prs",
         action="store_true",
@@ -206,6 +199,16 @@ def get_parser():
             help="Add a label to the PR. Has to be used in combination with --entity-regex.",
         )
 
+    def add_ensure_arg(subparser):
+        subparser.add_argument(
+            "--ensure",
+            action="append",
+            metavar="PACKAGE_SPEC",
+            help="Ensure a package version constraint is satisfied after updating. "
+            "Ensured packages don't need to be present, just their version constraints need to be satisfied. "
+            "Can be specified multiple times (e.g. --ensure 'python>=3.12').",
+        )
+
     update_conda_envs = subparsers.add_parser(
         "update-conda-envs",
         help="Update given conda environment definition files (in YAML format) "
@@ -227,6 +230,7 @@ def get_parser():
         action="store_true",
         help="also pin the updated environments (see pin-conda-envs subcommand).",
     )
+    add_ensure_arg(update_conda_envs)
     add_create_pr_args(update_conda_envs, "environment")
     update_conda_envs.add_argument(
         "--warn-on-error",
