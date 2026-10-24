@@ -150,7 +150,7 @@ def get_parser():
         "--ensure",
         action="append",
         metavar="PACKAGE_SPEC",
-        help="Ensure a package version constraint is satisfied, pinning if needed. "
+        help="Ensure a package version constraint is satisfied after pinning. "
         "Ensured packages don't need to be present, just their version constraints need to be satisfied. "
         "Can be specified multiple times (e.g. --ensure 'python>=3.12').",
     )

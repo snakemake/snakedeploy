@@ -280,10 +280,7 @@ class CondaEnvProcessor:
                 old_content = infile.read()
 
         with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
-            if pin_file.exists():
-                self.exec_conda(f"create --prefix {tmpdir} --file {pin_file}")
-            else:
-                self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
+            self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
             unsatisfied_constraints = []
             if ensure:
                 packages = json.loads(
@@ -298,19 +295,23 @@ class CondaEnvProcessor:
                     if package in package_versions
                     and not version_spec.match(package_versions[package])
                 ]
-                if not unsatisfied_constraints and pin_file.exists():
-                    logger.info(
-                        f"All --ensure constraints are satisfied for {conda_env_path} and {pin_file}; "
-                        "skipping pinning."
-                    )
-                    self.exec_conda(f"env remove --prefix {tmpdir} -y")
-                    return
             self.exec_conda(
                 f"list --explicit --md5 --prefix {tmpdir} > {tmpdir}/pin.txt"
             )
             with open(f"{tmpdir}/pin.txt", "r") as infile:
                 new_content = infile.read()
             updated = old_content != new_content
+
+            if unsatisfied_constraints:
+                details = ", ".join(
+                    f"{package}{version_spec.spec}"
+                    for package, version_spec in unsatisfied_constraints
+                )
+                raise UserError(
+                    f"Could not satisfy --ensure constraints for {conda_env_path}"
+                    f": {details}."
+                )
+
             if updated:
                 with open(pin_file, "w") as outfile:
                     outfile.write(new_content)
@@ -326,15 +327,6 @@ class CondaEnvProcessor:
                         is_updated=old_content is not None,
                         msg=msg,
                     )
-            if unsatisfied_constraints:
-                details = ", ".join(
-                    f"{package}{version_spec.spec}"
-                    for package, version_spec in unsatisfied_constraints
-                )
-                logger.warning(
-                    f"Could not satisfy --ensure constraints for {conda_env_path} "
-                    f"after pinning: {details}."
-                )
             self.exec_conda(f"env remove --prefix {tmpdir} -y")
 
     def exec_conda(self, subcmd):
