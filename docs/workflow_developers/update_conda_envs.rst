@@ -80,7 +80,11 @@ For example, to ensure that all environment pins are safe with respect to the Py
 
 .. code:: console
 
-    $ snakedeploy pin-conda-envs */*/environment.yaml */*/*/environment.yaml --ensure "certify>=2026.10.19" "pip>=26.2.2" "uv>=0.13.4" "sigstore>=4.5.1" "pixi>=0.82.1" "conda>=26.9.4" --only-if-ensure-is-unsatisfied
+    $ snakedeploy pin-conda-envs */*/environment.yaml */*/*/environment.yaml --ensure "certifi>=2026.10.19" "pip>=26.2.2" "uv>=0.13.4" "sigstore>=4.5.1" "pixi>=0.82.1" "conda>=26.9.4" --only-if-ensure-is-unsatisfied
 
 If any environment pin does not satisfy the specified constraints, the command will fail with an error, indicating which constraints were not met.
 You can then follow-up with ``snakedeploy update-conda-envs`` of the respective environment files, again using the same ``--ensure`` constraints, which will hopefully finally comply with the constraints.
+
+.. note::
+
+    Use --ensure as the last argument to avoid confusion of the argument parser with position arguments like the environment files.

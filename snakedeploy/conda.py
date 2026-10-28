@@ -170,14 +170,15 @@ class CondaEnvProcessor:
                         if not update_envs
                         else False,
                     )
+
+                if create_prs:
+                    assert pr is not None
+                    pr.create()
             except sp.CalledProcessError as e:
                 msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
                 errors.append(UserError(msg))
             except UserError as e:
                 errors.append(e)
-            if create_prs:
-                assert pr is not None
-                pr.create()
 
         if errors:
             user_error = UserError(suberrors=errors)
