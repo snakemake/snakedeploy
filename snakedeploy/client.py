@@ -233,7 +233,10 @@ def get_parser():
     update_conda_envs.add_argument(
         "--pin-envs",
         action="store_true",
-        help="also pin the updated environments (see pin-conda-envs subcommand).",
+        help="also pin the updated environments (see pin-conda-envs subcommand). "
+        "If an environment is not updated, the old pins are retained. "
+        "Instead use the pin-conda-envs subcommand to force an update of pinnings "
+        "independently of updating the environment files.",
     )
     add_ensure_args(update_conda_envs)
     add_create_pr_args(update_conda_envs, "environment")
