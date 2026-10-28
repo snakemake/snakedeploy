@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/snakemake/snakedeploy/compare/v0.17.1...v0.18.0) (2026-10-28)
+
+
+### Features
+
+* add --ensure flag to pin-conda-envs, allowing to specify package version constraints to be ensured by (re-)pinning ([#133](https://github.com/snakemake/snakedeploy/issues/133)) ([6270312](https://github.com/snakemake/snakedeploy/commit/6270312a4c18b5364e718191a91280e1686feee8))
+
 ## [0.17.1](https://github.com/snakemake/snakedeploy/compare/v0.17.0...v0.17.1) (2026-09-25)
 
 
