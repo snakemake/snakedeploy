@@ -42,3 +42,25 @@ class InvalidVersionSpec(ValueError):
 
 class UserError(ValueError):
     """An error that is presented as simple error message without a stack trace"""
+
+    def __init__(self, message: str = "", suberrors: list | None = None):
+        if message is not None:
+            message = str(message)
+        if suberrors is not None:
+            if message:
+                message = f"{message.strip()}:\n"
+            message += "\n".join(str(err) for err in suberrors)
+        super().__init__(message)
+
+
+class UnsatisfiedCondaConstraintsError(UserError):
+    """Thrown if there are unsatisfied conda constraints"""
+
+    def __init__(self, unsatisfied_constraints, conda_env_path):
+        details = ", ".join(
+            f"{package}{version_spec.spec}"
+            for package, version_spec in unsatisfied_constraints
+        )
+        super().__init__(
+            f"Could not satisfy --ensure constraints for {conda_env_path}: {details}."
+        )
