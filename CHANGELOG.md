@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.1](https://github.com/snakemake/snakedeploy/compare/v0.18.0...v0.18.1) (2026-10-28)
+
+
+### Documentation
+
+* better explanation of --pin-envs behavior ([72bfc6e](https://github.com/snakemake/snakedeploy/commit/72bfc6e47bf1ba6f4e38260f6efac706645e54c4))
+
 ## [0.18.0](https://github.com/snakemake/snakedeploy/compare/v0.17.1...v0.18.0) (2026-10-28)
 
 
