@@ -11,11 +11,34 @@ from pathlib import Path
 import yaml
 from packaging import version as packaging_version
 
-from snakedeploy.conda_version import VersionOrder
-from snakedeploy.exceptions import UserError
+from snakedeploy.conda_version import VersionOrder, VersionSpec
+from snakedeploy.exceptions import (
+    InvalidVersionSpec,
+    UnsatisfiedCondaConstraintsError,
+    UserError,
+)
 from snakedeploy.logger import logger
 from snakedeploy.prs import PR, get_repo
 from snakedeploy.utils import YamlDumper
+
+
+def _parse_ensure_constraints(constraints):
+    parsed_constraints = []
+    spec_re = re.compile(r"^\s*([A-Za-z0-9_.-]+)\s*(==|!=|~=|<=|>=|=|<|>)\s*(\S+)\s*$")
+    for constraint in constraints or ():
+        match = spec_re.match(constraint)
+        if match is None:
+            raise UserError(
+                f"Invalid --ensure constraint '{constraint}'; expected a package name "
+                "and version specifier, e.g. 'python<3.12'."
+            )
+        package, operator, version = match.groups()
+        version_spec = operator + version
+        try:
+            parsed_constraints.append((package.lower(), VersionSpec(version_spec)))
+        except InvalidVersionSpec as e:
+            raise UserError(f"Invalid --ensure constraint '{constraint}': {e}") from e
+    return parsed_constraints
 
 
 def pin_conda_envs(
@@ -25,6 +48,8 @@ def pin_conda_envs(
     pr_add_label=False,
     entity_regex=None,
     warn_on_error=False,
+    ensure=None,
+    only_if_ensure_is_unsatisfied=False,
 ):
     """Pin given conda envs by creating <conda-env>.<platform>.pin.txt
     files with explicit URLs for all packages in each env."""
@@ -36,6 +61,8 @@ def pin_conda_envs(
         pr_add_label=pr_add_label,
         entity_regex=entity_regex,
         warn_on_error=warn_on_error,
+        ensure=_parse_ensure_constraints(ensure),
+        only_if_ensure_is_unsatisfied=only_if_ensure_is_unsatisfied,
     )
 
 
@@ -47,6 +74,8 @@ def update_conda_envs(
     pr_add_label=False,
     entity_regex=None,
     warn_on_error=False,
+    ensure=None,
+    only_if_ensure_is_unsatisfied=False,
 ):
     """Update the given conda env definitions such that all dependencies
     in them are set to the latest feasible versions."""
@@ -58,6 +87,8 @@ def update_conda_envs(
         pr_add_label=pr_add_label,
         entity_regex=entity_regex,
         warn_on_error=warn_on_error,
+        ensure=_parse_ensure_constraints(ensure),
+        only_if_ensure_is_unsatisfied=only_if_ensure_is_unsatisfied,
     )
 
 
@@ -82,6 +113,8 @@ class CondaEnvProcessor:
         pr_add_label: bool = False,
         entity_regex: str | None = None,
         warn_on_error: bool = False,
+        ensure=None,
+        only_if_ensure_is_unsatisfied: bool = False,
     ):
         repo = None
         if create_prs:
@@ -93,6 +126,7 @@ class CondaEnvProcessor:
             logger.info(
                 f"No conda envs found at given paths: {', '.join(conda_env_paths)}"
             )
+        errors = []
         for conda_env_path in conda_envs:
             if create_prs:
                 if pr_add_label and not entity_regex:
@@ -117,34 +151,50 @@ class CondaEnvProcessor:
             try:
                 updated = False
                 if update_envs:
-                    logger.info(f"Updating {conda_env_path}...")
                     updated = self.update_env(
-                        conda_env_path, pr=pr, warn_on_error=warn_on_error
+                        conda_env_path,
+                        pr=pr,
+                        ensure=ensure,
+                        only_if_ensure_is_unsatisfied=only_if_ensure_is_unsatisfied,
                     )
                 if pin_envs and (
                     not update_envs
                     or updated
                     or not self.get_pin_file_path(conda_env_path).exists()
                 ):
-                    logger.info(f"Pinning {conda_env_path}...")
-                    self.update_pinning(conda_env_path, pr)
+                    self.update_pinning(
+                        conda_env_path,
+                        pr,
+                        ensure=ensure if not update_envs else None,
+                        only_if_ensure_is_unsatisfied=only_if_ensure_is_unsatisfied
+                        if not update_envs
+                        else False,
+                    )
+
+                if create_prs:
+                    assert pr is not None
+                    pr.create()
             except sp.CalledProcessError as e:
                 msg = f"Failed for conda env {conda_env_path}:\n{e.stderr}\n{e.stdout}"
-                if warn_on_error:
-                    logger.warning(msg)
-                    continue
-                else:
-                    raise UserError(msg)
-            if create_prs:
-                assert pr is not None
-                pr.create()
+                errors.append(UserError(msg))
+            except UserError as e:
+                errors.append(e)
+
+        if errors:
+            user_error = UserError(suberrors=errors)
+            if warn_on_error:
+                logger.warning(str(user_error))
+            else:
+                raise user_error
 
     def update_env(
         self,
         conda_env_path,
         pr=None,
-        warn_on_error=False,
+        ensure=None,
+        only_if_ensure_is_unsatisfied: bool = False,
     ):
+        logger.info(f"Checking {conda_env_path} for updates...")
         spec_re = re.compile("(?P<name>[^=>< ]+)[ =><]+")
         with open(conda_env_path, "r") as infile:
             conda_env = yaml.load(infile, Loader=yaml.SafeLoader)
@@ -170,18 +220,23 @@ class CondaEnvProcessor:
                 )
             )
 
-        def get_pkg_versions(conda_env_path):
+        def get_pkg_versions(conda_env_path, ensure=None):
             with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
                 self.exec_conda(f"env create --file {conda_env_path} --prefix {tmpdir}")
-                results = json.loads(
-                    self.exec_conda(f"list --json --prefix {tmpdir}").stdout
+                package_info = self.get_package_info(tmpdir)
+                pkg_versions = self.get_package_versions(package_info)
+                unsatisfied_constraints = self.get_unsatified_constraints(
+                    package_versions=pkg_versions, ensure=ensure
                 )
-                pkg_versions = {pkg["name"]: pkg["version"] for pkg in results}
                 self.exec_conda(f"env remove --prefix {tmpdir} -y")
-            return pkg_versions, results
+            return pkg_versions, package_info, unsatisfied_constraints
 
         logger.info("Resolving prior versions...")
-        prior_pkg_versions, _ = get_pkg_versions(conda_env_path)
+        prior_pkg_versions, _, prior_unsatisfied_constraints = get_pkg_versions(
+            conda_env_path, ensure=ensure
+        )
+        if only_if_ensure_is_unsatisfied and not prior_unsatisfied_constraints:
+            return
 
         unconstrained_deps = process_dependencies(lambda name: name)
         unconstrained_env = dict(conda_env)
@@ -192,7 +247,16 @@ class CondaEnvProcessor:
         ) as tmpenv:
             yaml.dump(unconstrained_env, tmpenv, Dumper=YamlDumper)
             logger.info("Resolving posterior versions...")
-            posterior_pkg_versions, posterior_pkg_json = get_pkg_versions(tmpenv.name)
+            (
+                posterior_pkg_versions,
+                posterior_pkg_json,
+                posterior_unsatisfied_constraints,
+            ) = get_pkg_versions(tmpenv.name, ensure=ensure)
+
+        if posterior_unsatisfied_constraints:
+            raise UnsatisfiedCondaConstraintsError(
+                posterior_unsatisfied_constraints, conda_env_path
+            )
 
         def downgraded():
             for pkg_name, version in posterior_pkg_versions.items():
@@ -216,11 +280,7 @@ class CondaEnvProcessor:
                 f"would be downgraded: {', '.join(downgraded)}. Please consider a manual update "
                 "of the environment."
             )
-            if warn_on_error:
-                logger.warning(msg)
-                return False
-            else:
-                raise UserError(msg)
+            raise UserError(msg)
 
         orig_env = copy.deepcopy(conda_env)
 
@@ -240,31 +300,93 @@ class CondaEnvProcessor:
                     is_updated=True,
                     msg=f"perf: update {conda_env_path}.",
                 )
+            logger.info(f"Updated {conda_env_path}.")
             return True
         else:
-            logger.info("No updates in env.")
+            logger.info(f"No updates in {conda_env_path}.")
             return False
 
     def get_pin_file_path(self, conda_env_path):
         return Path(conda_env_path).with_suffix(f".{self.info['platform']}.pin.txt")
 
-    def update_pinning(self, conda_env_path, pr=None):
+    def get_package_info(self, prefix):
+        return json.loads(self.exec_conda(f"list --json --prefix {prefix}").stdout)
+
+    def get_package_versions(self, package_info):
+        return {package["name"].lower(): package["version"] for package in package_info}
+
+    def get_unsatified_constraints(self, package_versions, ensure=None):
+        unsatisfied_constraints = []
+        if ensure:
+            unsatisfied_constraints = [
+                (package, version_spec)
+                for package, version_spec in ensure
+                if package in package_versions
+                and not version_spec.match(package_versions[package])
+            ]
+
+        return unsatisfied_constraints
+
+    def pinning_ensure_is_satisfied(self, conda_env_path, ensure):
+        pin_file = self.get_pin_file_path(conda_env_path)
+        if not pin_file.exists():
+            return False
+        if ensure:
+            with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
+                self.exec_conda(f"create --yes --prefix {tmpdir} --file {pin_file}")
+                unsatisfied_constraints = self.get_unsatified_constraints(
+                    package_versions=self.get_package_versions(
+                        self.get_package_info(tmpdir)
+                    ),
+                    ensure=ensure,
+                )
+                self.exec_conda(f"env remove --prefix {tmpdir} -y")
+                if unsatisfied_constraints:
+                    return False
+        return True
+
+    def update_pinning(
+        self, conda_env_path, pr=None, ensure=None, only_if_ensure_is_unsatisfied=False
+    ):
+        logger.info(f"Checking {conda_env_path} pinning...")
         pin_file = self.get_pin_file_path(conda_env_path)
         old_content = None
         updated = False
+        if only_if_ensure_is_unsatisfied and self.pinning_ensure_is_satisfied(
+            conda_env_path, ensure
+        ):
+            logger.info(f"Pinning for {conda_env_path} already satisfies --ensure.")
+            return False
+
         if pin_file.exists():
             with open(pin_file, "r") as infile:
                 old_content = infile.read()
 
         with tempfile.TemporaryDirectory(dir=".", prefix=".") as tmpdir:
             self.exec_conda(f"env create --prefix {tmpdir} --file {conda_env_path}")
+            unsatisfied_constraints = self.get_unsatified_constraints(
+                package_versions=self.get_package_versions(
+                    self.get_package_info(tmpdir)
+                ),
+                ensure=ensure,
+            )
             self.exec_conda(
                 f"list --explicit --md5 --prefix {tmpdir} > {tmpdir}/pin.txt"
             )
             with open(f"{tmpdir}/pin.txt", "r") as infile:
                 new_content = infile.read()
             updated = old_content != new_content
+
+            if unsatisfied_constraints:
+                logger.warning(
+                    f"Unsatisfied constraints for {conda_env_path} (full error upon termination)."
+                )
+                raise UnsatisfiedCondaConstraintsError(
+                    unsatisfied_constraints, conda_env_path
+                )
+
             if updated:
+                logger.info(f"Updated pinning for {conda_env_path}.")
                 with open(pin_file, "w") as outfile:
                     outfile.write(new_content)
                 if pr:
@@ -279,6 +401,8 @@ class CondaEnvProcessor:
                         is_updated=old_content is not None,
                         msg=msg,
                     )
+            else:
+                logger.info(f"No updates for pinning of {conda_env_path}.")
             self.exec_conda(f"env remove --prefix {tmpdir} -y")
 
     def exec_conda(self, subcmd):
