@@ -11,6 +11,7 @@ from snakedeploy.collect_files import collect_files
 from snakedeploy.conda import pin_conda_envs, update_conda_envs
 from snakedeploy.deploy import deploy
 from snakedeploy.exceptions import UserError
+from snakedeploy.lint import lint_conda_envs_cli
 from snakedeploy.logger import setup_logger
 from snakedeploy.scaffold_plugins import scaffold_plugin
 
@@ -246,6 +247,28 @@ def get_parser():
         help="Only warn if conda env evaluation fails and go on with the other envs.",
     )
 
+    lint_conda_envs = subparsers.add_parser(
+        "lint-conda-envs",
+        help="Check given conda environment definition files for violated constraints "
+        "and report them as one JSON document.",
+        description="Check given conda environment definition files (in YAML format): "
+        "channel order (conda-forge, bioconda, nodefaults for bioconda related envs; "
+        "conda-forge, nodefaults for conda-forge related envs) and, if given, --ensure "
+        "constraints (checked against the pin files of the envs). "
+        "Violations of all envs are printed as one JSON document; the exit code is 1 "
+        "if any violation was found.",
+    )
+    lint_conda_envs.add_argument(
+        "envfiles", nargs="+", help="Environment definition YAML files to lint."
+    )
+    lint_conda_envs.add_argument(
+        "--ensure",
+        nargs="+",
+        metavar="PACKAGE_SPEC",
+        help="Report pinned packages that violate these version constraints "
+        "(e.g. --ensure 'python>=3.12').",
+    )
+
     update_snakemake_wrappers = subparsers.add_parser(
         "update-snakemake-wrappers",
         help="Update all snakemake wrappers in given Snakefiles to their latest versions.",
@@ -351,6 +374,8 @@ def main():
                 ensure=args.ensure,
                 only_if_ensure_is_unsatisfied=args.only_if_ensure_is_unsatisfied,
             )
+        elif args.subcommand == "lint-conda-envs":
+            sys.exit(lint_conda_envs_cli(args.envfiles, ensure=args.ensure))
         elif args.subcommand == "update-snakemake-wrappers":
             update_snakemake_wrappers(
                 args.snakefiles,
